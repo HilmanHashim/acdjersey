@@ -88,6 +88,51 @@ export type Database = {
           },
         ]
       }
+      leads: {
+        Row: {
+          created_at: string
+          date: string | null
+          id: string
+          leads_from: string | null
+          name: string
+          note: string | null
+          number_of_pcs: number | null
+          phone: string | null
+          purchase_amount: number | null
+          stage: Database["public"]["Enums"]["lead_stage"]
+          type_of_custom: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          date?: string | null
+          id?: string
+          leads_from?: string | null
+          name?: string
+          note?: string | null
+          number_of_pcs?: number | null
+          phone?: string | null
+          purchase_amount?: number | null
+          stage?: Database["public"]["Enums"]["lead_stage"]
+          type_of_custom?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          date?: string | null
+          id?: string
+          leads_from?: string | null
+          name?: string
+          note?: string | null
+          number_of_pcs?: number | null
+          phone?: string | null
+          purchase_amount?: number | null
+          stage?: Database["public"]["Enums"]["lead_stage"]
+          type_of_custom?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       orders: {
         Row: {
           contact_id: string
@@ -181,6 +226,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      lead_stage: "cold" | "prospect" | "first_buy"
       order_status:
         | "pending"
         | "in_production"
@@ -315,6 +361,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      lead_stage: ["cold", "prospect", "first_buy"],
       order_status: [
         "pending",
         "in_production",
