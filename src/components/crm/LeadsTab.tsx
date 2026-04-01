@@ -1,0 +1,343 @@
+import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { Plus, Pencil, Trash2, Upload, Search, Download } from "lucide-react";
+import { toast } from "sonner";
+import * as XLSX from "xlsx";
+import type { Database } from "@/integrations/supabase/types";
+
+type LeadStage = Database["public"]["Enums"]["lead_stage"];
+type Lead = Database["public"]["Tables"]["leads"]["Row"];
+
+const stageBadge: Record<LeadStage, string> = {
+  cold: "bg-blue-500/10 text-blue-600 border-blue-500/30",
+  prospect: "bg-yellow-500/10 text-yellow-600 border-yellow-500/30",
+  first_buy: "bg-green-500/10 text-green-600 border-green-500/30",
+};
+
+const stageLabel: Record<LeadStage, string> = {
+  cold: "Cold",
+  prospect: "Prospect",
+  first_buy: "First Buy",
+};
+
+const LeadsTab = () => {
+  const queryClient = useQueryClient();
+  const [open, setOpen] = useState(false);
+  const [editing, setEditing] = useState<Lead | null>(null);
+  const [search, setSearch] = useState("");
+  const [activeStage, setActiveStage] = useState<string>("all");
+  const [form, setForm] = useState({
+    phone: "", name: "", note: "", date: "", type_of_custom: "",
+    leads_from: "", stage: "cold" as LeadStage, number_of_pcs: "", purchase_amount: "",
+  });
+
+  const { data: leads = [], isLoading } = useQuery({
+    queryKey: ["leads"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("leads").select("*").order("created_at", { ascending: false });
+      if (error) throw error;
+      return data as Lead[];
+    },
+  });
+
+  const saveMutation = useMutation({
+    mutationFn: async () => {
+      const payload = {
+        phone: form.phone || null,
+        name: form.name || "Customer",
+        note: form.note || null,
+        date: form.date || null,
+        type_of_custom: form.type_of_custom || null,
+        leads_from: form.leads_from || null,
+        stage: form.stage,
+        number_of_pcs: form.number_of_pcs ? parseInt(form.number_of_pcs) : null,
+        purchase_amount: form.purchase_amount ? parseFloat(form.purchase_amount) : null,
+      };
+      if (editing) {
+        const { error } = await supabase.from("leads").update(payload).eq("id", editing.id);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.from("leads").insert(payload);
+        if (error) throw error;
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["leads"] });
+      toast.success(editing ? "Lead updated" : "Lead added");
+      resetForm();
+    },
+    onError: () => toast.error("Failed to save lead"),
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("leads").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["leads"] });
+      toast.success("Lead deleted");
+    },
+  });
+
+  const resetForm = () => {
+    setForm({ phone: "", name: "", note: "", date: "", type_of_custom: "", leads_from: "", stage: "cold", number_of_pcs: "", purchase_amount: "" });
+    setEditing(null);
+    setOpen(false);
+  };
+
+  const openEdit = (l: Lead) => {
+    setEditing(l);
+    setForm({
+      phone: l.phone || "", name: l.name, note: l.note || "",
+      date: l.date || "", type_of_custom: l.type_of_custom || "",
+      leads_from: l.leads_from || "", stage: l.stage,
+      number_of_pcs: l.number_of_pcs?.toString() || "",
+      purchase_amount: l.purchase_amount?.toString() || "",
+    });
+    setOpen(true);
+  };
+
+  const handleExcelUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const data = await file.arrayBuffer();
+      const workbook = XLSX.read(data);
+      const allLeads: any[] = [];
+
+      const sheetStageMap: Record<string, LeadStage> = {
+        COLD: "cold",
+        PROSPECT: "prospect",
+        FIRST_BUY: "first_buy",
+      };
+
+      for (const sheetName of workbook.SheetNames) {
+        const stage = sheetStageMap[sheetName.toUpperCase()];
+        if (!stage) continue;
+
+        const sheet = workbook.Sheets[sheetName];
+        const rows = XLSX.utils.sheet_to_json<any>(sheet, { defval: "" });
+
+        for (const row of rows) {
+          const phone = String(row["NUMBER PHONE"] || "").trim();
+          const name = String(row["NAME"] || "Customer").trim();
+          const note = String(row["NOTE"] || row["NOTE "] || "").trim();
+          const rawDate = row["DATE"];
+          const typeOfCustom = String(row["TYPE OF CUSTOM"] || "").trim();
+          const leadsFrom = String(row["LEADS FROM"] || "").trim();
+          const numPcs = row["NUMBER OF PCS"];
+          const purchaseAmt = row["PURCHASE AMOUNT"];
+
+          if (!phone && !name) continue;
+          if (name === "Customer" && !phone) continue;
+
+          let dateStr: string | null = null;
+          if (rawDate) {
+            if (typeof rawDate === "number") {
+              const d = XLSX.SSF.parse_date_code(rawDate);
+              dateStr = `${d.y}-${String(d.m).padStart(2, "0")}-${String(d.d).padStart(2, "0")}`;
+            } else {
+              const parts = String(rawDate).split("/");
+              if (parts.length === 3) {
+                dateStr = `${parts[2]}-${parts[1].padStart(2, "0")}-${parts[0].padStart(2, "0")}`;
+              }
+            }
+          }
+
+          allLeads.push({
+            phone: phone || null,
+            name: name || "Customer",
+            note: note || null,
+            date: dateStr,
+            type_of_custom: typeOfCustom === "-" ? null : typeOfCustom || null,
+            leads_from: leadsFrom || null,
+            stage,
+            number_of_pcs: numPcs ? parseInt(String(numPcs)) || null : null,
+            purchase_amount: purchaseAmt ? parseFloat(String(purchaseAmt)) || null : null,
+          });
+        }
+      }
+
+      if (allLeads.length === 0) {
+        toast.error("No valid leads found in the Excel file");
+        return;
+      }
+
+      // Insert in batches of 50
+      for (let i = 0; i < allLeads.length; i += 50) {
+        const batch = allLeads.slice(i, i + 50);
+        const { error } = await supabase.from("leads").insert(batch);
+        if (error) throw error;
+      }
+
+      queryClient.invalidateQueries({ queryKey: ["leads"] });
+      toast.success(`Imported ${allLeads.length} leads from Excel`);
+    } catch (err: any) {
+      toast.error("Failed to import: " + err.message);
+    }
+
+    e.target.value = "";
+  };
+
+  const handleExport = () => {
+    const exportData = leads.map((l) => ({
+      "NUMBER PHONE": l.phone || "",
+      NAME: l.name,
+      NOTE: l.note || "",
+      DATE: l.date || "",
+      "TYPE OF CUSTOM": l.type_of_custom || "",
+      "LEADS FROM": l.leads_from || "",
+      STAGE: stageLabel[l.stage],
+      "NUMBER OF PCS": l.number_of_pcs || "",
+      "PURCHASE AMOUNT": l.purchase_amount || "",
+    }));
+    const ws = XLSX.utils.json_to_sheet(exportData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "All Leads");
+    XLSX.writeFile(wb, "ACD_Leads_Export.xlsx");
+  };
+
+  const filtered = leads.filter((l) => {
+    const matchesStage = activeStage === "all" || l.stage === activeStage;
+    const matchesSearch = !search || [l.phone, l.name, l.note, l.type_of_custom, l.leads_from]
+      .some((v) => v?.toLowerCase().includes(search.toLowerCase()));
+    return matchesStage && matchesSearch;
+  });
+
+  const stageCounts = {
+    all: leads.length,
+    cold: leads.filter((l) => l.stage === "cold").length,
+    prospect: leads.filter((l) => l.stage === "prospect").length,
+    first_buy: leads.filter((l) => l.stage === "first_buy").length,
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-col sm:flex-row gap-3 justify-between">
+        <div className="relative flex-1 max-w-sm">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input placeholder="Search leads..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+        </div>
+        <div className="flex gap-2 flex-wrap">
+          <Button variant="outline" size="sm" onClick={handleExport} disabled={leads.length === 0}>
+            <Download className="h-4 w-4 mr-1" /> Export
+          </Button>
+          <label>
+            <input type="file" accept=".xlsx,.xls" onChange={handleExcelUpload} className="hidden" />
+            <Button variant="secondary" size="sm" asChild>
+              <span><Upload className="h-4 w-4 mr-1" /> Import Excel</span>
+            </Button>
+          </label>
+          <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) resetForm(); }}>
+            <DialogTrigger asChild>
+              <Button variant="hero" size="sm"><Plus className="h-4 w-4 mr-1" /> Add Lead</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader><DialogTitle className="font-display">{editing ? "Edit" : "New"} Lead</DialogTitle></DialogHeader>
+              <form onSubmit={(e) => { e.preventDefault(); saveMutation.mutate(); }} className="space-y-3">
+                <Input placeholder="Phone (start with 60)" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+                <Input placeholder="Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+                <Textarea placeholder="Note" value={form.note} onChange={(e) => setForm({ ...form, note: e.target.value })} />
+                <Input type="date" value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} />
+                <Input placeholder="Type of Custom (e.g. Running, Bola)" value={form.type_of_custom} onChange={(e) => setForm({ ...form, type_of_custom: e.target.value })} />
+                <Select value={form.leads_from} onValueChange={(v) => setForm({ ...form, leads_from: v })}>
+                  <SelectTrigger><SelectValue placeholder="Leads From" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ADS">Ads</SelectItem>
+                    <SelectItem value="ORGANIC">Organic</SelectItem>
+                    <SelectItem value="REFERRAL">Referral</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Select value={form.stage} onValueChange={(v) => setForm({ ...form, stage: v as LeadStage })}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="cold">Cold</SelectItem>
+                    <SelectItem value="prospect">Prospect</SelectItem>
+                    <SelectItem value="first_buy">First Buy</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Input placeholder="Number of PCS" type="number" value={form.number_of_pcs} onChange={(e) => setForm({ ...form, number_of_pcs: e.target.value })} />
+                {form.stage === "first_buy" && (
+                  <Input placeholder="Purchase Amount (RM)" type="number" step="0.01" value={form.purchase_amount} onChange={(e) => setForm({ ...form, purchase_amount: e.target.value })} />
+                )}
+                <Button type="submit" variant="hero" className="w-full" disabled={saveMutation.isPending}>Save</Button>
+              </form>
+            </DialogContent>
+          </Dialog>
+        </div>
+      </div>
+
+      <Tabs value={activeStage} onValueChange={setActiveStage}>
+        <TabsList>
+          <TabsTrigger value="all">All ({stageCounts.all})</TabsTrigger>
+          <TabsTrigger value="cold">Cold ({stageCounts.cold})</TabsTrigger>
+          <TabsTrigger value="prospect">Prospect ({stageCounts.prospect})</TabsTrigger>
+          <TabsTrigger value="first_buy">First Buy ({stageCounts.first_buy})</TabsTrigger>
+        </TabsList>
+      </Tabs>
+
+      {isLoading ? (
+        <p className="text-muted-foreground text-center py-8">Loading...</p>
+      ) : filtered.length === 0 ? (
+        <p className="text-muted-foreground text-center py-8">No leads found. Add one or import from Excel!</p>
+      ) : (
+        <div className="border rounded-lg overflow-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Phone</TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead>Note</TableHead>
+                <TableHead>Date</TableHead>
+                <TableHead>Type</TableHead>
+                <TableHead>Source</TableHead>
+                <TableHead>Stage</TableHead>
+                <TableHead>PCS</TableHead>
+                {activeStage === "first_buy" || activeStage === "all" ? <TableHead>Amount</TableHead> : null}
+                <TableHead className="w-20">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filtered.map((l) => (
+                <TableRow key={l.id}>
+                  <TableCell className="font-mono text-sm">{l.phone || "—"}</TableCell>
+                  <TableCell className="font-medium">{l.name}</TableCell>
+                  <TableCell className="max-w-[200px] truncate text-sm">{l.note || "—"}</TableCell>
+                  <TableCell className="text-sm">{l.date || "—"}</TableCell>
+                  <TableCell className="text-sm">{l.type_of_custom || "—"}</TableCell>
+                  <TableCell className="text-sm">{l.leads_from || "—"}</TableCell>
+                  <TableCell>
+                    <Badge variant="outline" className={stageBadge[l.stage]}>{stageLabel[l.stage]}</Badge>
+                  </TableCell>
+                  <TableCell>{l.number_of_pcs || "—"}</TableCell>
+                  {activeStage === "first_buy" || activeStage === "all" ? (
+                    <TableCell>{l.purchase_amount ? `RM ${Number(l.purchase_amount).toFixed(2)}` : "—"}</TableCell>
+                  ) : null}
+                  <TableCell>
+                    <div className="flex gap-1">
+                      <Button variant="ghost" size="icon" onClick={() => openEdit(l)}><Pencil className="h-4 w-4" /></Button>
+                      <Button variant="ghost" size="icon" onClick={() => deleteMutation.mutate(l.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default LeadsTab;
