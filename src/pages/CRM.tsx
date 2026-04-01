@@ -18,9 +18,6 @@ const CRM = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [authLoading, setAuthLoading] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [authLoading, setAuthLoading] = useState(false);
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -34,19 +31,13 @@ const CRM = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const handleAuth = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setAuthLoading(true);
     try {
-      if (authMode === "login") {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-        toast.success("Logged in!");
-      } else {
-        const { error } = await supabase.auth.signUp({ email, password });
-        if (error) throw error;
-        toast.success("Account created! Check your email.");
-      }
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      toast.success("Logged in!");
     } catch (err: any) {
       toast.error(err.message);
     } finally {
@@ -71,19 +62,11 @@ const CRM = () => {
             <h1 className="text-3xl font-display text-gradient">ACD CRM</h1>
             <p className="text-muted-foreground mt-2">Sign in to manage your business</p>
           </div>
-          <form onSubmit={handleAuth} className="space-y-3">
+          <form onSubmit={handleLogin} className="space-y-3">
             <Input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
             <Input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
-            <Button type="submit" variant="hero" className="w-full" disabled={authLoading}>
-              {authMode === "login" ? "Sign In" : "Create Account"}
-            </Button>
+            <Button type="submit" variant="hero" className="w-full" disabled={authLoading}>Sign In</Button>
           </form>
-          <p className="text-center text-sm text-muted-foreground">
-            {authMode === "login" ? "No account? " : "Have an account? "}
-            <button onClick={() => setAuthMode(authMode === "login" ? "signup" : "login")} className="text-primary hover:underline">
-              {authMode === "login" ? "Sign up" : "Sign in"}
-            </button>
-          </p>
           <div className="text-center">
             <Link to="/" className="text-sm text-muted-foreground hover:text-primary">← Back to website</Link>
           </div>
