@@ -27,12 +27,6 @@ const UsersTab = ({ currentUserId }: { currentUserId: string }) => {
   const { data: users = [], isLoading } = useQuery({
     queryKey: ["auth-users"],
     queryFn: async () => {
-      const { data, error } = await supabase.functions.invoke("manage-users", {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-        body: undefined,
-      });
-      // supabase.functions.invoke uses POST by default, use query params
       const res = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/manage-users?action=list`,
         {

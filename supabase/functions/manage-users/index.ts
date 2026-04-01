@@ -26,7 +26,7 @@ serve(async (req) => {
     const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey);
 
     // Verify caller is a valid authenticated user
-    const publishableKey = Deno.env.get("SUPABASE_PUBLISHABLE_KEY")!;
+    const publishableKey = Deno.env.get("SUPABASE_ANON_KEY") || Deno.env.get("SUPABASE_PUBLISHABLE_KEY")!;
     const supabaseAuth = createClient(supabaseUrl, publishableKey);
     const token = authHeader.replace("Bearer ", "");
     const { data: { user: caller }, error: callerError } = await supabaseAuth.auth.getUser(token);
