@@ -1,6 +1,6 @@
 import heroImage from "@/assets/hero-jerseys.jpg";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+
 import { Phone, MapPin } from "lucide-react";
 
 const Hero = () => (
@@ -24,11 +24,6 @@ const Hero = () => (
             <a href="https://wa.me/60193396681" target="_blank" rel="noopener noreferrer">
               <Phone className="mr-2 h-5 w-5" /> WhatsApp Us
             </a>
-          </Button>
-          <Button variant="outline" size="lg" className="border-surface-dark-foreground/30 text-surface-dark-foreground hover:bg-surface-dark-foreground/10" asChild>
-            <Link to="/crm">
-              CRM Dashboard
-            </Link>
           </Button>
         </div>
         <div className="flex items-center gap-2 pt-4 text-surface-dark-foreground/60 text-sm">
