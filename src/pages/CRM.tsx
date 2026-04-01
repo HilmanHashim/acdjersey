@@ -11,6 +11,7 @@ import OrdersTab from "@/components/crm/OrdersTab";
 import QuotationsTab from "@/components/crm/QuotationsTab";
 import RemindersTab from "@/components/crm/RemindersTab";
 import UsersTab from "@/components/crm/UsersTab";
+import LeadsTab from "@/components/crm/LeadsTab";
 
 const CRM = () => {
   const navigate = useNavigate();
