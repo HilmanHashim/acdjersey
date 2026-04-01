@@ -1,0 +1,43 @@
+import heroImage from "@/assets/hero-jerseys.jpg";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
+import { Phone, MapPin } from "lucide-react";
+
+const Hero = () => (
+  <section className="relative min-h-[90vh] flex items-center overflow-hidden surface-dark">
+    <div className="absolute inset-0">
+      <img src={heroImage} alt="Premium sublimation jerseys by ACD Jersey HQ" width={1920} height={1080} className="w-full h-full object-cover opacity-40" />
+      <div className="absolute inset-0 bg-gradient-to-r from-surface-dark via-surface-dark/80 to-transparent" />
+    </div>
+    <div className="container relative z-10 py-20">
+      <div className="max-w-2xl space-y-6 animate-slide-up">
+        <p className="font-display text-accent uppercase tracking-[0.3em] text-sm">Premium Sublimation Apparel</p>
+        <h1 className="text-5xl md:text-7xl font-display leading-[0.95]">
+          <span className="text-surface-dark-foreground">ACD</span>{" "}
+          <span className="text-gradient">Jersey HQ</span>
+        </h1>
+        <p className="text-lg text-surface-dark-foreground/70 font-body max-w-lg">
+          High-quality, customizable designs for sports and corporate wear. Trusted by major brands and organizations across Malaysia.
+        </p>
+        <div className="flex flex-wrap gap-4 pt-2">
+          <Button variant="hero" size="lg" asChild>
+            <a href="https://wa.me/60193396681" target="_blank" rel="noopener noreferrer">
+              <Phone className="mr-2 h-5 w-5" /> WhatsApp Us
+            </a>
+          </Button>
+          <Button variant="outline" size="lg" className="border-surface-dark-foreground/30 text-surface-dark-foreground hover:bg-surface-dark-foreground/10" asChild>
+            <Link to="/crm">
+              CRM Dashboard
+            </Link>
+          </Button>
+        </div>
+        <div className="flex items-center gap-2 pt-4 text-surface-dark-foreground/60 text-sm">
+          <MapPin className="h-4 w-4" />
+          <span>Aman Putri, Shah Alam, Selangor</span>
+        </div>
+      </div>
+    </div>
+  </section>
+);
+
+export default Hero;
