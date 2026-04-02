@@ -63,7 +63,7 @@ const designers = [
     phone: "017-280 9232",
     whatsapp: "https://wa.me/60172809232",
     role: "Creative Director",
-    bio: "Our creative mind behind every jersey design. Faiz transforms your ideas into stunning, print-ready artwork with precision and flair.",
+    bio: "Graphic Designer with 8+ years of experience, specializing in jersey, apparel, and print design. Known for delivering clean, elevated visuals with a strong attention to detail and premium finish.",
     image: "",
   },
   {
