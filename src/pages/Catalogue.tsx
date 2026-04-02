@@ -95,7 +95,7 @@ const CategoryCard = ({
             if (!el) return;
             const scrollLeft = el.scrollLeft;
             const childWidth = (el.children[0] as HTMLElement)?.offsetWidth || 1;
-            setCurrent(Math.round(scrollLeft / (childWidth + 8)));
+            setCurrent(Math.round(scrollLeft / childWidth));
           }}
         >
           {category.images.map((src, i) => (
