@@ -33,6 +33,17 @@ const agents = [
   },
 ];
 
+const designers = [
+  {
+    name: "FAIZ ACD",
+    phone: "017-280 9232",
+    whatsapp: "https://wa.me/60172809232",
+    role: "Designer",
+    bio: "Our creative mind behind every jersey design. Faiz transforms your ideas into stunning, print-ready artwork with precision and flair.",
+    image: "",
+  },
+];
+
 const Agents = () => (
   <div className="min-h-screen bg-background">
     <div className="surface-dark py-12">
