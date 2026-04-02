@@ -4,7 +4,7 @@ const Footer = () => (
   <footer className="py-10 bg-background border-t border-border">
     <div className="container flex flex-col md:flex-row justify-between items-center gap-4">
       <div>
-        <p className="font-display text-xl text-gradient">ACD Jersey HQ</p>
+        <p className="font-display text-xl text-gradient">ACD Jersey</p>
         <p className="text-muted-foreground text-sm">Premium Sublimation Apparel · Shah Alam</p>
       </div>
       <div className="flex gap-4">
