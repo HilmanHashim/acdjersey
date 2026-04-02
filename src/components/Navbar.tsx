@@ -2,6 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import logo from "@/assets/logo-white.png";
 
 const navLinks = [
   { to: "/", label: "Home" },
@@ -16,10 +17,8 @@ const Navbar = () => {
   return (
     <nav className="sticky top-0 z-50 border-b border-primary/20 bg-gradient-to-r from-background via-card to-background backdrop-blur-md">
       <div className="container flex items-center justify-between h-16">
-        <Link to="/" className="font-display text-2xl tracking-wide group">
-          <span className="text-gradient font-bold">ACD</span>
-          <span className="text-foreground/60 mx-1 font-light">|</span>
-          <span className="text-foreground/90 text-lg tracking-[0.15em]">JERSEY</span>
+        <Link to="/" className="group">
+          <img src={logo} alt="ACD Jersey" className="h-10" />
         </Link>
 
         {/* Desktop */}
