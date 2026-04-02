@@ -187,22 +187,22 @@ const DashboardTab = () => {
               No per-user data yet. Activity will appear here as team members create records.
             </p>
           ) : (
-            <div className="border rounded-lg overflow-auto">
-              <Table>
+            <div className="border rounded-lg overflow-hidden">
+              <Table className="table-fixed w-full">
                 <TableHeader>
                   <TableRow>
-                    <TableHead>User</TableHead>
-                    <TableHead className="text-center">Leads</TableHead>
-                    <TableHead className="text-center">Contacts</TableHead>
-                    <TableHead className="text-center">Orders</TableHead>
-                    <TableHead className="text-center">Quotes</TableHead>
-                    <TableHead className="text-right">Revenue</TableHead>
+                    <TableHead className="w-[30%]">User</TableHead>
+                    <TableHead className="w-[12%] text-center">Leads</TableHead>
+                    <TableHead className="w-[14%] text-center">Contacts</TableHead>
+                    <TableHead className="w-[12%] text-center">Orders</TableHead>
+                    <TableHead className="w-[12%] text-center">Quotes</TableHead>
+                    <TableHead className="w-[20%] text-right">Revenue</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {userActivities.map((u) => (
                     <TableRow key={u.email}>
-                      <TableCell className="font-medium">{u.email}</TableCell>
+                      <TableCell className="font-medium truncate">{u.email}</TableCell>
                       <TableCell className="text-center">
                         <Badge variant="outline">{u.leads}</Badge>
                       </TableCell>
@@ -215,7 +215,7 @@ const DashboardTab = () => {
                       <TableCell className="text-center">
                         <Badge variant="outline">{u.quotations}</Badge>
                       </TableCell>
-                      <TableCell className="text-right font-mono">
+                      <TableCell className="text-right font-mono truncate">
                         RM {u.totalRevenue.toFixed(2)}
                       </TableCell>
                     </TableRow>

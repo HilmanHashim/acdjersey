@@ -394,27 +394,27 @@ const LeadsTab = () => {
       ) : filtered.length === 0 ? (
         <p className="text-muted-foreground text-center py-8">No leads found. Add one or import from Excel!</p>
       ) : (
-        <div className="border rounded-lg overflow-auto">
-          <Table>
+        <div className="border rounded-lg overflow-hidden">
+          <Table className="table-fixed w-full">
             <TableHeader>
               <TableRow>
-                <TableHead className="w-10">
+                <TableHead className="w-[3%]">
                   <Checkbox
                     checked={filtered.length > 0 && selectedIds.size === filtered.length}
                     onCheckedChange={toggleSelectAll}
                   />
                 </TableHead>
-                <TableHead>Phone</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Note</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Source</TableHead>
-                <TableHead>Stage</TableHead>
-                <TableHead>PCS</TableHead>
-                {activeStage === "first_buy" || activeStage === "all" ? <TableHead>Amount</TableHead> : null}
-                <TableHead>Owner</TableHead>
-                <TableHead className="w-20">Actions</TableHead>
+                <TableHead className="w-[12%]">Phone</TableHead>
+                <TableHead className="w-[10%]">Name</TableHead>
+                <TableHead className="w-[14%]">Note</TableHead>
+                <TableHead className="w-[8%]">Date</TableHead>
+                <TableHead className="w-[8%]">Type</TableHead>
+                <TableHead className="w-[7%]">Source</TableHead>
+                <TableHead className="w-[8%]">Stage</TableHead>
+                <TableHead className="w-[5%]">PCS</TableHead>
+                {(activeStage === "first_buy" || activeStage === "all") && <TableHead className="w-[8%]">Amount</TableHead>}
+                <TableHead className="w-[9%]">Owner</TableHead>
+                <TableHead className="w-[8%]">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -426,41 +426,41 @@ const LeadsTab = () => {
                       onCheckedChange={() => toggleSelect(l.id)}
                     />
                   </TableCell>
-                  <TableCell className="font-mono text-sm">
+                  <TableCell className="font-mono text-xs truncate">
                     <div className="flex items-center gap-1">
-                      {l.phone || "—"}
+                      <span className="truncate">{l.phone || "—"}</span>
                       {l.phone && (
                         <a
                           href={`https://wa.me/${l.phone.replace(/[^0-9]/g, "")}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-green-500 hover:text-green-400 transition-colors"
+                          className="text-green-500 hover:text-green-400 transition-colors shrink-0"
                           title="Chat on WhatsApp"
                         >
-                          <MessageCircle className="h-4 w-4" />
+                          <MessageCircle className="h-3.5 w-3.5" />
                         </a>
                       )}
                     </div>
                   </TableCell>
-                  <TableCell className="font-medium">{l.name}</TableCell>
-                  <TableCell className="max-w-[200px] truncate text-sm">{l.note || "—"}</TableCell>
-                  <TableCell className="text-sm">{l.date || "—"}</TableCell>
-                  <TableCell className="text-sm">{l.type_of_custom || "—"}</TableCell>
-                  <TableCell className="text-sm">{l.leads_from || "—"}</TableCell>
+                  <TableCell className="font-medium text-sm truncate">{l.name}</TableCell>
+                  <TableCell className="text-xs truncate" title={l.note || ""}>{l.note || "—"}</TableCell>
+                  <TableCell className="text-xs truncate">{l.date || "—"}</TableCell>
+                  <TableCell className="text-xs truncate">{l.type_of_custom || "—"}</TableCell>
+                  <TableCell className="text-xs truncate">{l.leads_from || "—"}</TableCell>
                   <TableCell>
-                    <Badge variant="outline" className={stageBadge[l.stage]}>{stageLabel[l.stage]}</Badge>
+                    <Badge variant="outline" className={`${stageBadge[l.stage]} text-xs`}>{stageLabel[l.stage]}</Badge>
                   </TableCell>
-                  <TableCell>{l.number_of_pcs || "—"}</TableCell>
-                  {activeStage === "first_buy" || activeStage === "all" ? (
-                    <TableCell>{l.purchase_amount ? `RM ${Number(l.purchase_amount).toFixed(2)}` : "—"}</TableCell>
-                  ) : null}
-                  <TableCell className="text-sm text-muted-foreground">
+                  <TableCell className="text-xs">{l.number_of_pcs || "—"}</TableCell>
+                  {(activeStage === "first_buy" || activeStage === "all") && (
+                    <TableCell className="text-xs truncate">{l.purchase_amount ? `RM ${Number(l.purchase_amount).toFixed(2)}` : "—"}</TableCell>
+                  )}
+                  <TableCell className="text-xs truncate text-muted-foreground">
                     {l.created_by ? (userEmailMap[l.created_by]?.split("@")[0] || "—") : "—"}
                   </TableCell>
                   <TableCell>
-                    <div className="flex gap-1">
-                      <Button variant="ghost" size="icon" onClick={() => openEdit(l)}><Pencil className="h-4 w-4" /></Button>
-                      <Button variant="ghost" size="icon" onClick={() => deleteMutation.mutate(l.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                    <div className="flex gap-0.5">
+                      <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => openEdit(l)}><Pencil className="h-3.5 w-3.5" /></Button>
+                      <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => deleteMutation.mutate(l.id)}><Trash2 className="h-3.5 w-3.5 text-destructive" /></Button>
                     </div>
                   </TableCell>
                 </TableRow>

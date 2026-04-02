@@ -110,28 +110,28 @@ const ContactsTab = () => {
       ) : filtered.length === 0 ? (
         <p className="text-muted-foreground text-center py-8">No contacts yet. Add your first one!</p>
       ) : (
-        <div className="border rounded-lg overflow-auto">
-          <Table>
+        <div className="border rounded-lg overflow-hidden">
+          <Table className="table-fixed w-full">
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Phone</TableHead>
-                <TableHead>Company</TableHead>
-                <TableHead className="w-20">Actions</TableHead>
+                <TableHead className="w-[25%]">Name</TableHead>
+                <TableHead className="w-[25%]">Email</TableHead>
+                <TableHead className="w-[20%]">Phone</TableHead>
+                <TableHead className="w-[20%]">Company</TableHead>
+                <TableHead className="w-[10%]">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filtered.map((c) => (
                 <TableRow key={c.id}>
-                  <TableCell className="font-medium">{c.name}</TableCell>
-                  <TableCell>{c.email || "—"}</TableCell>
-                  <TableCell>{c.phone || "—"}</TableCell>
-                  <TableCell>{c.company || "—"}</TableCell>
+                  <TableCell className="font-medium truncate">{c.name}</TableCell>
+                  <TableCell className="truncate">{c.email || "—"}</TableCell>
+                  <TableCell className="truncate">{c.phone || "—"}</TableCell>
+                  <TableCell className="truncate">{c.company || "—"}</TableCell>
                   <TableCell>
-                    <div className="flex gap-1">
-                      <Button variant="ghost" size="icon" onClick={() => openEdit(c)}><Pencil className="h-4 w-4" /></Button>
-                      <Button variant="ghost" size="icon" onClick={() => deleteMutation.mutate(c.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                    <div className="flex gap-0.5">
+                      <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => openEdit(c)}><Pencil className="h-3.5 w-3.5" /></Button>
+                      <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => deleteMutation.mutate(c.id)}><Trash2 className="h-3.5 w-3.5 text-destructive" /></Button>
                     </div>
                   </TableCell>
                 </TableRow>
