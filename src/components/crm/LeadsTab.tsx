@@ -9,7 +9,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Pencil, Trash2, Upload, Search, Download, MessageCircle } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Plus, Pencil, Trash2, Upload, Search, Download, MessageCircle, Send } from "lucide-react";
 import { toast } from "sonner";
 import * as XLSX from "xlsx";
 import type { Database } from "@/integrations/supabase/types";
@@ -35,11 +36,15 @@ const LeadsTab = () => {
   const [editing, setEditing] = useState<Lead | null>(null);
   const [search, setSearch] = useState("");
   const [activeStage, setActiveStage] = useState<string>("all");
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [blastOpen, setBlastOpen] = useState(false);
+  const [blastMessage, setBlastMessage] = useState("Hi {{name}}, this is a follow-up from ACD Jersey. How can we help you today?");
   const [form, setForm] = useState({
     phone: "", name: "", note: "", date: "", type_of_custom: "",
     leads_from: "", stage: "cold" as LeadStage, number_of_pcs: "", purchase_amount: "",
   });
 
+  // Fetch leads
   const { data: leads = [], isLoading } = useQuery({
     queryKey: ["leads"],
     queryFn: async () => {
@@ -48,6 +53,28 @@ const LeadsTab = () => {
       return data as Lead[];
     },
   });
+
+  // Fetch auth users for owner column
+  const { data: authUsers = [] } = useQuery({
+    queryKey: ["auth-users"],
+    queryFn: async () => {
+      const res = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/manage-users`,
+        {
+          headers: {
+            Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
+            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+          },
+        }
+      );
+      if (!res.ok) return [];
+      const json = await res.json();
+      return (json.users ?? json) as { id: string; email: string }[];
+    },
+  });
+
+  const userEmailMap: Record<string, string> = {};
+  authUsers.forEach((u) => { userEmailMap[u.id] = u.email; });
 
   const saveMutation = useMutation({
     mutationFn: async () => {
@@ -175,7 +202,6 @@ const LeadsTab = () => {
         return;
       }
 
-      // Insert in batches of 50
       for (let i = 0; i < allLeads.length; i += 50) {
         const batch = allLeads.slice(i, i + 50);
         const { error } = await supabase.from("leads").insert(batch);
@@ -202,6 +228,7 @@ const LeadsTab = () => {
       STAGE: stageLabel[l.stage],
       "NUMBER OF PCS": l.number_of_pcs || "",
       "PURCHASE AMOUNT": l.purchase_amount || "",
+      OWNER: l.created_by ? (userEmailMap[l.created_by] || "Unknown") : "—",
     }));
     const ws = XLSX.utils.json_to_sheet(exportData);
     const wb = XLSX.utils.book_new();
@@ -223,6 +250,48 @@ const LeadsTab = () => {
     first_buy: leads.filter((l) => l.stage === "first_buy").length,
   };
 
+  // Selection helpers
+  const toggleSelect = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.size === filtered.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(filtered.map((l) => l.id)));
+    }
+  };
+
+  const selectedLeadsWithPhone = leads.filter(
+    (l) => selectedIds.has(l.id) && l.phone
+  );
+
+  const handleBlast = () => {
+    if (selectedLeadsWithPhone.length === 0) {
+      toast.error("No selected leads have phone numbers");
+      return;
+    }
+
+    let opened = 0;
+    for (const lead of selectedLeadsWithPhone) {
+      const phone = lead.phone!.replace(/[^0-9]/g, "");
+      const msg = encodeURIComponent(
+        blastMessage.replace(/\{\{name\}\}/gi, lead.name)
+      );
+      window.open(`https://wa.me/${phone}?text=${msg}`, "_blank");
+      opened++;
+    }
+
+    toast.success(`Opened ${opened} WhatsApp chat(s)`);
+    setBlastOpen(false);
+    setSelectedIds(new Set());
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row gap-3 justify-between">
@@ -231,6 +300,38 @@ const LeadsTab = () => {
           <Input placeholder="Search leads..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
         </div>
         <div className="flex gap-2 flex-wrap">
+          {selectedIds.size > 0 && (
+            <Dialog open={blastOpen} onOpenChange={setBlastOpen}>
+              <DialogTrigger asChild>
+                <Button variant="default" size="sm" className="bg-green-600 hover:bg-green-700 text-white">
+                  <Send className="h-4 w-4 mr-1" /> Blast WhatsApp ({selectedIds.size})
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle className="font-display">WhatsApp Blast</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-3">
+                  <p className="text-sm text-muted-foreground">
+                    This will open {selectedLeadsWithPhone.length} WhatsApp chat tab(s) with a pre-filled message.
+                    {selectedIds.size - selectedLeadsWithPhone.length > 0 && (
+                      <span className="text-destructive"> ({selectedIds.size - selectedLeadsWithPhone.length} selected lead(s) have no phone number and will be skipped.)</span>
+                    )}
+                  </p>
+                  <p className="text-xs text-muted-foreground">Use <code className="bg-muted px-1 rounded">{"{{name}}"}</code> to personalise with the lead's name.</p>
+                  <Textarea
+                    rows={4}
+                    value={blastMessage}
+                    onChange={(e) => setBlastMessage(e.target.value)}
+                    placeholder="Type your message..."
+                  />
+                  <Button onClick={handleBlast} className="w-full bg-green-600 hover:bg-green-700 text-white">
+                    <MessageCircle className="h-4 w-4 mr-1" /> Open {selectedLeadsWithPhone.length} Chat(s)
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+          )}
           <Button variant="outline" size="sm" onClick={handleExport} disabled={leads.length === 0}>
             <Download className="h-4 w-4 mr-1" /> Export
           </Button>
@@ -297,6 +398,12 @@ const LeadsTab = () => {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-10">
+                  <Checkbox
+                    checked={filtered.length > 0 && selectedIds.size === filtered.length}
+                    onCheckedChange={toggleSelectAll}
+                  />
+                </TableHead>
                 <TableHead>Phone</TableHead>
                 <TableHead>Name</TableHead>
                 <TableHead>Note</TableHead>
@@ -306,12 +413,19 @@ const LeadsTab = () => {
                 <TableHead>Stage</TableHead>
                 <TableHead>PCS</TableHead>
                 {activeStage === "first_buy" || activeStage === "all" ? <TableHead>Amount</TableHead> : null}
+                <TableHead>Owner</TableHead>
                 <TableHead className="w-20">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filtered.map((l) => (
-                <TableRow key={l.id}>
+                <TableRow key={l.id} className={selectedIds.has(l.id) ? "bg-muted/50" : ""}>
+                  <TableCell>
+                    <Checkbox
+                      checked={selectedIds.has(l.id)}
+                      onCheckedChange={() => toggleSelect(l.id)}
+                    />
+                  </TableCell>
                   <TableCell className="font-mono text-sm">
                     <div className="flex items-center gap-1">
                       {l.phone || "—"}
@@ -340,6 +454,9 @@ const LeadsTab = () => {
                   {activeStage === "first_buy" || activeStage === "all" ? (
                     <TableCell>{l.purchase_amount ? `RM ${Number(l.purchase_amount).toFixed(2)}` : "—"}</TableCell>
                   ) : null}
+                  <TableCell className="text-sm text-muted-foreground">
+                    {l.created_by ? (userEmailMap[l.created_by]?.split("@")[0] || "—") : "—"}
+                  </TableCell>
                   <TableCell>
                     <div className="flex gap-1">
                       <Button variant="ghost" size="icon" onClick={() => openEdit(l)}><Pencil className="h-4 w-4" /></Button>
