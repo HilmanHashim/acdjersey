@@ -23,6 +23,7 @@ const CRM = () => {
   const [forgotOpen, setForgotOpen] = useState(false);
   const [forgotEmail, setForgotEmail] = useState("");
   const [forgotLoading, setForgotLoading] = useState(false);
+  const [tempPassword, setTempPassword] = useState("");
   const [newPasswordMode, setNewPasswordMode] = useState(false);
   const [newPassword, setNewPassword] = useState("");
 

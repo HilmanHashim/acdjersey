@@ -28,16 +28,23 @@ serve(async (req) => {
       if (!resetEmail) return json({ error: "Email required" }, 400);
 
       const { data: userList } = await supabaseAdmin.auth.admin.listUsers();
-      const userExists = userList?.users?.some((u) => u.email === resetEmail);
+      const foundUser = userList?.users?.find((u) => u.email === resetEmail);
       
-      if (userExists) {
-        const { error } = await supabaseAuth.auth.resetPasswordForEmail(resetEmail, {
-          redirectTo: `${req.headers.get("origin") || supabaseUrl}/crm`,
-        });
-        if (error) throw error;
+      if (!foundUser) {
+        return json({ success: false, error: "No account found with that email." }, 404);
       }
 
-      return json({ success: true, message: "If an account with that email exists, a password reset link has been sent." });
+      // Generate a random temporary password
+      const chars = "ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#$%";
+      let tempPassword = "";
+      for (let i = 0; i < 12; i++) {
+        tempPassword += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+
+      const { error } = await supabaseAdmin.auth.admin.updateUserById(foundUser.id, { password: tempPassword });
+      if (error) throw error;
+
+      return json({ success: true, temporary_password: tempPassword, message: "Temporary password generated. Please share it with the user securely." });
     }
 
     // All other actions require authentication
