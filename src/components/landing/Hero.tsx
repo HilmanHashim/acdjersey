@@ -6,7 +6,7 @@ import { Phone, MapPin } from "lucide-react";
 const Hero = () => (
   <section className="relative min-h-[90vh] flex items-center overflow-hidden surface-dark">
     <div className="absolute inset-0">
-      <img src={heroImage} alt="Premium sublimation jerseys by ACD Jersey HQ" width={1920} height={1080} className="w-full h-full object-cover opacity-40" />
+      <img src={heroImage} alt="Premium sublimation jerseys by ACD Jersey HQ" width={1920} height={1080} <img src={heroImage} alt="Premium sublimation jerseys by ACD Jersey HQ" width={1920} height={1080} className="w-full h-full object-cover opacity-60 saturate-[1.3] contrast-[1.1]" /> />
       <div className="absolute inset-0 bg-gradient-to-r from-surface-dark via-surface-dark/80 to-transparent" />
     </div>
     <div className="container relative z-10 py-20">

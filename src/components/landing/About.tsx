@@ -1,7 +1,7 @@
 import { Star, Clock, MapPin, Phone } from "lucide-react";
 
 const About = () => (
-  <section className="py-20 bg-background">
+  <section className="py-20 bg-card">
     <div className="container">
       <div className="grid md:grid-cols-2 gap-16 items-center">
         <div className="space-y-6">
