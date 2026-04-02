@@ -1,4 +1,4 @@
-import heroImage from "@/assets/hero-jerseys.jpg";
+import heroImage from "@/assets/hero-bg.jpg";
 import { Button } from "@/components/ui/button";
 
 import { Phone, MapPin } from "lucide-react";
