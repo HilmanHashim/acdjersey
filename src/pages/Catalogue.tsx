@@ -32,6 +32,9 @@ import st5 from "@/assets/catalogue/standard-5.png";
 import st6 from "@/assets/catalogue/standard-6.png";
 import st7 from "@/assets/catalogue/standard-7.png";
 
+import fabricTypes from "@/assets/catalogue/fabric-types.png";
+import collarTypes from "@/assets/catalogue/collar-types.png";
+
 const categories = [
   {
     title: "Long Sleeve",
@@ -212,6 +215,44 @@ const Catalogue = () => {
               />
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Divider */}
+      <div className="container max-w-6xl">
+        <div className="h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent" />
+      </div>
+
+      {/* Fabric Types */}
+      <section className="container max-w-6xl py-16 space-y-6 animate-slide-up">
+        <div className="text-center space-y-2">
+          <p className="font-display text-accent uppercase tracking-[0.3em] text-sm">Materials</p>
+          <h2 className="text-3xl md:text-5xl font-display text-gradient">Fabric Types</h2>
+          <p className="text-muted-foreground max-w-lg mx-auto text-sm">
+            Choose from our range of premium fabrics — each suited for different needs and comfort levels.
+          </p>
+        </div>
+        <div className="rounded-2xl overflow-hidden border border-border hover:border-primary/30 transition-all duration-500">
+          <img src={fabricTypes} alt="Available fabric types — Interlock, Pin Dot Mesh, Mini Eyelet, Eyelet Reverse, RJPK, Premium Lycra, Lycra Standard, High Grade Diamond Hexagon, Ultron Superlite, Mini Square" className="w-full h-auto" loading="lazy" />
+        </div>
+      </section>
+
+      {/* Divider */}
+      <div className="container max-w-6xl">
+        <div className="h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent" />
+      </div>
+
+      {/* Collar Types */}
+      <section className="container max-w-6xl py-16 pb-20 space-y-6 animate-slide-up">
+        <div className="text-center space-y-2">
+          <p className="font-display text-accent uppercase tracking-[0.3em] text-sm">Customization</p>
+          <h2 className="text-3xl md:text-5xl font-display text-gradient">Collar Types</h2>
+          <p className="text-muted-foreground max-w-lg mx-auto text-sm">
+            Select your preferred collar style — from classic roundneck to polo and mandarin options.
+          </p>
+        </div>
+        <div className="rounded-2xl overflow-hidden border border-border hover:border-primary/30 transition-all duration-500">
+          <img src={collarTypes} alt="Available collar types — Roundneck, V-Neck End, V-Neck Cross, V-Neck Flat, Insert Stub, Open Stub, Polo Retro String, Polo Retro, Polo, Mandarin, Mandarin Zip" className="w-full h-auto" loading="lazy" />
         </div>
       </section>
 
