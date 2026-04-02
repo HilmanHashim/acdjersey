@@ -1,6 +1,8 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/landing/Footer";
 import { Shield, Zap, Palette, Award, DollarSign } from "lucide-react";
+import whoWeAreBg from "@/assets/who-we-are-bg.jpeg";
+import whyChooseUsBg from "@/assets/why-choose-us-bg.jpeg";
 
 import logoUis from "@/assets/logos/uis.png";
 import logoSwcorp from "@/assets/logos/swcorp.png";
@@ -74,11 +76,13 @@ const AboutUs = () => (
     <Navbar />
 
     {/* Hero */}
-    <section className="surface-dark py-20 animate-slide-up">
-      <div className="container max-w-3xl text-center space-y-6">
+    <section className="relative py-20 animate-slide-up overflow-hidden">
+      <img src={whoWeAreBg} alt="" className="absolute inset-0 w-full h-full object-cover" />
+      <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
+      <div className="container max-w-3xl text-center space-y-6 relative z-10">
         <p className="font-display text-accent uppercase tracking-[0.3em] text-sm">About Us</p>
         <h1 className="text-4xl md:text-6xl font-display text-gradient">Who We Are</h1>
-        <p className="text-surface-dark-foreground/70 text-lg leading-relaxed">
+        <p className="text-foreground/80 text-lg leading-relaxed">
           ACD is a premium sublimation clothing service provider specializing in sport fashion apparel. We pride ourselves on delivering top-notch quality and customization to meet the needs of our clients. With a focus on innovation, we cater to running groups, events, and organizations seeking lightweight, comfortable, and stylish apparel.
         </p>
       </div>
@@ -107,12 +111,14 @@ const AboutUs = () => (
     </section>
 
     {/* Why Choose Us */}
-    <section className="py-16 bg-card">
-      <div className="container space-y-10">
+    <section className="relative py-16 overflow-hidden">
+      <img src={whyChooseUsBg} alt="" className="absolute inset-0 w-full h-full object-cover" />
+      <div className="absolute inset-0 bg-background/85 backdrop-blur-sm" />
+      <div className="container space-y-10 relative z-10">
         <h2 className="text-3xl md:text-4xl font-display text-gradient text-center">Why Choose Us</h2>
         <div className="flex flex-wrap justify-center gap-6 max-w-5xl mx-auto">
           {whyChooseUs.map((item) => (
-            <div key={item.title} className="p-6 rounded-lg bg-background border border-border space-y-3 w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
+            <div key={item.title} className="p-6 rounded-lg bg-background/90 border border-border space-y-3 w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
               <item.icon className="h-8 w-8 text-primary" />
               <h3 className="font-display text-lg text-foreground">{item.title}</h3>
               <p className="text-muted-foreground text-sm leading-relaxed">{item.desc}</p>
