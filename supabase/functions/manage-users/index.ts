@@ -167,27 +167,6 @@ serve(async (req) => {
       return json({ success: true });
     }
 
-    // ─── FORGOT PASSWORD ───
-    if (req.method === "POST" && action === "forgot_password") {
-      const { email: resetEmail } = await req.json();
-      if (!resetEmail) return json({ error: "Email required" }, 400);
-
-      // Check if user exists
-      const { data: userList } = await supabaseAdmin.auth.admin.listUsers();
-      const userExists = userList?.users?.some((u) => u.email === resetEmail);
-      
-      if (userExists) {
-        // Send password reset email via Supabase
-        const { error } = await supabaseAuth.auth.resetPasswordForEmail(resetEmail, {
-          redirectTo: `${req.headers.get("origin") || supabaseUrl}/crm`,
-        });
-        if (error) throw error;
-      }
-
-      // Always return success (don't reveal if email exists)
-      return json({ success: true, message: "If an account with that email exists, a password reset link has been sent." });
-    }
-
     // ─── RESET PASSWORD (admin) ───
     if (req.method === "POST" && action === "reset_password") {
       if (!isAdmin) return json({ error: "Only admins can send reset emails" }, 403);
