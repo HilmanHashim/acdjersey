@@ -22,7 +22,7 @@ const Hero = () => (
         <div className="flex flex-wrap gap-4 pt-2">
           <Button variant="hero" size="lg" asChild>
             <Link to="/agents">
-              <Phone className="mr-2 h-5 w-5" /> WhatsApp Us
+              <Phone className="mr-2 h-5 w-5" /> Contact Us
             </Link>
           </Button>
         </div>
