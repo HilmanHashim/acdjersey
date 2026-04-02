@@ -46,11 +46,13 @@ const designers = [
 
 const Agents = () => (
   <div className="min-h-screen bg-background">
-    <div className="surface-dark py-12 animate-fade-in">
+    <div className="surface-dark py-12 opacity-0 animate-fade-in" style={{ animationDuration: "0.6s", animationFillMode: "forwards" }}>
       <div className="container">
-        <Link to="/" className="text-muted-foreground hover:text-foreground text-sm mb-6 inline-block">
-          ← Back to Home
-        </Link>
+        <Button variant="outline" size="sm" className="mb-6" asChild>
+          <Link to="/">
+            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Home
+          </Link>
+        </Button>
         <h1 className="text-4xl md:text-5xl font-display text-gradient mb-3">Contact Our Team</h1>
         <p className="text-surface-dark-foreground/70 max-w-lg">
           Reach out to any of our agents directly via WhatsApp for enquiries, quotations, or orders.
