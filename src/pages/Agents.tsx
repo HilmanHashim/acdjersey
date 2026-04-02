@@ -60,6 +60,7 @@ const Agents = () => (
 
     <section className="py-16">
       <div className="container">
+        <h2 className="text-3xl md:text-4xl font-display text-gradient mb-10 text-center">Our Sales Executive</h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {agents.map((agent) => (
             <Card key={agent.name} className="bg-card border-border hover:border-primary/50 transition-colors">
