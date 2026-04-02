@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 const agents = [
   {
-    name: "UMAR NAZMI",
+    name: "UMAR ACD",
     phone: "019-339 6681",
     whatsapp: "https://wa.me/60193396681",
     role: "Sales Executive",
@@ -13,17 +13,17 @@ const agents = [
     image: "",
   },
   {
-    name: "ALIFF IRFAN",
-    phone: "019-339 6681",
-    whatsapp: "https://wa.me/60193396681",
+    name: "ALIFF ACD",
+    phone: "011-6844 8896",
+    whatsapp: "https://wa.me/601168448896",
     role: "Sales Executive",
     bio: "Specializes in corporate bulk orders and custom team jerseys. Always ready to help bring your design ideas to life.",
     image: "",
   },
   {
-    name: "iman munir",
-    phone: "019-339 6681",
-    whatsapp: "https://wa.me/60193396681",
+    name: "IMAN ACD",
+    phone: "018 255 2426",
+    whatsapp: "https://wa.me/60182552426",
     role: "Sales Executive",
     bio: "Expert in sports apparel design and fabric selection. Dedicated to delivering the perfect fit and finish for every order.",
     image: "",
