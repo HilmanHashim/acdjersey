@@ -19,7 +19,7 @@ const Footer = () => (
         </a>
       </div>
       <div className="flex items-center gap-3">
-        <p className="text-muted-foreground text-xs">© 2026 ACD Jersey HQ. All rights reserved.</p>
+        <p className="text-muted-foreground text-xs">© 2026 ACD Jersey. All rights reserved.</p>
         <a href="/crm" className="text-muted-foreground/40 hover:text-muted-foreground text-[10px] transition-colors">Admin</a>
       </div>
     </div>
