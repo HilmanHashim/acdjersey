@@ -71,7 +71,7 @@ const LeadsTab = () => {
 
   // Fetch auth users for owner column
   const { data: authUsers = [] } = useQuery({
-    queryKey: ["auth-users"],
+    queryKey: ["auth-users-list"],
     queryFn: async () => {
       const res = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/manage-users?action=list`,
@@ -84,7 +84,7 @@ const LeadsTab = () => {
       );
       if (!res.ok) return [];
       const json = await res.json();
-      return (json.users ?? json) as { id: string; email: string }[];
+      return (json.users ?? []) as { id: string; email: string }[];
     },
   });
 
