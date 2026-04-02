@@ -48,6 +48,14 @@ const agents = [
     bio: "Passionate about connecting clients with the perfect apparel solutions, ensuring satisfaction from enquiry to delivery.",
     image: "",
   },
+  {
+    name: "HILMAN ACD",
+    phone: "",
+    whatsapp: "",
+    role: "Sales Executive",
+    bio: "Dedicated to understanding client needs and delivering tailored apparel solutions with exceptional service.",
+    image: "",
+  },
 ];
 const designers = [
   {
