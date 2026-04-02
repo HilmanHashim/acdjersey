@@ -41,7 +41,8 @@ const ContactsTab = () => {
         const { error } = await supabase.from("contacts").update({ name: form.name, email: form.email || null, phone: form.phone || null, company: form.company || null, notes: form.notes || null }).eq("id", editing.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("contacts").insert({ name: form.name, email: form.email || null, phone: form.phone || null, company: form.company || null, notes: form.notes || null });
+        const session = (await supabase.auth.getSession()).data.session;
+        const { error } = await supabase.from("contacts").insert({ name: form.name, email: form.email || null, phone: form.phone || null, company: form.company || null, notes: form.notes || null, created_by: session?.user?.id } as any);
         if (error) throw error;
       }
     },
