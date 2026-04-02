@@ -77,7 +77,7 @@ const CategoryCard = ({
     if (el) {
       const child = el.children[clamped] as HTMLElement;
       if (child) {
-        el.scrollTo({ left: child.offsetLeft - 8, behavior: "smooth" });
+        el.scrollTo({ left: child.offsetLeft, behavior: "smooth" });
       }
     }
   };
@@ -88,14 +88,14 @@ const CategoryCard = ({
       <div className="relative">
         <div
           ref={scrollRef}
-          className="flex gap-2 overflow-x-auto snap-x snap-mandatory p-2 scrollbar-hide"
+          className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           onScroll={() => {
             const el = scrollRef.current;
             if (!el) return;
             const scrollLeft = el.scrollLeft;
             const childWidth = (el.children[0] as HTMLElement)?.offsetWidth || 1;
-            setCurrent(Math.round(scrollLeft / (childWidth + 8)));
+            setCurrent(Math.round(scrollLeft / childWidth));
           }}
         >
           {category.images.map((src, i) => (
