@@ -1,4 +1,4 @@
-import { Phone, MessageCircle } from "lucide-react";
+import { Phone, MessageCircle, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import aliffImg from "@/assets/aliff-acd.jfif";
 import imanImg from "@/assets/iman-acd.jfif";
@@ -46,11 +46,13 @@ const designers = [
 
 const Agents = () => (
   <div className="min-h-screen bg-background">
-    <div className="surface-dark py-12 animate-fade-in">
+    <div className="surface-dark py-12 opacity-0 animate-fade-in" style={{ animationDuration: "0.6s", animationFillMode: "forwards" }}>
       <div className="container">
-        <Link to="/" className="text-muted-foreground hover:text-foreground text-sm mb-6 inline-block">
-          ← Back to Home
-        </Link>
+        <Button variant="outline" size="sm" className="mb-6" asChild>
+          <Link to="/">
+            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Home
+          </Link>
+        </Button>
         <h1 className="text-4xl md:text-5xl font-display text-gradient mb-3">Contact Our Team</h1>
         <p className="text-surface-dark-foreground/70 max-w-lg">
           Reach out to any of our agents directly via WhatsApp for enquiries, quotations, or orders.
@@ -60,10 +62,10 @@ const Agents = () => (
 
     <section className="py-16">
       <div className="container">
-        <h2 className="text-3xl md:text-4xl font-display text-gradient mb-10 text-center animate-fade-in" style={{ animationDelay: "0.1s", animationFillMode: "both" }}>Our Sales Executive</h2>
+        <h2 className="text-3xl md:text-4xl font-display text-gradient mb-10 text-center opacity-0 animate-fade-in" style={{ animationDelay: "0.2s", animationDuration: "0.6s", animationFillMode: "forwards" }}>Our Sales Executive</h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {agents.map((agent, i) => (
-            <Card key={agent.name} className="bg-card border-border hover:border-primary/50 transition-colors animate-fade-in hover-scale" style={{ animationDelay: `${0.2 + i * 0.15}s`, animationFillMode: "both" }}>
+            <Card key={agent.name} className="bg-card border-border hover:border-primary/50 transition-colors opacity-0 animate-fade-in hover-scale" style={{ animationDelay: `${0.4 + i * 0.2}s`, animationDuration: "0.6s", animationFillMode: "forwards" }}>
               <CardContent className="p-6 flex flex-col items-center text-center gap-5">
                 <div className="w-32 h-32 rounded-full bg-secondary flex items-center justify-center overflow-hidden">
                   {agent.image ? (
@@ -97,10 +99,10 @@ const Agents = () => (
 
     <section className="py-16 border-t border-border">
       <div className="container">
-        <h2 className="text-3xl md:text-4xl font-display text-gradient mb-10 text-center animate-fade-in" style={{ animationDelay: "0.6s", animationFillMode: "both" }}>Our Designer</h2>
+        <h2 className="text-3xl md:text-4xl font-display text-gradient mb-10 text-center opacity-0 animate-fade-in" style={{ animationDelay: "1s", animationDuration: "0.6s", animationFillMode: "forwards" }}>Our Designer</h2>
         <div className="grid sm:grid-cols-1 gap-8 max-w-sm mx-auto">
           {designers.map((d) => (
-            <Card key={d.name} className="bg-card border-border hover:border-primary/50 transition-colors animate-fade-in hover-scale" style={{ animationDelay: "0.75s", animationFillMode: "both" }}>
+            <Card key={d.name} className="bg-card border-border hover:border-primary/50 transition-colors opacity-0 animate-fade-in hover-scale" style={{ animationDelay: "1.2s", animationDuration: "0.6s", animationFillMode: "forwards" }}>
               <CardContent className="p-6 flex flex-col items-center text-center gap-5">
                 <div className="w-32 h-32 rounded-full bg-secondary flex items-center justify-center overflow-hidden">
                   {d.image ? (
