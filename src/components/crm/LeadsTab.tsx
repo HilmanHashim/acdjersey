@@ -30,6 +30,18 @@ const stageLabel: Record<LeadStage, string> = {
   first_buy: "First Buy",
 };
 
+const DEFAULT_TEMPLATE = `Salam ramadan bro! Saya Umar wakil dari ACD Jersey mengucapkan selamat menyambut puasa bro!
+
+Semoga ramadan tahun ni lebih bermakna dari ramadan sebelum ini dan mengajar kita untuk jadi lebih baik sebagai seorang manusia.
+
+Anyway broo, ni saya ada nak tanya pendapat sikit.
+
+Kalau bulan puasa, better lari sebelum sahur ke lepas berbuka?
+
+atau bulan puasa ni memang off dari running or any activity?`;
+
+const getStoredTemplate = () => localStorage.getItem("wa_blast_template") || DEFAULT_TEMPLATE;
+
 const LeadsTab = () => {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
@@ -39,17 +51,9 @@ const LeadsTab = () => {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [blastOpen, setBlastOpen] = useState(false);
   const [ownerFilter, setOwnerFilter] = useState<string>("all");
-  const [blastMessage, setBlastMessage] = useState(`Salam ramadan bro! Saya Umar wakil dari ACD Jersey mengucapkan selamat menyambut puasa bro!
-
-Semoga ramadan tahun ni lebih bermakna dari ramadan sebelum ini dan mengajar kita untuk jadi lebih baik sebagai seorang manusia.
-
-Anyway broo, ni saya ada nak tanya pendapat sikit.
-
-Kalau bulan puasa, better lari sebelum sahur ke lepas berbuka?
-
-atau bulan puasa ni memang off dari running or any activity?
-
-Check out our latest jersey: ${window.location.origin}/images/acd-ramadan.png`);
+  const [blastMessage, setBlastMessage] = useState(getStoredTemplate);
+  const [templateOpen, setTemplateOpen] = useState(false);
+  const [templateDraft, setTemplateDraft] = useState(getStoredTemplate);
   const [form, setForm] = useState({
     phone: "", name: "", note: "", date: "", type_of_custom: "",
     leads_from: "", stage: "cold" as LeadStage, number_of_pcs: "", purchase_amount: "",
