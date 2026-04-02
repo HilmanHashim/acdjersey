@@ -8,7 +8,7 @@ import logoJpj from "@/assets/logos/jpj.png";
 import logoNavy from "@/assets/logos/navy.png";
 import logoMrcb from "@/assets/logos/mrcb.png";
 import logoHsb from "@/assets/logos/hsb.png";
-import logoVolvo from "@/assets/logos/volvo.png";
+import logoVolvo from "@/assets/logos/volvo.jpg";
 
 const clientLogos = [
   { src: logoUis, alt: "Universiti Islam Selangor" },
@@ -17,7 +17,7 @@ const clientLogos = [
   { src: logoNavy, alt: "Royal Malaysian Navy" },
   { src: logoMrcb, alt: "MRCB" },
   { src: logoHsb, alt: "Hospital Sungai Buloh" },
-  { src: logoVolvo, alt: "Volvo Ingress Swede Automobile" },
+  { src: logoVolvo, alt: "Volvo Ingress Swede Automobile", zoom: true },
 ];
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -144,8 +144,8 @@ const AboutUs = () => (
         <h2 className="text-3xl md:text-4xl font-display text-gradient text-center">Trusted By</h2>
         <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12 max-w-4xl mx-auto">
           {clientLogos.map((logo) => (
-            <div key={logo.alt} className="bg-white rounded-lg p-4 w-28 h-28 md:w-36 md:h-36 flex items-center justify-center shadow-sm border border-border">
-              <img src={logo.src} alt={logo.alt} className="max-w-full max-h-full object-contain" />
+            <div key={logo.alt} className="bg-white rounded-lg p-4 w-28 h-28 md:w-36 md:h-36 flex items-center justify-center shadow-sm border border-border overflow-hidden">
+              <img src={logo.src} alt={logo.alt} className={`max-w-full max-h-full object-contain ${logo.zoom ? 'scale-150' : ''}`} />
             </div>
           ))}
         </div>
