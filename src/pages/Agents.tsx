@@ -75,10 +75,14 @@ const designers = [
 const Agents = () => (
   <div className="min-h-screen bg-background">
     <Navbar />
-    <div className="surface-dark py-12 animate-slide-up">
-      <div className="container">
+    <div className="relative py-20 animate-slide-up overflow-hidden">
+      <div className="absolute inset-0">
+        <img src={teamBg} alt="" className="w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
+      </div>
+      <div className="container relative z-10">
         <h1 className="text-4xl md:text-5xl font-display text-gradient mb-3">Contact Our Team</h1>
-        <p className="text-surface-dark-foreground/70 max-w-lg">
+        <p className="text-foreground/70 max-w-lg">
           Reach out to any of our agents directly via WhatsApp for enquiries, quotations, or orders.
         </p>
       </div>
