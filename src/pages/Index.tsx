@@ -16,6 +16,7 @@ const Divider = () => (
 
 const Index = () => (
   <>
+    <Navbar />
     <Hero />
     <About />
     <Divider />

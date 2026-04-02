@@ -46,13 +46,9 @@ const designers = [
 
 const Agents = () => (
   <div className="min-h-screen bg-background">
+    <Navbar />
     <div className="surface-dark py-12 animate-slide-up">
       <div className="container">
-        <Button variant="outline" size="sm" className="mb-6" asChild>
-          <Link to="/">
-            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Home
-          </Link>
-        </Button>
         <h1 className="text-4xl md:text-5xl font-display text-gradient mb-3">Contact Our Team</h1>
         <p className="text-surface-dark-foreground/70 max-w-lg">
           Reach out to any of our agents directly via WhatsApp for enquiries, quotations, or orders.
