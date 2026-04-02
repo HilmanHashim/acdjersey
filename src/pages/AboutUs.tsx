@@ -112,7 +112,7 @@ const AboutUs = () => (
         <h2 className="text-3xl md:text-4xl font-display text-gradient text-center">Why Choose Us</h2>
         <div className="flex flex-wrap justify-center gap-6 max-w-5xl mx-auto">
           {whyChooseUs.map((item) => (
-            <div key={item.title} className="p-6 rounded-lg bg-background border border-border space-y-3">
+            <div key={item.title} className="p-6 rounded-lg bg-background border border-border space-y-3 w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
               <item.icon className="h-8 w-8 text-primary" />
               <h3 className="font-display text-lg text-foreground">{item.title}</h3>
               <p className="text-muted-foreground text-sm leading-relaxed">{item.desc}</p>
