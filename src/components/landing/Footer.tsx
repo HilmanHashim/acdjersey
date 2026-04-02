@@ -1,7 +1,7 @@
 import { Facebook, Instagram } from "lucide-react";
 
 const Footer = () => (
-  <footer className="py-10 bg-card border-t border-border">
+  <footer className="py-10 bg-background border-t border-border">
     <div className="container flex flex-col md:flex-row justify-between items-center gap-4">
       <div>
         <p className="font-display text-xl text-gradient">ACD Jersey HQ</p>
