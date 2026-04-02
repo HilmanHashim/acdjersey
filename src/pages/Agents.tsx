@@ -5,6 +5,7 @@ import imanImg from "@/assets/iman-acd.jfif";
 import umarImg from "@/assets/umar-acd.jfif";
 import { Card, CardContent } from "@/components/ui/card";
 import Navbar from "@/components/Navbar";
+import teamBg from "@/assets/team-bg.jpeg";
 
 const agents = [
   {
