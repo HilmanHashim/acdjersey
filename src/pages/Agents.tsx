@@ -116,15 +116,6 @@ const Agents = () => (
                   <p className="text-primary text-sm font-medium">{d.role}</p>
                 </div>
                 <p className="text-muted-foreground text-sm leading-relaxed">{d.bio}</p>
-                <div className="flex items-center gap-2 text-muted-foreground text-sm">
-                  <Phone className="h-4 w-4" />
-                  <span>{d.phone}</span>
-                </div>
-                <Button variant="hero" size="lg" className="w-full" asChild>
-                  <a href={d.whatsapp} target="_blank" rel="noopener noreferrer">
-                    <MessageCircle className="mr-2 h-4 w-4" /> WhatsApp
-                  </a>
-                </Button>
               </CardContent>
             </Card>
           ))}
