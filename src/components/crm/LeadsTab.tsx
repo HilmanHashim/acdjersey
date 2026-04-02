@@ -448,27 +448,27 @@ const LeadsTab = () => {
       ) : filtered.length === 0 ? (
         <p className="text-muted-foreground text-center py-8">No leads found. Add one or import from Excel!</p>
       ) : (
-        <div className="border rounded-lg overflow-hidden">
-          <Table className="table-fixed w-full">
+        <div className="border rounded-lg overflow-x-auto">
+          <Table className="min-w-[1100px] w-full">
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[3%]">
+                <TableHead className="w-10">
                   <Checkbox
                     checked={filtered.length > 0 && selectedIds.size === filtered.length}
                     onCheckedChange={toggleSelectAll}
                   />
                 </TableHead>
-                <TableHead className="w-[12%]">Phone</TableHead>
-                <TableHead className="w-[10%]">Name</TableHead>
-                <TableHead className="w-[14%]">Note</TableHead>
-                <TableHead className="w-[8%]">Date</TableHead>
-                <TableHead className="w-[8%]">Type</TableHead>
-                <TableHead className="w-[7%]">Source</TableHead>
-                <TableHead className="w-[8%]">Stage</TableHead>
-                <TableHead className="w-[5%]">PCS</TableHead>
-                {(activeStage === "first_buy" || activeStage === "all") && <TableHead className="w-[8%]">Amount</TableHead>}
-                <TableHead className="w-[9%]">Owner</TableHead>
-                <TableHead className="w-[8%]">Actions</TableHead>
+                <TableHead className="min-w-[130px]">Phone</TableHead>
+                <TableHead className="min-w-[120px]">Name</TableHead>
+                <TableHead className="min-w-[180px]">Note</TableHead>
+                <TableHead className="min-w-[100px]">Date</TableHead>
+                <TableHead className="min-w-[100px]">Type</TableHead>
+                <TableHead className="min-w-[90px]">Source</TableHead>
+                <TableHead className="min-w-[90px]">Stage</TableHead>
+                <TableHead className="min-w-[50px]">PCS</TableHead>
+                {(activeStage === "first_buy" || activeStage === "all") && <TableHead className="min-w-[100px]">Amount</TableHead>}
+                <TableHead className="min-w-[100px]">Owner</TableHead>
+                <TableHead className="min-w-[80px]">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -496,9 +496,9 @@ const LeadsTab = () => {
                       )}
                     </div>
                   </TableCell>
-                  <TableCell className="font-medium text-sm truncate">{l.name}</TableCell>
-                  <TableCell className="text-xs truncate" title={l.note || ""}>{l.note || "—"}</TableCell>
-                  <TableCell className="text-xs truncate">{l.date || "—"}</TableCell>
+                  <TableCell className="font-medium text-sm">{l.name}</TableCell>
+                  <TableCell className="text-xs whitespace-pre-wrap break-words" title={l.note || ""}>{l.note || "—"}</TableCell>
+                  <TableCell className="text-xs">{l.date || "—"}</TableCell>
                   <TableCell className="text-xs truncate">{l.type_of_custom || "—"}</TableCell>
                   <TableCell className="text-xs truncate">{l.leads_from || "—"}</TableCell>
                   <TableCell>
