@@ -208,21 +208,21 @@ const UsersTab = ({ currentUserId }: { currentUserId: string }) => {
       ) : users.length === 0 ? (
         <p className="text-muted-foreground text-center py-8">No users found.</p>
       ) : (
-        <div className="border rounded-lg overflow-auto">
-          <Table>
+        <div className="border rounded-lg overflow-hidden">
+          <Table className="table-fixed w-full">
             <TableHeader>
               <TableRow>
-                <TableHead>Email</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>Created</TableHead>
-                <TableHead>Last Sign In</TableHead>
-                <TableHead className="w-28">Actions</TableHead>
+                <TableHead className="w-[28%]">Email</TableHead>
+                <TableHead className="w-[15%]">Role</TableHead>
+                <TableHead className="w-[15%]">Created</TableHead>
+                <TableHead className="w-[22%]">Last Sign In</TableHead>
+                <TableHead className="w-[20%]">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {users.map((u) => (
                 <TableRow key={u.id}>
-                  <TableCell className="font-medium">
+                  <TableCell className="font-medium truncate">
                     {u.email}
                     {u.id === currentUserId && <span className="ml-2 text-xs text-primary">(you)</span>}
                   </TableCell>
@@ -242,23 +242,23 @@ const UsersTab = ({ currentUserId }: { currentUserId: string }) => {
                       </Badge>
                     )}
                   </TableCell>
-                  <TableCell>{format(new Date(u.created_at), "MMM d, yyyy")}</TableCell>
-                  <TableCell>{u.last_sign_in_at ? format(new Date(u.last_sign_in_at), "MMM d, yyyy h:mm a") : "Never"}</TableCell>
+                  <TableCell className="text-sm truncate">{format(new Date(u.created_at), "MMM d, yyyy")}</TableCell>
+                  <TableCell className="text-sm truncate">{u.last_sign_in_at ? format(new Date(u.last_sign_in_at), "MMM d, yyyy h:mm a") : "Never"}</TableCell>
                   <TableCell>
-                    <div className="flex gap-1">
+                    <div className="flex gap-0.5">
                       {isAdmin ? (
                         <>
-                          <Button variant="ghost" size="icon" onClick={() => openEdit(u)} title="Edit"><Pencil className="h-4 w-4" /></Button>
-                          <Button variant="ghost" size="icon" onClick={() => openChangePassword(u)} title="Change password"><KeyRound className="h-4 w-4" /></Button>
-                          <Button variant="ghost" size="icon" onClick={() => resetPasswordMutation.mutate(u.email)} title="Send reset email"><Mail className="h-4 w-4" /></Button>
+                          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => openEdit(u)} title="Edit"><Pencil className="h-3.5 w-3.5" /></Button>
+                          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => openChangePassword(u)} title="Change password"><KeyRound className="h-3.5 w-3.5" /></Button>
+                          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => resetPasswordMutation.mutate(u.email)} title="Send reset email"><Mail className="h-3.5 w-3.5" /></Button>
                           {u.id !== currentUserId && (
-                            <Button variant="ghost" size="icon" onClick={() => { if (confirm("Delete this user?")) deleteMutation.mutate(u.id); }}>
-                              <Trash2 className="h-4 w-4 text-destructive" />
+                            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => { if (confirm("Delete this user?")) deleteMutation.mutate(u.id); }}>
+                              <Trash2 className="h-3.5 w-3.5 text-destructive" />
                             </Button>
                           )}
                         </>
                       ) : u.id === currentUserId ? (
-                        <Button variant="ghost" size="icon" onClick={() => openChangePassword(u)} title="Change password"><KeyRound className="h-4 w-4" /></Button>
+                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => openChangePassword(u)} title="Change password"><KeyRound className="h-3.5 w-3.5" /></Button>
                       ) : null}
                     </div>
                   </TableCell>

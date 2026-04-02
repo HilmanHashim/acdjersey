@@ -132,32 +132,32 @@ const OrdersTab = () => {
       ) : orders.length === 0 ? (
         <p className="text-muted-foreground text-center py-8">No orders yet.</p>
       ) : (
-        <div className="border rounded-lg overflow-auto">
-          <Table>
+        <div className="border rounded-lg overflow-hidden">
+          <Table className="table-fixed w-full">
             <TableHeader>
               <TableRow>
-                <TableHead>Order #</TableHead>
-                <TableHead>Customer</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Amount (RM)</TableHead>
-                <TableHead className="w-20">Actions</TableHead>
+                <TableHead className="w-[20%]">Order #</TableHead>
+                <TableHead className="w-[25%]">Customer</TableHead>
+                <TableHead className="w-[20%]">Status</TableHead>
+                <TableHead className="w-[20%]">Amount (RM)</TableHead>
+                <TableHead className="w-[15%]">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {orders.map((o: any) => (
                 <TableRow key={o.id}>
-                  <TableCell className="font-medium">{o.order_number}</TableCell>
-                  <TableCell>{o.contacts?.name || "—"}</TableCell>
+                  <TableCell className="font-medium truncate">{o.order_number}</TableCell>
+                  <TableCell className="truncate">{o.contacts?.name || "—"}</TableCell>
                   <TableCell>
-                    <Badge variant="outline" className={statusColors[o.status as OrderStatus]}>
+                    <Badge variant="outline" className={`${statusColors[o.status as OrderStatus]} text-xs`}>
                       {o.status.replace("_", " ")}
                     </Badge>
                   </TableCell>
-                  <TableCell>{o.total_amount ? `RM ${o.total_amount.toFixed(2)}` : "—"}</TableCell>
+                  <TableCell className="truncate">{o.total_amount ? `RM ${o.total_amount.toFixed(2)}` : "—"}</TableCell>
                   <TableCell>
-                    <div className="flex gap-1">
-                      <Button variant="ghost" size="icon" onClick={() => openEdit(o)}><Pencil className="h-4 w-4" /></Button>
-                      <Button variant="ghost" size="icon" onClick={() => deleteMutation.mutate(o.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                    <div className="flex gap-0.5">
+                      <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => openEdit(o)}><Pencil className="h-3.5 w-3.5" /></Button>
+                      <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => deleteMutation.mutate(o.id)}><Trash2 className="h-3.5 w-3.5 text-destructive" /></Button>
                     </div>
                   </TableCell>
                 </TableRow>

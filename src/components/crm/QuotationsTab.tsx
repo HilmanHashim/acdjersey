@@ -132,30 +132,30 @@ const QuotationsTab = () => {
       ) : quotes.length === 0 ? (
         <p className="text-muted-foreground text-center py-8">No quotations yet.</p>
       ) : (
-        <div className="border rounded-lg overflow-auto">
-          <Table>
+        <div className="border rounded-lg overflow-hidden">
+          <Table className="table-fixed w-full">
             <TableHeader>
               <TableRow>
-                <TableHead>Quote #</TableHead>
-                <TableHead>Customer</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Amount (RM)</TableHead>
-                <TableHead>Valid Until</TableHead>
-                <TableHead className="w-20">Actions</TableHead>
+                <TableHead className="w-[18%]">Quote #</TableHead>
+                <TableHead className="w-[22%]">Customer</TableHead>
+                <TableHead className="w-[15%]">Status</TableHead>
+                <TableHead className="w-[18%]">Amount (RM)</TableHead>
+                <TableHead className="w-[15%]">Valid Until</TableHead>
+                <TableHead className="w-[12%]">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {quotes.map((q: any) => (
                 <TableRow key={q.id}>
-                  <TableCell className="font-medium">{q.quote_number}</TableCell>
-                  <TableCell>{q.contacts?.name || "—"}</TableCell>
-                  <TableCell><Badge variant="outline" className={statusColors[q.status as QuoteStatus]}>{q.status}</Badge></TableCell>
-                  <TableCell>{q.total_amount ? `RM ${q.total_amount.toFixed(2)}` : "—"}</TableCell>
-                  <TableCell>{q.valid_until || "—"}</TableCell>
+                  <TableCell className="font-medium truncate">{q.quote_number}</TableCell>
+                  <TableCell className="truncate">{q.contacts?.name || "—"}</TableCell>
+                  <TableCell><Badge variant="outline" className={`${statusColors[q.status as QuoteStatus]} text-xs`}>{q.status}</Badge></TableCell>
+                  <TableCell className="truncate">{q.total_amount ? `RM ${q.total_amount.toFixed(2)}` : "—"}</TableCell>
+                  <TableCell className="truncate">{q.valid_until || "—"}</TableCell>
                   <TableCell>
-                    <div className="flex gap-1">
-                      <Button variant="ghost" size="icon" onClick={() => openEdit(q)}><Pencil className="h-4 w-4" /></Button>
-                      <Button variant="ghost" size="icon" onClick={() => deleteMutation.mutate(q.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                    <div className="flex gap-0.5">
+                      <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => openEdit(q)}><Pencil className="h-3.5 w-3.5" /></Button>
+                      <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => deleteMutation.mutate(q.id)}><Trash2 className="h-3.5 w-3.5 text-destructive" /></Button>
                     </div>
                   </TableCell>
                 </TableRow>
