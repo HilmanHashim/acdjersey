@@ -33,7 +33,7 @@ const Gallery = () => {
 
         <div className="relative group my-0 py-0">
           {/* Main image */}
-          <div className="relative aspect-[16/9] max-w-4xl mx-auto overflow-hidden rounded-xl border border-border shadow-2xl">
+          <div className="relative h-[80vh] w-full overflow-hidden rounded-xl border border-border shadow-2xl">
             {images.map((src, i) => (
               <img
                 key={i}
