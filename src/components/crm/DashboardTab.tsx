@@ -64,7 +64,8 @@ const DashboardTab = () => {
         }
       );
       if (!res.ok) return [];
-      return (await res.json()) as { id: string; email: string }[];
+      const json = await res.json();
+      return (json.users ?? json) as { id: string; email: string }[];
     },
   });
 
