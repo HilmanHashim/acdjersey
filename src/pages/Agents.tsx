@@ -60,6 +60,7 @@ const Agents = () => (
 
     <section className="py-16">
       <div className="container">
+        <h2 className="text-3xl md:text-4xl font-display text-gradient mb-10 text-center">Our Sales Executive</h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {agents.map((agent) => (
             <Card key={agent.name} className="bg-card border-border hover:border-primary/50 transition-colors">
@@ -115,15 +116,6 @@ const Agents = () => (
                   <p className="text-primary text-sm font-medium">{d.role}</p>
                 </div>
                 <p className="text-muted-foreground text-sm leading-relaxed">{d.bio}</p>
-                <div className="flex items-center gap-2 text-muted-foreground text-sm">
-                  <Phone className="h-4 w-4" />
-                  <span>{d.phone}</span>
-                </div>
-                <Button variant="hero" size="lg" className="w-full" asChild>
-                  <a href={d.whatsapp} target="_blank" rel="noopener noreferrer">
-                    <MessageCircle className="mr-2 h-4 w-4" /> WhatsApp
-                  </a>
-                </Button>
               </CardContent>
             </Card>
           ))}
