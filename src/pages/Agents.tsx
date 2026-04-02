@@ -13,7 +13,7 @@ const agents = [
     whatsapp: "https://wa.me/60193396681",
     role: "Sales Executive",
     bio: "With over 10 years of experience in sublimation apparel, Mr. Munir leads our team with dedication to quality and customer satisfaction.",
-    image: "",
+    image: umarImg,
   },
   {
     name: "ALIFF ACD",
@@ -21,7 +21,7 @@ const agents = [
     whatsapp: "https://wa.me/601168448896",
     role: "Sales Executive",
     bio: "Specializes in corporate bulk orders and custom team jerseys. Always ready to help bring your design ideas to life.",
-    image: "",
+    image: aliffImg,
   },
   {
     name: "IMAN ACD",
@@ -29,7 +29,7 @@ const agents = [
     whatsapp: "https://wa.me/60182552426",
     role: "Sales Executive",
     bio: "Expert in sports apparel design and fabric selection. Dedicated to delivering the perfect fit and finish for every order.",
-    image: "",
+    image: imanImg,
   },
 ];
 
