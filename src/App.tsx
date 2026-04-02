@@ -7,6 +7,7 @@ import Index from "./pages/Index.tsx";
 import CRM from "./pages/CRM.tsx";
 import Agents from "./pages/Agents.tsx";
 import AboutUs from "./pages/AboutUs.tsx";
+import Catalogue from "./pages/Catalogue.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import ScrollToTop from "./components/ScrollToTop";
 import ScrollToTopButton from "./components/ScrollToTopButton";
