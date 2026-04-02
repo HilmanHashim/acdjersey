@@ -91,8 +91,9 @@ const CRM = () => {
         </div>
       </header>
       <main className="container py-6 max-w-5xl">
-        <Tabs defaultValue="leads">
-          <TabsList className="grid w-full grid-cols-6 mb-6">
+        <Tabs defaultValue="dashboard">
+          <TabsList className="grid w-full grid-cols-7 mb-6">
+            <TabsTrigger value="dashboard" className="gap-2"><LayoutDashboard className="h-4 w-4" /><span className="hidden sm:inline">Dashboard</span></TabsTrigger>
             <TabsTrigger value="leads" className="gap-2"><Target className="h-4 w-4" /><span className="hidden sm:inline">Leads</span></TabsTrigger>
             <TabsTrigger value="contacts" className="gap-2"><Users className="h-4 w-4" /><span className="hidden sm:inline">Contacts</span></TabsTrigger>
             <TabsTrigger value="orders" className="gap-2"><Package className="h-4 w-4" /><span className="hidden sm:inline">Orders</span></TabsTrigger>
@@ -100,6 +101,7 @@ const CRM = () => {
             <TabsTrigger value="reminders" className="gap-2"><Bell className="h-4 w-4" /><span className="hidden sm:inline">Reminders</span></TabsTrigger>
             <TabsTrigger value="users" className="gap-2"><Shield className="h-4 w-4" /><span className="hidden sm:inline">Users</span></TabsTrigger>
           </TabsList>
+          <TabsContent value="dashboard"><DashboardTab /></TabsContent>
           <TabsContent value="leads"><LeadsTab /></TabsContent>
           <TabsContent value="contacts"><ContactsTab /></TabsContent>
           <TabsContent value="orders"><OrdersTab /></TabsContent>
