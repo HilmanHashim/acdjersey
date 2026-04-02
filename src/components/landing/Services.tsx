@@ -16,10 +16,10 @@ const Services = () => (
       </h2>
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {services.map((s) => (
-          <div key={s.title} className="group p-6 rounded-xl bg-surface-dark-foreground/5 border border-surface-dark-foreground/10 hover:border-primary/50 transition-colors">
-            <s.icon className="h-10 w-10 text-primary mb-4 group-hover:scale-110 transition-transform" />
-            <h3 className="font-display text-lg text-surface-dark-foreground mb-2">{s.title}</h3>
-            <p className="text-surface-dark-foreground/60 text-sm">{s.desc}</p>
+          <div key={s.title} className="group p-6 rounded-xl bg-card border border-border hover:border-primary/50 transition-colors">
+            <s.icon className="h-10 w-10 text-accent mb-4 group-hover:scale-110 transition-transform" />
+            <h3 className="font-display text-lg text-foreground mb-2">{s.title}</h3>
+            <p className="text-muted-foreground text-sm">{s.desc}</p>
           </div>
         ))}
       </div>
