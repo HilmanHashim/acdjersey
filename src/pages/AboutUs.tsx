@@ -78,7 +78,7 @@ const AboutUs = () => (
     {/* Hero */}
     <section className="relative py-20 animate-slide-up overflow-hidden">
       <img src={whoWeAreBg} alt="" className="absolute inset-0 w-full h-full object-cover" />
-      <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
+      <div className="absolute inset-0 bg-background/90 backdrop-blur-sm" />
       <div className="container max-w-3xl text-center space-y-6 relative z-10">
         <p className="font-display text-accent uppercase tracking-[0.3em] text-sm">About Us</p>
         <h1 className="text-4xl md:text-6xl font-display text-gradient">Who We Are</h1>
