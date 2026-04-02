@@ -59,8 +59,6 @@ serve(async (req) => {
     const isAdmin = callerRoleSet.has("admin") || isSuperadmin;
     const callerRole = isSuperadmin ? "superadmin" : isAdmin ? "admin" : "user";
 
-    const url = new URL(req.url);
-    const action = url.searchParams.get("action");
 
     // ─── LIST ───
     if (req.method === "GET" && action === "list") {
