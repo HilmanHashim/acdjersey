@@ -37,7 +37,7 @@ import collarTypes from "@/assets/catalogue/collar-types.png";
 
 const categories = [
   {
-    title: "Long Sleeve",
+    title: "Long Sleeve / MUSLIMAH",
     description: "Premium long sleeve jerseys for comfort & performance.",
     images: [ls1, ls2, ls3, ls4, ls5],
   },
