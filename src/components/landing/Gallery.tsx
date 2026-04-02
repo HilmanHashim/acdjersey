@@ -19,7 +19,7 @@ const Gallery = () => {
   const prev = useCallback(() => setCurrent((c) => (c - 1 + images.length) % images.length), []);
 
   useEffect(() => {
-    const id = setInterval(next, 4000);
+    const id = setInterval(next, 7000);
     return () => clearInterval(id);
   }, [next]);
 
@@ -39,7 +39,7 @@ const Gallery = () => {
                 key={i}
                 src={src}
                 alt={`Project ${i + 1}`}
-                className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${
+                className={`absolute inset-0 w-full h-full object-contain transition-opacity duration-700 ${
                   i === current ? "opacity-100" : "opacity-0"
                 }`}
               />
