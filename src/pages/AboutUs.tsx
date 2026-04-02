@@ -8,7 +8,7 @@ import logoJpj from "@/assets/logos/jpj.png";
 import logoNavy from "@/assets/logos/navy.png";
 import logoMrcb from "@/assets/logos/mrcb.png";
 import logoHsb from "@/assets/logos/hsb.png";
-import logoVolvo from "@/assets/logos/volvo.png";
+import logoVolvo from "@/assets/logos/volvo.jpg";
 
 const clientLogos = [
   { src: logoUis, alt: "Universiti Islam Selangor" },
@@ -17,7 +17,7 @@ const clientLogos = [
   { src: logoNavy, alt: "Royal Malaysian Navy" },
   { src: logoMrcb, alt: "MRCB" },
   { src: logoHsb, alt: "Hospital Sungai Buloh" },
-  { src: logoVolvo, alt: "Volvo Ingress Swede Automobile" },
+  { src: logoVolvo, alt: "Volvo Ingress Swede Automobile", zoom: true },
 ];
 import { Card, CardContent } from "@/components/ui/card";
 
