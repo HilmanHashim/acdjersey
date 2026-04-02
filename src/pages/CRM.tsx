@@ -23,6 +23,7 @@ const CRM = () => {
   const [forgotOpen, setForgotOpen] = useState(false);
   const [forgotEmail, setForgotEmail] = useState("");
   const [forgotLoading, setForgotLoading] = useState(false);
+  const [tempPassword, setTempPassword] = useState("");
   const [newPasswordMode, setNewPasswordMode] = useState(false);
   const [newPassword, setNewPassword] = useState("");
 
@@ -59,6 +60,7 @@ const CRM = () => {
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     setForgotLoading(true);
+    setTempPassword("");
     try {
       const res = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/manage-users?action=forgot_password`,
@@ -69,11 +71,14 @@ const CRM = () => {
         }
       );
       const data = await res.json();
-      toast.success(data.message || "If the email exists, a reset link has been sent.");
-      setForgotOpen(false);
-      setForgotEmail("");
+      if (data.temporary_password) {
+        setTempPassword(data.temporary_password);
+        toast.success("Temporary password generated!");
+      } else {
+        toast.error(data.error || "No account found with that email.");
+      }
     } catch {
-      toast.error("Failed to send reset email");
+      toast.error("Failed to generate temporary password");
     } finally {
       setForgotLoading(false);
     }
@@ -138,14 +143,23 @@ const CRM = () => {
             <Link to="/" className="text-sm text-muted-foreground hover:text-primary">← Back to website</Link>
           </div>
 
-          <Dialog open={forgotOpen} onOpenChange={setForgotOpen}>
+          <Dialog open={forgotOpen} onOpenChange={(open) => { setForgotOpen(open); if (!open) { setForgotEmail(""); setTempPassword(""); } }}>
             <DialogContent>
               <DialogHeader><DialogTitle className="font-display">Reset Password</DialogTitle></DialogHeader>
-              <form onSubmit={handleForgotPassword} className="space-y-3">
-                <p className="text-sm text-muted-foreground">Enter your email and we'll send you a password reset link if the account exists.</p>
-                <Input type="email" placeholder="Email" value={forgotEmail} onChange={(e) => setForgotEmail(e.target.value)} required />
-                <Button type="submit" variant="hero" className="w-full" disabled={forgotLoading}>Send Reset Link</Button>
-              </form>
+              {tempPassword ? (
+                <div className="space-y-3">
+                  <p className="text-sm text-muted-foreground">Temporary password generated for <strong>{forgotEmail}</strong>:</p>
+                  <div className="bg-muted p-3 rounded-md font-mono text-lg text-center select-all break-all">{tempPassword}</div>
+                  <p className="text-xs text-muted-foreground">Copy and share this password securely with the user. They should change it after logging in.</p>
+                  <Button variant="hero" className="w-full" onClick={() => { setForgotOpen(false); setForgotEmail(""); setTempPassword(""); }}>Done</Button>
+                </div>
+              ) : (
+                <form onSubmit={handleForgotPassword} className="space-y-3">
+                  <p className="text-sm text-muted-foreground">Enter the user's email to generate a temporary password.</p>
+                  <Input type="email" placeholder="Email" value={forgotEmail} onChange={(e) => setForgotEmail(e.target.value)} required />
+                  <Button type="submit" variant="hero" className="w-full" disabled={forgotLoading}>Generate Temporary Password</Button>
+                </form>
+              )}
             </DialogContent>
           </Dialog>
         </div>
