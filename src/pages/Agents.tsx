@@ -1,6 +1,7 @@
 import { Phone, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import aliffImg from "@/assets/aliff-acd.jfif";
+import faizImg from "@/assets/faiz-acd.jfif";
 import imanImg from "@/assets/iman-acd.jfif";
 import umarImg from "@/assets/umar-acd.jfif";
 import { Card, CardContent } from "@/components/ui/card";
@@ -64,7 +65,7 @@ const designers = [
     whatsapp: "https://wa.me/60172809232",
     role: "Creative Director",
     bio: "Graphic Designer with 8+ years of experience, specializing in jersey, apparel, and print design. Known for delivering clean, elevated visuals with a strong attention to detail and premium finish.",
-    image: "",
+    image: faizImg,
   },
   {
     name: "HARITH ACD",
