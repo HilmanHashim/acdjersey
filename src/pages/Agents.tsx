@@ -62,10 +62,10 @@ const Agents = () => (
 
     <section className="py-16">
       <div className="container">
-        <h2 className="text-3xl md:text-4xl font-display text-gradient mb-10 text-center animate-fade-in" style={{ animationDelay: "0.1s", animationFillMode: "both" }}>Our Sales Executive</h2>
+        <h2 className="text-3xl md:text-4xl font-display text-gradient mb-10 text-center opacity-0 animate-fade-in" style={{ animationDelay: "0.2s", animationDuration: "0.6s", animationFillMode: "forwards" }}>Our Sales Executive</h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {agents.map((agent, i) => (
-            <Card key={agent.name} className="bg-card border-border hover:border-primary/50 transition-colors animate-fade-in hover-scale" style={{ animationDelay: `${0.2 + i * 0.15}s`, animationFillMode: "both" }}>
+            <Card key={agent.name} className="bg-card border-border hover:border-primary/50 transition-colors opacity-0 animate-fade-in hover-scale" style={{ animationDelay: `${0.4 + i * 0.2}s`, animationDuration: "0.6s", animationFillMode: "forwards" }}>
               <CardContent className="p-6 flex flex-col items-center text-center gap-5">
                 <div className="w-32 h-32 rounded-full bg-secondary flex items-center justify-center overflow-hidden">
                   {agent.image ? (
