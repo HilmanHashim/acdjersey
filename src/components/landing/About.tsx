@@ -9,15 +9,6 @@ const About = () => (
           <p className="text-muted-foreground leading-relaxed">
             ACD Jersey specialize in premium sublimation apparel, offering high-quality, customizable designs for sports and corporate wear. Trusted by major brands and organizations, we prioritize exceptional service and top-notch materials to deliver the best.
           </p>
-          <div className="flex items-center gap-2">
-            <div className="flex">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} className="h-5 w-5 fill-accent text-accent" />
-              ))}
-            </div>
-            <span className="font-display text-lg">4.9</span>
-            <span className="text-muted-foreground text-sm">/ 15 Google Reviews</span>
-          </div>
         </div>
         <div className="space-y-4">
           {[
