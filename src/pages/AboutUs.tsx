@@ -1,6 +1,24 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/landing/Footer";
 import { Shield, Zap, Palette, Award, DollarSign } from "lucide-react";
+
+import logoUis from "@/assets/logos/uis.png";
+import logoSwcorp from "@/assets/logos/swcorp.png";
+import logoJpj from "@/assets/logos/jpj.png";
+import logoNavy from "@/assets/logos/navy.png";
+import logoMrcb from "@/assets/logos/mrcb.png";
+import logoHsb from "@/assets/logos/hsb.png";
+import logoVolvo from "@/assets/logos/volvo.png";
+
+const clientLogos = [
+  { src: logoUis, alt: "Universiti Islam Selangor" },
+  { src: logoSwcorp, alt: "SWCorp Malaysia" },
+  { src: logoJpj, alt: "Jabatan Pengangkutan Jalan Malaysia" },
+  { src: logoNavy, alt: "Royal Malaysian Navy" },
+  { src: logoMrcb, alt: "MRCB" },
+  { src: logoHsb, alt: "Hospital Sungai Buloh" },
+  { src: logoVolvo, alt: "Volvo Ingress Swede Automobile" },
+];
 import { Card, CardContent } from "@/components/ui/card";
 
 const whyChooseUs = [
@@ -115,6 +133,20 @@ const AboutUs = () => (
                 </ul>
               </CardContent>
             </Card>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    {/* Client Logos */}
+    <section className="py-16">
+      <div className="container space-y-10">
+        <h2 className="text-3xl md:text-4xl font-display text-gradient text-center">Trusted By</h2>
+        <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12 max-w-4xl mx-auto">
+          {clientLogos.map((logo) => (
+            <div key={logo.alt} className="bg-white rounded-lg p-4 w-28 h-28 md:w-36 md:h-36 flex items-center justify-center shadow-sm border border-border">
+              <img src={logo.src} alt={logo.alt} className="max-w-full max-h-full object-contain" />
+            </div>
           ))}
         </div>
       </div>
