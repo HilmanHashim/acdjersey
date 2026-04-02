@@ -8,7 +8,7 @@ const services = [
 ];
 
 const Services = () => (
-  <section className="py-20 surface-dark">
+  <section className="py-20 bg-background">
     <div className="container">
       <h2 className="text-4xl font-display text-center mb-12">
         <span className="text-foreground">Our </span>
