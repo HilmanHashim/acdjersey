@@ -66,7 +66,8 @@ const LeadsTab = () => {
         const { error } = await supabase.from("leads").update(payload).eq("id", editing.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("leads").insert(payload);
+        const session = (await supabase.auth.getSession()).data.session;
+        const { error } = await supabase.from("leads").insert({ ...payload, created_by: session?.user?.id } as any);
         if (error) throw error;
       }
     },
