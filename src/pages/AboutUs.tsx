@@ -111,12 +111,14 @@ const AboutUs = () => (
     </section>
 
     {/* Why Choose Us */}
-    <section className="py-16 bg-card">
-      <div className="container space-y-10">
+    <section className="relative py-16 overflow-hidden">
+      <img src={whyChooseUsBg} alt="" className="absolute inset-0 w-full h-full object-cover" />
+      <div className="absolute inset-0 bg-background/85 backdrop-blur-sm" />
+      <div className="container space-y-10 relative z-10">
         <h2 className="text-3xl md:text-4xl font-display text-gradient text-center">Why Choose Us</h2>
         <div className="flex flex-wrap justify-center gap-6 max-w-5xl mx-auto">
           {whyChooseUs.map((item) => (
-            <div key={item.title} className="p-6 rounded-lg bg-background border border-border space-y-3 w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
+            <div key={item.title} className="p-6 rounded-lg bg-background/90 border border-border space-y-3 w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
               <item.icon className="h-8 w-8 text-primary" />
               <h3 className="font-display text-lg text-foreground">{item.title}</h3>
               <p className="text-muted-foreground text-sm leading-relaxed">{item.desc}</p>
