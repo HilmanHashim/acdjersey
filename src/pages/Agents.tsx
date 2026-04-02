@@ -94,7 +94,7 @@ const Agents = () => (
         <div className="flex flex-wrap justify-center gap-8 max-w-5xl mx-auto">
 
           {agents.map((agent, i) => (
-            <Card key={agent.name} className="bg-card border-border hover:border-primary/50 transition-colors animate-slide-up hover-scale" style={{ animationDelay: `${0.3 + i * 0.15}s` }}>
+            <Card key={agent.name} className="bg-card border-border hover:border-primary/50 transition-colors animate-slide-up hover-scale w-full sm:w-[calc(50%-16px)] lg:w-[calc(33.333%-22px)]" style={{ animationDelay: `${0.3 + i * 0.15}s` }}>
               <CardContent className="p-6 flex flex-col items-center text-center gap-5">
                 <div className="w-32 h-32 rounded-full bg-secondary flex items-center justify-center overflow-hidden">
                   {agent.image ? (
