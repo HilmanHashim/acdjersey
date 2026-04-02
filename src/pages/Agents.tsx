@@ -46,7 +46,7 @@ const designers = [
 
 const Agents = () => (
   <div className="min-h-screen bg-background">
-    <div className="surface-dark py-12">
+    <div className="surface-dark py-12 animate-fade-in">
       <div className="container">
         <Link to="/" className="text-muted-foreground hover:text-foreground text-sm mb-6 inline-block">
           ← Back to Home
@@ -60,10 +60,10 @@ const Agents = () => (
 
     <section className="py-16">
       <div className="container">
-        <h2 className="text-3xl md:text-4xl font-display text-gradient mb-10 text-center">Our Sales Executive</h2>
+        <h2 className="text-3xl md:text-4xl font-display text-gradient mb-10 text-center animate-fade-in" style={{ animationDelay: "0.1s", animationFillMode: "both" }}>Our Sales Executive</h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
-          {agents.map((agent) => (
-            <Card key={agent.name} className="bg-card border-border hover:border-primary/50 transition-colors">
+          {agents.map((agent, i) => (
+            <Card key={agent.name} className="bg-card border-border hover:border-primary/50 transition-colors animate-fade-in hover-scale" style={{ animationDelay: `${0.2 + i * 0.15}s`, animationFillMode: "both" }}>
               <CardContent className="p-6 flex flex-col items-center text-center gap-5">
                 <div className="w-32 h-32 rounded-full bg-secondary flex items-center justify-center overflow-hidden">
                   {agent.image ? (
@@ -97,10 +97,10 @@ const Agents = () => (
 
     <section className="py-16 border-t border-border">
       <div className="container">
-        <h2 className="text-3xl md:text-4xl font-display text-gradient mb-10 text-center">Our Designer</h2>
+        <h2 className="text-3xl md:text-4xl font-display text-gradient mb-10 text-center animate-fade-in" style={{ animationDelay: "0.6s", animationFillMode: "both" }}>Our Designer</h2>
         <div className="grid sm:grid-cols-1 gap-8 max-w-sm mx-auto">
           {designers.map((d) => (
-            <Card key={d.name} className="bg-card border-border hover:border-primary/50 transition-colors">
+            <Card key={d.name} className="bg-card border-border hover:border-primary/50 transition-colors animate-fade-in hover-scale" style={{ animationDelay: "0.75s", animationFillMode: "both" }}>
               <CardContent className="p-6 flex flex-col items-center text-center gap-5">
                 <div className="w-32 h-32 rounded-full bg-secondary flex items-center justify-center overflow-hidden">
                   {d.image ? (
