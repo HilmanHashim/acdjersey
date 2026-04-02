@@ -1,4 +1,4 @@
-import { Star, Clock, MapPin, Phone } from "lucide-react";
+import { Clock, MapPin, Phone } from "lucide-react";
 
 const About = () => (
   <section className="py-20 bg-card">
