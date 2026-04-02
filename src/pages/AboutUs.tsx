@@ -1,6 +1,8 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/landing/Footer";
 import { Shield, Zap, Palette, Award, DollarSign } from "lucide-react";
+import whoWeAreBg from "@/assets/who-we-are-bg.jpeg";
+import whyChooseUsBg from "@/assets/why-choose-us-bg.jpeg";
 
 import logoUis from "@/assets/logos/uis.png";
 import logoSwcorp from "@/assets/logos/swcorp.png";
