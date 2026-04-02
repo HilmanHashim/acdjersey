@@ -13,15 +13,37 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader) return json({ error: "Unauthorized" }, 401);
+    const url = new URL(req.url);
+    const action = url.searchParams.get("action");
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey);
-
     const publishableKey = Deno.env.get("SUPABASE_ANON_KEY") || Deno.env.get("SUPABASE_PUBLISHABLE_KEY")!;
     const supabaseAuth = createClient(supabaseUrl, publishableKey);
+
+    // ─── FORGOT PASSWORD (no auth required) ───
+    if (req.method === "POST" && action === "forgot_password") {
+      const { email: resetEmail } = await req.json();
+      if (!resetEmail) return json({ error: "Email required" }, 400);
+
+      const { data: userList } = await supabaseAdmin.auth.admin.listUsers();
+      const userExists = userList?.users?.some((u) => u.email === resetEmail);
+      
+      if (userExists) {
+        const { error } = await supabaseAuth.auth.resetPasswordForEmail(resetEmail, {
+          redirectTo: `${req.headers.get("origin") || supabaseUrl}/crm`,
+        });
+        if (error) throw error;
+      }
+
+      return json({ success: true, message: "If an account with that email exists, a password reset link has been sent." });
+    }
+
+    // All other actions require authentication
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) return json({ error: "Unauthorized" }, 401);
+
     const token = authHeader.replace("Bearer ", "");
     const { data: { user: caller }, error: callerError } = await supabaseAuth.auth.getUser(token);
     if (callerError || !caller) return json({ error: "Unauthorized" }, 401);
