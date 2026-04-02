@@ -82,7 +82,7 @@ const CategoryCard = ({
         }
         return next;
       });
-    }, 700);
+    }, 3000);
     return () => clearInterval(id);
   }, [total]);
 
