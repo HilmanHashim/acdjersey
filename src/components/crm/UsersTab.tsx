@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Switch } from "@/components/ui/switch";
-import { Plus, Pencil, Trash2, UserPlus, KeyRound, Mail } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { UserPlus, KeyRound, Mail, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
@@ -16,7 +16,14 @@ type AuthUser = {
   email: string;
   created_at: string;
   last_sign_in_at: string | null;
+  role: string;
   is_admin: boolean;
+};
+
+const roleBadge: Record<string, string> = {
+  superadmin: "bg-red-500/10 text-red-600 border-red-500/30",
+  admin: "bg-primary/10 text-primary border-primary/30",
+  user: "",
 };
 
 const UsersTab = ({ currentUserId }: { currentUserId: string }) => {
@@ -42,18 +49,20 @@ const UsersTab = ({ currentUserId }: { currentUserId: string }) => {
         }
       );
       if (!res.ok) throw new Error("Failed to fetch users");
-      return (await res.json()) as { users: AuthUser[]; caller_is_admin: boolean };
+      return (await res.json()) as { users: AuthUser[]; caller_is_admin: boolean; caller_role: string };
     },
   });
 
   const users = data?.users ?? [];
   const isAdmin = data?.caller_is_admin ?? false;
+  const callerRole = data?.caller_role ?? "user";
+  const isSuperadmin = callerRole === "superadmin";
 
-  const callApi = async (action: string, body: any, method = "POST") => {
+  const callApi = async (action: string, body: any) => {
     const res = await fetch(
       `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/manage-users?action=${action}`,
       {
-        method,
+        method: "POST",
         headers: {
           Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
           apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
@@ -83,11 +92,7 @@ const UsersTab = ({ currentUserId }: { currentUserId: string }) => {
   const updateMutation = useMutation({
     mutationFn: () => {
       if (!editing) throw new Error("No user selected");
-      return callApi("update", {
-        user_id: editing.id,
-        email: editForm.email || undefined,
-        password: editForm.password || undefined,
-      });
+      return callApi("update", { user_id: editing.id, email: editForm.email || undefined, password: editForm.password || undefined });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["auth-users"] });
@@ -122,9 +127,9 @@ const UsersTab = ({ currentUserId }: { currentUserId: string }) => {
     onError: (e) => toast.error(e.message),
   });
 
-  const toggleAdminMutation = useMutation({
-    mutationFn: ({ userId, makeAdmin }: { userId: string; makeAdmin: boolean }) =>
-      callApi("set_role", { user_id: userId, make_admin: makeAdmin }),
+  const setRoleMutation = useMutation({
+    mutationFn: ({ userId, role }: { userId: string; role: string }) =>
+      callApi("set_role", { user_id: userId, role }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["auth-users"] });
       toast.success("Role updated");
@@ -134,7 +139,7 @@ const UsersTab = ({ currentUserId }: { currentUserId: string }) => {
 
   const resetPasswordMutation = useMutation({
     mutationFn: (email: string) => callApi("reset_password", { email }),
-    onSuccess: () => toast.success("Password reset link generated"),
+    onSuccess: () => toast.success("Password reset email sent"),
     onError: (e) => toast.error(e.message),
   });
 
@@ -150,15 +155,28 @@ const UsersTab = ({ currentUserId }: { currentUserId: string }) => {
     setPasswordOpen(true);
   };
 
+  // Can the caller change this user's role?
+  const canChangeRole = (u: AuthUser) => {
+    if (u.id === currentUserId) return false;
+    if (isSuperadmin) return true;
+    if (isAdmin && u.role !== "superadmin") return true;
+    return false;
+  };
+
+  // Available roles caller can assign
+  const availableRoles = isSuperadmin ? ["user", "admin", "superadmin"] : ["user", "admin"];
+
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-2">
-          {isAdmin && <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30">Admin</Badge>}
+          <Badge variant="outline" className={roleBadge[callerRole] || ""}>
+            {callerRole.charAt(0).toUpperCase() + callerRole.slice(1)}
+          </Badge>
         </div>
         <div className="flex gap-2">
           {!isAdmin && (
-            <Button variant="outline" size="sm" onClick={() => openChangePassword({ id: currentUserId, email: "", created_at: "", last_sign_in_at: null, is_admin: false })}>
+            <Button variant="outline" size="sm" onClick={() => openChangePassword({ id: currentUserId, email: "", created_at: "", last_sign_in_at: null, role: "user", is_admin: false })}>
               <KeyRound className="h-4 w-4 mr-1" /> Change My Password
             </Button>
           )}
@@ -180,7 +198,7 @@ const UsersTab = ({ currentUserId }: { currentUserId: string }) => {
         </div>
       </div>
 
-      {/* Edit user dialog (admin only) */}
+      {/* Edit user dialog */}
       <Dialog open={editOpen} onOpenChange={(v) => { setEditOpen(v); if (!v) setEditing(null); }}>
         <DialogContent>
           <DialogHeader><DialogTitle className="font-display">Edit User</DialogTitle></DialogHeader>
@@ -195,7 +213,7 @@ const UsersTab = ({ currentUserId }: { currentUserId: string }) => {
       {/* Change password dialog */}
       <Dialog open={passwordOpen} onOpenChange={(v) => { setPasswordOpen(v); if (!v) { setEditing(null); setNewPassword(""); } }}>
         <DialogContent>
-          <DialogHeader><DialogTitle className="font-display">Change Password</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle className="font-display">Change Password{editing?.email ? ` — ${editing.email}` : ""}</DialogTitle></DialogHeader>
           <form onSubmit={(e) => { e.preventDefault(); changePasswordMutation.mutate(); }} className="space-y-3">
             <Input type="password" placeholder="New password (min 6 chars)" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} required minLength={6} />
             <Button type="submit" variant="hero" className="w-full" disabled={changePasswordMutation.isPending}>Change Password</Button>
@@ -227,18 +245,20 @@ const UsersTab = ({ currentUserId }: { currentUserId: string }) => {
                     {u.id === currentUserId && <span className="ml-2 text-xs text-primary">(you)</span>}
                   </TableCell>
                   <TableCell>
-                    {isAdmin ? (
-                      <div className="flex items-center gap-2">
-                        <Switch
-                          checked={u.is_admin}
-                          onCheckedChange={(checked) => toggleAdminMutation.mutate({ userId: u.id, makeAdmin: checked })}
-                          disabled={u.id === currentUserId}
-                        />
-                        <span className="text-xs text-muted-foreground">{u.is_admin ? "Admin" : "User"}</span>
-                      </div>
+                    {canChangeRole(u) ? (
+                      <Select value={u.role} onValueChange={(role) => setRoleMutation.mutate({ userId: u.id, role })}>
+                        <SelectTrigger className="h-8 w-[120px]">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {availableRoles.map((r) => (
+                            <SelectItem key={r} value={r}>{r.charAt(0).toUpperCase() + r.slice(1)}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     ) : (
-                      <Badge variant="outline" className={u.is_admin ? "bg-primary/10 text-primary border-primary/30" : ""}>
-                        {u.is_admin ? "Admin" : "User"}
+                      <Badge variant="outline" className={roleBadge[u.role] || ""}>
+                        {u.role.charAt(0).toUpperCase() + u.role.slice(1)}
                       </Badge>
                     )}
                   </TableCell>
@@ -251,7 +271,7 @@ const UsersTab = ({ currentUserId }: { currentUserId: string }) => {
                           <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => openEdit(u)} title="Edit"><Pencil className="h-3.5 w-3.5" /></Button>
                           <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => openChangePassword(u)} title="Change password"><KeyRound className="h-3.5 w-3.5" /></Button>
                           <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => resetPasswordMutation.mutate(u.email)} title="Send reset email"><Mail className="h-3.5 w-3.5" /></Button>
-                          {u.id !== currentUserId && (
+                          {u.id !== currentUserId && u.role !== "superadmin" && (
                             <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => { if (confirm("Delete this user?")) deleteMutation.mutate(u.id); }}>
                               <Trash2 className="h-3.5 w-3.5 text-destructive" />
                             </Button>
