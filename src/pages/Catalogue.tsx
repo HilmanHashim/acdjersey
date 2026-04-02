@@ -32,6 +32,9 @@ import st5 from "@/assets/catalogue/standard-5.png";
 import st6 from "@/assets/catalogue/standard-6.png";
 import st7 from "@/assets/catalogue/standard-7.png";
 
+import fabricTypes from "@/assets/catalogue/fabric-types.png";
+import collarTypes from "@/assets/catalogue/collar-types.png";
+
 const categories = [
   {
     title: "Long Sleeve",
