@@ -1,4 +1,4 @@
-import { Phone } from "lucide-react";
+import { Phone, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
@@ -6,21 +6,27 @@ import { Link } from "react-router-dom";
 const agents = [
   {
     name: "Mr. Munir",
-    phone: "60193396681",
-    displayPhone: "019-339 6681",
+    phone: "019-339 6681",
+    whatsapp: "https://wa.me/60193396681",
     role: "Sales Manager",
+    bio: "With over 10 years of experience in sublimation apparel, Mr. Munir leads our team with dedication to quality and customer satisfaction.",
+    image: "",
   },
   {
     name: "Agent 2",
-    phone: "60193396681",
-    displayPhone: "019-339 6681",
+    phone: "019-339 6681",
+    whatsapp: "https://wa.me/60193396681",
     role: "Sales Executive",
+    bio: "Specializes in corporate bulk orders and custom team jerseys. Always ready to help bring your design ideas to life.",
+    image: "",
   },
   {
     name: "Agent 3",
-    phone: "60193396681",
-    displayPhone: "019-339 6681",
+    phone: "019-339 6681",
+    whatsapp: "https://wa.me/60193396681",
     role: "Sales Executive",
+    bio: "Expert in sports apparel design and fabric selection. Dedicated to delivering the perfect fit and finish for every order.",
+    image: "",
   },
 ];
 
@@ -40,23 +46,31 @@ const Agents = () => (
 
     <section className="py-16">
       <div className="container">
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {agents.map((agent) => (
             <Card key={agent.name} className="bg-card border-border hover:border-primary/50 transition-colors">
-              <CardContent className="p-6 flex flex-col items-center text-center gap-4">
-                <div className="w-20 h-20 rounded-full bg-secondary flex items-center justify-center">
-                  <span className="text-2xl font-display text-foreground">
-                    {agent.name.charAt(0)}
-                  </span>
+              <CardContent className="p-6 flex flex-col items-center text-center gap-5">
+                <div className="w-32 h-32 rounded-full bg-secondary flex items-center justify-center overflow-hidden">
+                  {agent.image ? (
+                    <img src={agent.image} alt={agent.name} className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-4xl font-display text-foreground">
+                      {agent.name.charAt(0)}
+                    </span>
+                  )}
                 </div>
-                <div>
-                  <h3 className="font-display text-lg text-foreground">{agent.name}</h3>
-                  <p className="text-muted-foreground text-sm">{agent.role}</p>
-                  <p className="text-muted-foreground text-sm mt-1">{agent.displayPhone}</p>
+                <div className="space-y-1">
+                  <h3 className="font-display text-xl text-foreground">{agent.name}</h3>
+                  <p className="text-primary text-sm font-medium">{agent.role}</p>
+                </div>
+                <p className="text-muted-foreground text-sm leading-relaxed">{agent.bio}</p>
+                <div className="flex items-center gap-2 text-muted-foreground text-sm">
+                  <Phone className="h-4 w-4" />
+                  <span>{agent.phone}</span>
                 </div>
                 <Button variant="hero" size="lg" className="w-full" asChild>
-                  <a href={`https://wa.me/${agent.phone}`} target="_blank" rel="noopener noreferrer">
-                    <Phone className="mr-2 h-4 w-4" /> WhatsApp
+                  <a href={agent.whatsapp} target="_blank" rel="noopener noreferrer">
+                    <MessageCircle className="mr-2 h-4 w-4" /> WhatsApp
                   </a>
                 </Button>
               </CardContent>
