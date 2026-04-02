@@ -12,19 +12,19 @@
     --card-foreground: 30 15% 90%;
     --popover: 220 20% 14%;
     --popover-foreground: 30 15% 90%;
-    --primary: 0 85% 55%;
+    --primary: 0 65% 42%;
     --primary-foreground: 0 0% 100%;
     --secondary: 220 15% 20%;
     --secondary-foreground: 30 15% 85%;
     --muted: 220 15% 18%;
     --muted-foreground: 220 10% 60%;
-    --accent: 25 95% 55%;
+    --accent: 30 70% 50%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
     --border: 220 15% 22%;
     --input: 220 15% 22%;
-    --ring: 0 85% 55%;
+    --ring: 0 65% 42%;
     --radius: 0.75rem;
 
     --hero-gradient: linear-gradient(135deg, hsl(0 85% 55%), hsl(25 95% 55%));
