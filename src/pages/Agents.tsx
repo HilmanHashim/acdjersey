@@ -5,15 +5,15 @@ import { Link } from "react-router-dom";
 
 const agents = [
   {
-    name: "Mr. Munir",
+    name: "UMAR NAZMI",
     phone: "019-339 6681",
     whatsapp: "https://wa.me/60193396681",
-    role: "Sales Manager",
+    role: "Sales Executive",
     bio: "With over 10 years of experience in sublimation apparel, Mr. Munir leads our team with dedication to quality and customer satisfaction.",
     image: "",
   },
   {
-    name: "Agent 2",
+    name: "ALIFF IRFAN",
     phone: "019-339 6681",
     whatsapp: "https://wa.me/60193396681",
     role: "Sales Executive",
@@ -21,7 +21,7 @@ const agents = [
     image: "",
   },
   {
-    name: "Agent 3",
+    name: "iman munir",
     phone: "019-339 6681",
     whatsapp: "https://wa.me/60193396681",
     role: "Sales Executive",
