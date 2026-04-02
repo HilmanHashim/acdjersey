@@ -99,10 +99,10 @@ const Agents = () => (
 
     <section className="py-16 border-t border-border">
       <div className="container">
-        <h2 className="text-3xl md:text-4xl font-display text-gradient mb-10 text-center opacity-0 animate-fade-in" style={{ animationDelay: "1s", animationDuration: "0.6s", animationFillMode: "forwards" }}>Our Designer</h2>
+        <h2 className="text-3xl md:text-4xl font-display text-gradient mb-10 text-center animate-slide-up" style={{ animationDelay: "0.75s" }}>Our Designer</h2>
         <div className="grid sm:grid-cols-1 gap-8 max-w-sm mx-auto">
           {designers.map((d) => (
-            <Card key={d.name} className="bg-card border-border hover:border-primary/50 transition-colors opacity-0 animate-fade-in hover-scale" style={{ animationDelay: "1.2s", animationDuration: "0.6s", animationFillMode: "forwards" }}>
+            <Card key={d.name} className="bg-card border-border hover:border-primary/50 transition-colors animate-slide-up hover-scale" style={{ animationDelay: "0.9s" }}>
               <CardContent className="p-6 flex flex-col items-center text-center gap-5">
                 <div className="w-32 h-32 rounded-full bg-secondary flex items-center justify-center overflow-hidden">
                   {d.image ? (
