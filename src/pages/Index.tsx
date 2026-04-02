@@ -1,3 +1,4 @@
+import Navbar from "@/components/Navbar";
 import Hero from "@/components/landing/Hero";
 import About from "@/components/landing/About";
 import Gallery from "@/components/landing/Gallery";
@@ -15,6 +16,7 @@ const Divider = () => (
 
 const Index = () => (
   <>
+    <Navbar />
     <Hero />
     <About />
     <Divider />
