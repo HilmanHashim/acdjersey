@@ -1,5 +1,8 @@
 import { Phone, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import aliffImg from "@/assets/aliff-acd.jfif";
+import imanImg from "@/assets/iman-acd.jfif";
+import umarImg from "@/assets/umar-acd.jfif";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 
