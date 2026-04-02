@@ -1,6 +1,24 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/landing/Footer";
 import { Shield, Zap, Palette, Award, DollarSign } from "lucide-react";
+
+import logoUis from "@/assets/logos/uis.png";
+import logoSwcorp from "@/assets/logos/swcorp.png";
+import logoJpj from "@/assets/logos/jpj.png";
+import logoNavy from "@/assets/logos/navy.png";
+import logoMrcb from "@/assets/logos/mrcb.png";
+import logoHsb from "@/assets/logos/hsb.png";
+import logoVolvo from "@/assets/logos/volvo.png";
+
+const clientLogos = [
+  { src: logoUis, alt: "Universiti Islam Selangor" },
+  { src: logoSwcorp, alt: "SWCorp Malaysia" },
+  { src: logoJpj, alt: "Jabatan Pengangkutan Jalan Malaysia" },
+  { src: logoNavy, alt: "Royal Malaysian Navy" },
+  { src: logoMrcb, alt: "MRCB" },
+  { src: logoHsb, alt: "Hospital Sungai Buloh" },
+  { src: logoVolvo, alt: "Volvo Ingress Swede Automobile" },
+];
 import { Card, CardContent } from "@/components/ui/card";
 
 const whyChooseUs = [
