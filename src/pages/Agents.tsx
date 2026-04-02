@@ -1,5 +1,8 @@
 import { Phone, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import aliffImg from "@/assets/aliff-acd.jfif";
+import imanImg from "@/assets/iman-acd.jfif";
+import umarImg from "@/assets/umar-acd.jfif";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 
@@ -10,7 +13,7 @@ const agents = [
     whatsapp: "https://wa.me/60193396681",
     role: "Sales Executive",
     bio: "With over 10 years of experience in sublimation apparel, Mr. Munir leads our team with dedication to quality and customer satisfaction.",
-    image: "",
+    image: umarImg,
   },
   {
     name: "ALIFF ACD",
@@ -18,7 +21,7 @@ const agents = [
     whatsapp: "https://wa.me/601168448896",
     role: "Sales Executive",
     bio: "Specializes in corporate bulk orders and custom team jerseys. Always ready to help bring your design ideas to life.",
-    image: "",
+    image: aliffImg,
   },
   {
     name: "IMAN ACD",
@@ -26,7 +29,7 @@ const agents = [
     whatsapp: "https://wa.me/60182552426",
     role: "Sales Executive",
     bio: "Expert in sports apparel design and fabric selection. Dedicated to delivering the perfect fit and finish for every order.",
-    image: "",
+    image: imanImg,
   },
 ];
 
