@@ -65,7 +65,7 @@ const designers = [
     whatsapp: "https://wa.me/60172809232",
     role: "Creative Director",
     bio: "Graphic Designer with 8+ years of experience, specializing in jersey, apparel, and print design. Known for delivering clean, elevated visuals with a strong attention to detail and premium finish.",
-    image: "",
+    image: faizImg,
   },
   {
     name: "HARITH ACD",
