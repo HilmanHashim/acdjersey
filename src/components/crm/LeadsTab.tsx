@@ -38,7 +38,18 @@ const LeadsTab = () => {
   const [activeStage, setActiveStage] = useState<string>("all");
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [blastOpen, setBlastOpen] = useState(false);
-  const [blastMessage, setBlastMessage] = useState("Hi {{name}}, this is a follow-up from ACD Jersey. How can we help you today?");
+  const [ownerFilter, setOwnerFilter] = useState<string>("all");
+  const [blastMessage, setBlastMessage] = useState(`Salam ramadan bro! Saya Umar wakil dari ACD Jersey mengucapkan selamat menyambut puasa bro!
+
+Semoga ramadan tahun ni lebih bermakna dari ramadan sebelum ini dan mengajar kita untuk jadi lebih baik sebagai seorang manusia.
+
+Anyway broo, ni saya ada nak tanya pendapat sikit.
+
+Kalau bulan puasa, better lari sebelum sahur ke lepas berbuka?
+
+atau bulan puasa ni memang off dari running or any activity?
+
+Check out our latest jersey: ${window.location.origin}/images/acd-ramadan.png`);
   const [form, setForm] = useState({
     phone: "", name: "", note: "", date: "", type_of_custom: "",
     leads_from: "", stage: "cold" as LeadStage, number_of_pcs: "", purchase_amount: "",
@@ -236,11 +247,14 @@ const LeadsTab = () => {
     XLSX.writeFile(wb, "ACD_Leads_Export.xlsx");
   };
 
+  const uniqueOwnerIds = [...new Set(leads.map((l) => l.created_by).filter(Boolean))] as string[];
+
   const filtered = leads.filter((l) => {
     const matchesStage = activeStage === "all" || l.stage === activeStage;
     const matchesSearch = !search || [l.phone, l.name, l.note, l.type_of_custom, l.leads_from]
       .some((v) => v?.toLowerCase().includes(search.toLowerCase()));
-    return matchesStage && matchesSearch;
+    const matchesOwner = ownerFilter === "all" || l.created_by === ownerFilter;
+    return matchesStage && matchesSearch && matchesOwner;
   });
 
   const stageCounts = {
@@ -295,9 +309,24 @@ const LeadsTab = () => {
   return (
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row gap-3 justify-between">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input placeholder="Search leads..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+        <div className="flex gap-2 flex-1 max-w-md">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input placeholder="Search leads..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+          </div>
+          <Select value={ownerFilter} onValueChange={setOwnerFilter}>
+            <SelectTrigger className="w-[160px]">
+              <SelectValue placeholder="Filter by owner" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Owners</SelectItem>
+              {uniqueOwnerIds.map((uid) => (
+                <SelectItem key={uid} value={uid}>
+                  {userEmailMap[uid]?.split("@")[0] || "Unknown"}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         <div className="flex gap-2 flex-wrap">
           {selectedIds.size > 0 && (
