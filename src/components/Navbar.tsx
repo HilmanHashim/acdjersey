@@ -14,22 +14,25 @@ const Navbar = () => {
   const { pathname } = useLocation();
 
   return (
-    <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
+    <nav className="sticky top-0 z-50 border-b border-primary/20 bg-gradient-to-r from-background via-card to-background backdrop-blur-md">
       <div className="container flex items-center justify-between h-16">
-        <Link to="/" className="font-display text-xl">
-          <span className="text-foreground">ACD</span>{" "}
-          <span className="text-gradient">Jersey</span>
+        <Link to="/" className="font-display text-2xl tracking-wide group">
+          <span className="text-gradient font-bold">ACD</span>
+          <span className="text-foreground/60 mx-1 font-light">|</span>
+          <span className="text-foreground/90 text-lg tracking-[0.15em]">JERSEY</span>
         </Link>
 
         {/* Desktop */}
-        <div className="hidden md:flex items-center gap-8">
+        <div className="hidden md:flex items-center gap-1">
           {navLinks.map((link) => (
             <Link
               key={link.to}
               to={link.to}
               className={cn(
-                "font-display text-sm uppercase tracking-wider transition-colors hover:text-primary",
-                pathname === link.to ? "text-primary" : "text-muted-foreground"
+                "relative font-display text-sm uppercase tracking-[0.2em] px-4 py-2 rounded-md transition-all duration-300",
+                pathname === link.to
+                  ? "text-primary-foreground bg-gradient-to-r from-primary to-accent"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
               )}
             >
               {link.label}
@@ -49,16 +52,18 @@ const Navbar = () => {
 
       {/* Mobile menu */}
       {open && (
-        <div className="md:hidden border-t border-border bg-background/95 backdrop-blur-md">
-          <div className="container py-4 flex flex-col gap-4">
+        <div className="md:hidden border-t border-primary/20 bg-card/95 backdrop-blur-md">
+          <div className="container py-4 flex flex-col gap-2">
             {navLinks.map((link) => (
               <Link
                 key={link.to}
                 to={link.to}
                 onClick={() => setOpen(false)}
                 className={cn(
-                  "font-display text-sm uppercase tracking-wider transition-colors hover:text-primary",
-                  pathname === link.to ? "text-primary" : "text-muted-foreground"
+                  "font-display text-sm uppercase tracking-[0.2em] px-4 py-2.5 rounded-md transition-all duration-300",
+                  pathname === link.to
+                    ? "text-primary-foreground bg-gradient-to-r from-primary to-accent"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                 )}
               >
                 {link.label}
