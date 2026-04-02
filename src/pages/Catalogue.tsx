@@ -77,7 +77,7 @@ const CategoryCard = ({
     if (el) {
       const child = el.children[clamped] as HTMLElement;
       if (child) {
-        el.scrollTo({ left: child.offsetLeft - 8, behavior: "smooth" });
+        el.scrollTo({ left: child.offsetLeft, behavior: "smooth" });
       }
     }
   };
