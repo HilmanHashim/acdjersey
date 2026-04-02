@@ -59,7 +59,7 @@ const LeadsTab = () => {
     queryKey: ["auth-users"],
     queryFn: async () => {
       const res = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/manage-users`,
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/manage-users?action=list`,
         {
           headers: {
             Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
