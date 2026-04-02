@@ -38,7 +38,18 @@ const LeadsTab = () => {
   const [activeStage, setActiveStage] = useState<string>("all");
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [blastOpen, setBlastOpen] = useState(false);
-  const [blastMessage, setBlastMessage] = useState("Hi {{name}}, this is a follow-up from ACD Jersey. How can we help you today?");
+  const [ownerFilter, setOwnerFilter] = useState<string>("all");
+  const [blastMessage, setBlastMessage] = useState(`Salam ramadan bro! Saya Umar wakil dari ACD Jersey mengucapkan selamat menyambut puasa bro!
+
+Semoga ramadan tahun ni lebih bermakna dari ramadan sebelum ini dan mengajar kita untuk jadi lebih baik sebagai seorang manusia.
+
+Anyway broo, ni saya ada nak tanya pendapat sikit.
+
+Kalau bulan puasa, better lari sebelum sahur ke lepas berbuka?
+
+atau bulan puasa ni memang off dari running or any activity?
+
+Check out our latest jersey: ${window.location.origin}/images/acd-ramadan.png`);
   const [form, setForm] = useState({
     phone: "", name: "", note: "", date: "", type_of_custom: "",
     leads_from: "", stage: "cold" as LeadStage, number_of_pcs: "", purchase_amount: "",
