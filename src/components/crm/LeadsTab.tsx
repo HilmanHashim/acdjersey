@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Pencil, Trash2, Upload, Search, Download } from "lucide-react";
+import { Plus, Pencil, Trash2, Upload, Search, Download, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 import * as XLSX from "xlsx";
 import type { Database } from "@/integrations/supabase/types";
@@ -312,7 +312,22 @@ const LeadsTab = () => {
             <TableBody>
               {filtered.map((l) => (
                 <TableRow key={l.id}>
-                  <TableCell className="font-mono text-sm">{l.phone || "—"}</TableCell>
+                  <TableCell className="font-mono text-sm">
+                    <div className="flex items-center gap-1">
+                      {l.phone || "—"}
+                      {l.phone && (
+                        <a
+                          href={`https://wa.me/${l.phone.replace(/[^0-9]/g, "")}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-green-500 hover:text-green-400 transition-colors"
+                          title="Chat on WhatsApp"
+                        >
+                          <MessageCircle className="h-4 w-4" />
+                        </a>
+                      )}
+                    </div>
+                  </TableCell>
                   <TableCell className="font-medium">{l.name}</TableCell>
                   <TableCell className="max-w-[200px] truncate text-sm">{l.note || "—"}</TableCell>
                   <TableCell className="text-sm">{l.date || "—"}</TableCell>
