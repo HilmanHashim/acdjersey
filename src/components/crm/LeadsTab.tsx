@@ -247,11 +247,14 @@ Check out our latest jersey: ${window.location.origin}/images/acd-ramadan.png`);
     XLSX.writeFile(wb, "ACD_Leads_Export.xlsx");
   };
 
+  const uniqueOwnerIds = [...new Set(leads.map((l) => l.created_by).filter(Boolean))] as string[];
+
   const filtered = leads.filter((l) => {
     const matchesStage = activeStage === "all" || l.stage === activeStage;
     const matchesSearch = !search || [l.phone, l.name, l.note, l.type_of_custom, l.leads_from]
       .some((v) => v?.toLowerCase().includes(search.toLowerCase()));
-    return matchesStage && matchesSearch;
+    const matchesOwner = ownerFilter === "all" || l.created_by === ownerFilter;
+    return matchesStage && matchesSearch && matchesOwner;
   });
 
   const stageCounts = {
