@@ -365,6 +365,27 @@ const LeadsTab = () => {
               </DialogContent>
             </Dialog>
           )}
+          <Dialog open={templateOpen} onOpenChange={(v) => { setTemplateOpen(v); if (v) setTemplateDraft(getStoredTemplate()); }}>
+            <DialogTrigger asChild>
+              <Button variant="outline" size="sm"><Settings className="h-4 w-4 mr-1" /> Template</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader><DialogTitle className="font-display">Blast Message Template</DialogTitle></DialogHeader>
+              <div className="space-y-3">
+                <p className="text-xs text-muted-foreground">Set the default WhatsApp blast message. Use <code className="bg-muted px-1 rounded">{"{{name}}"}</code> to personalise.</p>
+                <Textarea rows={10} value={templateDraft} onChange={(e) => setTemplateDraft(e.target.value)} placeholder="Type your template..." />
+                <div className="flex gap-2">
+                  <Button variant="outline" className="flex-1" onClick={() => { setTemplateDraft(DEFAULT_TEMPLATE); }}>Reset Default</Button>
+                  <Button variant="hero" className="flex-1" onClick={() => {
+                    localStorage.setItem("wa_blast_template", templateDraft);
+                    setBlastMessage(templateDraft);
+                    setTemplateOpen(false);
+                    toast.success("Template saved");
+                  }}>Save Template</Button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
           <Button variant="outline" size="sm" onClick={handleExport} disabled={leads.length === 0}>
             <Download className="h-4 w-4 mr-1" /> Export
           </Button>
