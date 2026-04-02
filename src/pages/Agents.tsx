@@ -52,7 +52,7 @@ const agents = [
     name: "HILMAN ACD",
     phone: "",
     whatsapp: "",
-    role: "Sales Executive",
+    role: "Sales Executive/ Web and Data Engineer",
     bio: "Dedicated to understanding client needs and delivering tailored apparel solutions with exceptional service.",
     image: "",
   },
