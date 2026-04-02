@@ -31,8 +31,23 @@ const agents = [
     bio: "Expert in sports apparel design and fabric selection. Dedicated to delivering the perfect fit and finish for every order.",
     image: imanImg,
   },
+  {
+    name: "JEED ACD",
+    phone: "",
+    whatsapp: "",
+    role: "Sales Executive",
+    bio: "Committed to providing a seamless ordering experience with prompt responses and personalized service for every client.",
+    image: "",
+  },
+  {
+    name: "DIDO ACD",
+    phone: "",
+    whatsapp: "",
+    role: "Sales Executive",
+    bio: "Passionate about connecting clients with the perfect apparel solutions, ensuring satisfaction from enquiry to delivery.",
+    image: "",
+  },
 ];
-
 const designers = [
   {
     name: "FAIZ ACD",
