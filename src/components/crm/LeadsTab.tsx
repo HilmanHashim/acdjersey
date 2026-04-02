@@ -485,7 +485,7 @@ const LeadsTab = () => {
                       <span className="truncate">{l.phone || "—"}</span>
                       {l.phone && (
                         <a
-                          href={`https://wa.me/${l.phone.replace(/[^0-9]/g, "")}`}
+                          href={`https://wa.me/${l.phone.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(getStoredTemplate())}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-green-500 hover:text-green-400 transition-colors shrink-0"
