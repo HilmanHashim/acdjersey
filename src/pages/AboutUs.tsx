@@ -110,7 +110,7 @@ const AboutUs = () => (
     <section className="py-16 bg-card">
       <div className="container space-y-10">
         <h2 className="text-3xl md:text-4xl font-display text-gradient text-center">Why Choose Us</h2>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+        <div className="flex flex-wrap justify-center gap-6 max-w-5xl mx-auto">
           {whyChooseUs.map((item) => (
             <div key={item.title} className="p-6 rounded-lg bg-background border border-border space-y-3">
               <item.icon className="h-8 w-8 text-primary" />
