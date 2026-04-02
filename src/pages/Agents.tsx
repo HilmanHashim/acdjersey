@@ -42,6 +42,18 @@ const designers = [
     bio: "Our creative mind behind every jersey design. Faiz transforms your ideas into stunning, print-ready artwork with precision and flair.",
     image: "",
   },
+  {
+    name: "HARITH ACD",
+    role: "Designer",
+    bio: "Brings bold, creative concepts to life with an eye for detail and a passion for standout sportswear design.",
+    image: "",
+  },
+  {
+    name: "ADAM ACD",
+    role: "Designer",
+    bio: "Specializes in modern, dynamic jersey layouts that combine functionality with cutting-edge visual appeal.",
+    image: "",
+  },
 ];
 
 const Agents = () => (
