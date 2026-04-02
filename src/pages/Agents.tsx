@@ -5,6 +5,7 @@ import imanImg from "@/assets/iman-acd.jfif";
 import umarImg from "@/assets/umar-acd.jfif";
 import { Card, CardContent } from "@/components/ui/card";
 import Navbar from "@/components/Navbar";
+import teamBg from "@/assets/team-bg.jpeg";
 
 const agents = [
   {
@@ -74,10 +75,14 @@ const designers = [
 const Agents = () => (
   <div className="min-h-screen bg-background">
     <Navbar />
-    <div className="surface-dark py-12 animate-slide-up">
-      <div className="container">
+    <div className="relative py-20 animate-slide-up overflow-hidden">
+      <div className="absolute inset-0">
+        <img src={teamBg} alt="" className="w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
+      </div>
+      <div className="container relative z-10">
         <h1 className="text-4xl md:text-5xl font-display text-gradient mb-3">Contact Our Team</h1>
-        <p className="text-surface-dark-foreground/70 max-w-lg">
+        <p className="text-foreground/70 max-w-lg">
           Reach out to any of our agents directly via WhatsApp for enquiries, quotations, or orders.
         </p>
       </div>
@@ -86,9 +91,10 @@ const Agents = () => (
     <section className="py-16">
       <div className="container">
         <h2 className="text-3xl md:text-4xl font-display text-gradient mb-10 text-center animate-slide-up" style={{ animationDelay: "0.15s" }}>Our Sales Executive</h2>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <div className="flex flex-wrap justify-center gap-8 max-w-5xl mx-auto">
+
           {agents.map((agent, i) => (
-            <Card key={agent.name} className="bg-card border-border hover:border-primary/50 transition-colors animate-slide-up hover-scale" style={{ animationDelay: `${0.3 + i * 0.15}s` }}>
+            <Card key={agent.name} className="bg-card border-border hover:border-primary/50 transition-colors animate-slide-up hover-scale w-full sm:w-[calc(50%-16px)] lg:w-[calc(33.333%-22px)]" style={{ animationDelay: `${0.3 + i * 0.15}s` }}>
               <CardContent className="p-6 flex flex-col items-center text-center gap-5">
                 <div className="w-32 h-32 rounded-full bg-secondary flex items-center justify-center overflow-hidden">
                   {agent.image ? (
