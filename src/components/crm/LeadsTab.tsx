@@ -312,7 +312,22 @@ const LeadsTab = () => {
             <TableBody>
               {filtered.map((l) => (
                 <TableRow key={l.id}>
-                  <TableCell className="font-mono text-sm">{l.phone || "—"}</TableCell>
+                  <TableCell className="font-mono text-sm">
+                    <div className="flex items-center gap-1">
+                      {l.phone || "—"}
+                      {l.phone && (
+                        <a
+                          href={`https://wa.me/${l.phone.replace(/[^0-9]/g, "")}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-green-500 hover:text-green-400 transition-colors"
+                          title="Chat on WhatsApp"
+                        >
+                          <MessageCircle className="h-4 w-4" />
+                        </a>
+                      )}
+                    </div>
+                  </TableCell>
                   <TableCell className="font-medium">{l.name}</TableCell>
                   <TableCell className="max-w-[200px] truncate text-sm">{l.note || "—"}</TableCell>
                   <TableCell className="text-sm">{l.date || "—"}</TableCell>
