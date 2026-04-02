@@ -9,6 +9,10 @@ import logoNavy from "@/assets/logos/navy.png";
 import logoMrcb from "@/assets/logos/mrcb.png";
 import logoHsb from "@/assets/logos/hsb.png";
 import logoVolvo from "@/assets/logos/volvo.jpg";
+import logoUitm from "@/assets/logos/uitm.png";
+import logoAadk from "@/assets/logos/aadk.gif";
+import logoKlust from "@/assets/logos/klust.jfif";
+import logoBomba from "@/assets/logos/bomba.png";
 
 const clientLogos = [
   { src: logoUis, alt: "Universiti Islam Selangor" },
@@ -18,6 +22,10 @@ const clientLogos = [
   { src: logoMrcb, alt: "MRCB" },
   { src: logoHsb, alt: "Hospital Sungai Buloh" },
   { src: logoVolvo, alt: "Volvo Ingress Swede Automobile", zoom: true },
+  { src: logoUitm, alt: "Universiti Teknologi MARA" },
+  { src: logoAadk, alt: "Agensi Antidadah Kebangsaan" },
+  { src: logoKlust, alt: "KLUST" },
+  { src: logoBomba, alt: "Bomba Dan Penyelamat Malaysia" },
 ];
 import { Card, CardContent } from "@/components/ui/card";
 
