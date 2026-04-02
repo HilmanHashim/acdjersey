@@ -8,6 +8,8 @@ import CRM from "./pages/CRM.tsx";
 import Agents from "./pages/Agents.tsx";
 import AboutUs from "./pages/AboutUs.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import ScrollToTop from "./components/ScrollToTop";
+import ScrollToTopButton from "./components/ScrollToTopButton";
 
 const queryClient = new QueryClient();
 
@@ -17,6 +19,8 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <ScrollToTop />
+        <ScrollToTopButton />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/crm" element={<CRM />} />
