@@ -10,7 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Plus, Pencil, Trash2, Upload, Search, Download, MessageCircle, Send } from "lucide-react";
+import { Plus, Pencil, Trash2, Upload, Search, Download, MessageCircle, Send, Settings } from "lucide-react";
 import { toast } from "sonner";
 import * as XLSX from "xlsx";
 import type { Database } from "@/integrations/supabase/types";
@@ -30,6 +30,18 @@ const stageLabel: Record<LeadStage, string> = {
   first_buy: "First Buy",
 };
 
+const DEFAULT_TEMPLATE = `Salam ramadan bro! Saya Umar wakil dari ACD Jersey mengucapkan selamat menyambut puasa bro!
+
+Semoga ramadan tahun ni lebih bermakna dari ramadan sebelum ini dan mengajar kita untuk jadi lebih baik sebagai seorang manusia.
+
+Anyway broo, ni saya ada nak tanya pendapat sikit.
+
+Kalau bulan puasa, better lari sebelum sahur ke lepas berbuka?
+
+atau bulan puasa ni memang off dari running or any activity?`;
+
+const getStoredTemplate = () => localStorage.getItem("wa_blast_template") || DEFAULT_TEMPLATE;
+
 const LeadsTab = () => {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
@@ -39,17 +51,9 @@ const LeadsTab = () => {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [blastOpen, setBlastOpen] = useState(false);
   const [ownerFilter, setOwnerFilter] = useState<string>("all");
-  const [blastMessage, setBlastMessage] = useState(`Salam ramadan bro! Saya Umar wakil dari ACD Jersey mengucapkan selamat menyambut puasa bro!
-
-Semoga ramadan tahun ni lebih bermakna dari ramadan sebelum ini dan mengajar kita untuk jadi lebih baik sebagai seorang manusia.
-
-Anyway broo, ni saya ada nak tanya pendapat sikit.
-
-Kalau bulan puasa, better lari sebelum sahur ke lepas berbuka?
-
-atau bulan puasa ni memang off dari running or any activity?
-
-Check out our latest jersey: ${window.location.origin}/images/acd-ramadan.png`);
+  const [blastMessage, setBlastMessage] = useState(getStoredTemplate);
+  const [templateOpen, setTemplateOpen] = useState(false);
+  const [templateDraft, setTemplateDraft] = useState(getStoredTemplate);
   const [form, setForm] = useState({
     phone: "", name: "", note: "", date: "", type_of_custom: "",
     leads_from: "", stage: "cold" as LeadStage, number_of_pcs: "", purchase_amount: "",
@@ -361,6 +365,27 @@ Check out our latest jersey: ${window.location.origin}/images/acd-ramadan.png`);
               </DialogContent>
             </Dialog>
           )}
+          <Dialog open={templateOpen} onOpenChange={(v) => { setTemplateOpen(v); if (v) setTemplateDraft(getStoredTemplate()); }}>
+            <DialogTrigger asChild>
+              <Button variant="outline" size="sm"><Settings className="h-4 w-4 mr-1" /> Template</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader><DialogTitle className="font-display">Blast Message Template</DialogTitle></DialogHeader>
+              <div className="space-y-3">
+                <p className="text-xs text-muted-foreground">Set the default WhatsApp blast message. Use <code className="bg-muted px-1 rounded">{"{{name}}"}</code> to personalise.</p>
+                <Textarea rows={10} value={templateDraft} onChange={(e) => setTemplateDraft(e.target.value)} placeholder="Type your template..." />
+                <div className="flex gap-2">
+                  <Button variant="outline" className="flex-1" onClick={() => { setTemplateDraft(DEFAULT_TEMPLATE); }}>Reset Default</Button>
+                  <Button variant="hero" className="flex-1" onClick={() => {
+                    localStorage.setItem("wa_blast_template", templateDraft);
+                    setBlastMessage(templateDraft);
+                    setTemplateOpen(false);
+                    toast.success("Template saved");
+                  }}>Save Template</Button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
           <Button variant="outline" size="sm" onClick={handleExport} disabled={leads.length === 0}>
             <Download className="h-4 w-4 mr-1" /> Export
           </Button>
