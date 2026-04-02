@@ -46,7 +46,7 @@ const designers = [
 
 const Agents = () => (
   <div className="min-h-screen bg-background">
-    <div className="surface-dark py-12 opacity-0 animate-fade-in" style={{ animationDuration: "0.6s", animationFillMode: "forwards" }}>
+    <div className="surface-dark py-12 animate-slide-up">
       <div className="container">
         <Button variant="outline" size="sm" className="mb-6" asChild>
           <Link to="/">
