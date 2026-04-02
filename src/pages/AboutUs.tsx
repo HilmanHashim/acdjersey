@@ -9,6 +9,10 @@ import logoNavy from "@/assets/logos/navy.png";
 import logoMrcb from "@/assets/logos/mrcb.png";
 import logoHsb from "@/assets/logos/hsb.png";
 import logoVolvo from "@/assets/logos/volvo.jpg";
+import logoUitm from "@/assets/logos/uitm.png";
+import logoAadk from "@/assets/logos/aadk.gif";
+import logoKlust from "@/assets/logos/klust.jfif";
+import logoBomba from "@/assets/logos/bomba.png";
 
 const clientLogos = [
   { src: logoUis, alt: "Universiti Islam Selangor" },
@@ -18,6 +22,10 @@ const clientLogos = [
   { src: logoMrcb, alt: "MRCB" },
   { src: logoHsb, alt: "Hospital Sungai Buloh" },
   { src: logoVolvo, alt: "Volvo Ingress Swede Automobile", zoom: true },
+  { src: logoUitm, alt: "Universiti Teknologi MARA" },
+  { src: logoAadk, alt: "Agensi Antidadah Kebangsaan" },
+  { src: logoKlust, alt: "KLUST" },
+  { src: logoBomba, alt: "Bomba Dan Penyelamat Malaysia" },
 ];
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -138,13 +146,15 @@ const AboutUs = () => (
       </div>
     </section>
 
-    {/* Client Logos */}
-    <section className="py-16">
+    {/* Client Logos - Infinite Scroll */}
+    <section className="py-16 overflow-hidden">
       <div className="container space-y-10">
         <h2 className="text-3xl md:text-4xl font-display text-gradient text-center">Trusted By</h2>
-        <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12 max-w-4xl mx-auto">
-          {clientLogos.map((logo) => (
-            <div key={logo.alt} className="bg-white rounded-lg p-4 w-28 h-28 md:w-36 md:h-36 flex items-center justify-center shadow-sm border border-border overflow-hidden">
+      </div>
+      <div className="relative mt-10">
+        <div className="flex animate-marquee gap-8 w-max">
+          {[...clientLogos, ...clientLogos].map((logo, i) => (
+            <div key={`${logo.alt}-${i}`} className="bg-white rounded-lg p-4 w-28 h-28 md:w-36 md:h-36 flex-shrink-0 flex items-center justify-center shadow-sm border border-border overflow-hidden">
               <img src={logo.src} alt={logo.alt} className={`max-w-full max-h-full object-contain ${logo.zoom ? 'scale-[2.5]' : ''}`} />
             </div>
           ))}
