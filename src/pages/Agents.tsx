@@ -25,7 +25,7 @@ const agents = [
     image: aliffImg,
   },
   {
-    name: "IMAN ACD",
+    name: "MUNIR ACD",
     phone: "018-255 2426",
     whatsapp: "https://wa.me/60182552426",
     role: "Sales Executive",
