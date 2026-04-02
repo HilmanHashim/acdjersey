@@ -1,6 +1,6 @@
 import heroImage from "@/assets/hero-bg.jpg";
 import { Button } from "@/components/ui/button";
-
+import { Link } from "react-router-dom";
 import { Phone, MapPin } from "lucide-react";
 
 const Hero = () => (
