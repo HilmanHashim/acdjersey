@@ -10,7 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Plus, Pencil, Trash2, Upload, Search, Download, MessageCircle, Send } from "lucide-react";
+import { Plus, Pencil, Trash2, Upload, Search, Download, MessageCircle, Send, Settings } from "lucide-react";
 import { toast } from "sonner";
 import * as XLSX from "xlsx";
 import type { Database } from "@/integrations/supabase/types";
