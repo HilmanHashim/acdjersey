@@ -31,7 +31,7 @@ const Gallery = () => {
           <h2 className="text-3xl md:text-5xl font-display text-foreground">Recent Projects</h2>
         </div>
 
-        <div className="relative group">
+        <div className="relative group my-0 py-0">
           {/* Main image */}
           <div className="relative aspect-[16/9] max-w-4xl mx-auto overflow-hidden rounded-xl border border-border shadow-2xl">
             {images.map((src, i) => (
