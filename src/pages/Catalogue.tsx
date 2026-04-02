@@ -70,6 +70,22 @@ const CategoryCard = ({
   const [current, setCurrent] = useState(0);
   const total = category.images.length;
 
+  useEffect(() => {
+    if (total <= 1) return;
+    const id = setInterval(() => {
+      setCurrent((c) => {
+        const next = (c + 1) % total;
+        const el = scrollRef.current;
+        if (el) {
+          const child = el.children[next] as HTMLElement;
+          if (child) el.scrollTo({ left: child.offsetLeft, behavior: "smooth" });
+        }
+        return next;
+      });
+    }, 700);
+    return () => clearInterval(id);
+  }, [total]);
+
   const scrollTo = (index: number) => {
     const clamped = Math.max(0, Math.min(index, total - 1));
     setCurrent(clamped);

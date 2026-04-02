@@ -5,6 +5,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import Autoplay from "embla-carousel-autoplay";
 
 import client1 from "@/assets/clients/client-1.jpeg";
 import client2 from "@/assets/clients/client-2.jpeg";
@@ -46,6 +47,7 @@ const Clients = () => (
             align: "start",
             loop: true,
           }}
+          plugins={[Autoplay({ delay: 700, stopOnInteraction: false })]}
           className="w-full"
         >
           <CarouselContent className="-ml-4">
