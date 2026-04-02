@@ -496,9 +496,9 @@ const LeadsTab = () => {
                       )}
                     </div>
                   </TableCell>
-                  <TableCell className="font-medium text-sm truncate">{l.name}</TableCell>
-                  <TableCell className="text-xs truncate" title={l.note || ""}>{l.note || "—"}</TableCell>
-                  <TableCell className="text-xs truncate">{l.date || "—"}</TableCell>
+                  <TableCell className="font-medium text-sm">{l.name}</TableCell>
+                  <TableCell className="text-xs whitespace-pre-wrap break-words" title={l.note || ""}>{l.note || "—"}</TableCell>
+                  <TableCell className="text-xs">{l.date || "—"}</TableCell>
                   <TableCell className="text-xs truncate">{l.type_of_custom || "—"}</TableCell>
                   <TableCell className="text-xs truncate">{l.leads_from || "—"}</TableCell>
                   <TableCell>

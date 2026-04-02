@@ -132,15 +132,15 @@ const OrdersTab = () => {
       ) : orders.length === 0 ? (
         <p className="text-muted-foreground text-center py-8">No orders yet.</p>
       ) : (
-        <div className="border rounded-lg overflow-hidden">
-          <Table className="table-fixed w-full">
+        <div className="border rounded-lg overflow-x-auto">
+          <Table className="min-w-[600px] w-full">
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[20%]">Order #</TableHead>
-                <TableHead className="w-[25%]">Customer</TableHead>
-                <TableHead className="w-[20%]">Status</TableHead>
-                <TableHead className="w-[20%]">Amount (RM)</TableHead>
-                <TableHead className="w-[15%]">Actions</TableHead>
+                <TableHead className="min-w-[130px]">Order #</TableHead>
+                <TableHead className="min-w-[150px]">Customer</TableHead>
+                <TableHead className="min-w-[120px]">Status</TableHead>
+                <TableHead className="min-w-[120px]">Amount (RM)</TableHead>
+                <TableHead className="min-w-[100px]">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

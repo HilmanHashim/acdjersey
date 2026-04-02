@@ -226,15 +226,15 @@ const UsersTab = ({ currentUserId }: { currentUserId: string }) => {
       ) : users.length === 0 ? (
         <p className="text-muted-foreground text-center py-8">No users found.</p>
       ) : (
-        <div className="border rounded-lg overflow-hidden">
-          <Table className="table-fixed w-full">
+        <div className="border rounded-lg overflow-x-auto">
+          <Table className="min-w-[700px] w-full">
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[28%]">Email</TableHead>
-                <TableHead className="w-[15%]">Role</TableHead>
-                <TableHead className="w-[15%]">Created</TableHead>
-                <TableHead className="w-[22%]">Last Sign In</TableHead>
-                <TableHead className="w-[20%]">Actions</TableHead>
+                <TableHead className="min-w-[200px]">Email</TableHead>
+                <TableHead className="min-w-[120px]">Role</TableHead>
+                <TableHead className="min-w-[120px]">Created</TableHead>
+                <TableHead className="min-w-[160px]">Last Sign In</TableHead>
+                <TableHead className="min-w-[150px]">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
