@@ -60,6 +60,7 @@ const CRM = () => {
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     setForgotLoading(true);
+    setTempPassword("");
     try {
       const res = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/manage-users?action=forgot_password`,
@@ -70,11 +71,14 @@ const CRM = () => {
         }
       );
       const data = await res.json();
-      toast.success(data.message || "If the email exists, a reset link has been sent.");
-      setForgotOpen(false);
-      setForgotEmail("");
+      if (data.temporary_password) {
+        setTempPassword(data.temporary_password);
+        toast.success("Temporary password generated!");
+      } else {
+        toast.error(data.error || "No account found with that email.");
+      }
     } catch {
-      toast.error("Failed to send reset email");
+      toast.error("Failed to generate temporary password");
     } finally {
       setForgotLoading(false);
     }
