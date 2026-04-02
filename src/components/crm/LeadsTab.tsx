@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Pencil, Trash2, Upload, Search, Download } from "lucide-react";
+import { Plus, Pencil, Trash2, Upload, Search, Download, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 import * as XLSX from "xlsx";
 import type { Database } from "@/integrations/supabase/types";
