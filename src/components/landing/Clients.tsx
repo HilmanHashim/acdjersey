@@ -47,6 +47,7 @@ const Clients = () => (
             align: "start",
             loop: true,
           }}
+          plugins={[Autoplay({ delay: 700, stopOnInteraction: false })]}
           className="w-full"
         >
           <CarouselContent className="-ml-4">

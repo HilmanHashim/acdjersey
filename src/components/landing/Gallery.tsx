@@ -19,7 +19,7 @@ const Gallery = () => {
   const prev = useCallback(() => setCurrent((c) => (c - 1 + images.length) % images.length), []);
 
   useEffect(() => {
-    const id = setInterval(next, 7000);
+    const id = setInterval(next, 700);
     return () => clearInterval(id);
   }, [next]);
 

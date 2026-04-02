@@ -70,7 +70,7 @@ const Reviews = () => (
         </div>
       </div>
 
-      <Carousel opts={{ align: "start", loop: true }} className="w-full max-w-5xl mx-auto">
+      <Carousel opts={{ align: "start", loop: true }} plugins={[Autoplay({ delay: 700, stopOnInteraction: false })]} className="w-full max-w-5xl mx-auto">
         <CarouselContent>
           {reviews.map((review) => (
             <CarouselItem key={review.name} className="md:basis-1/2 lg:basis-1/3">
