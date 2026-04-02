@@ -14,7 +14,7 @@ const Hero = () => (
         <p className="font-display text-accent uppercase tracking-[0.3em] text-sm">Premium Sublimation Apparel</p>
         <h1 className="text-5xl md:text-7xl font-display leading-[0.95]">
           <span className="text-surface-dark-foreground">ACD</span>{" "}
-          <span className="text-gradient">Jersey HQ</span>
+          <span className="text-gradient">Jersey</span>
         </h1>
         <p className="text-lg text-surface-dark-foreground/70 font-body max-w-lg">
           High-quality, customizable designs for sports and corporate wear. Trusted by major brands and organizations across Malaysia.

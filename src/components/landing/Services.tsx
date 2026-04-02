@@ -2,7 +2,7 @@ import { Shirt, Palette, Users, Trophy } from "lucide-react";
 
 const services = [
   { icon: Shirt, title: "Custom Jerseys", desc: "Full sublimation jerseys with your designs, logos, and colors." },
-  { icon: Palette, title: "Design Service", desc: "Professional in-house design team to bring your vision to life." },
+  { icon: Palette, title: "Design Services", desc: "Professional in-house design team to bring your vision to life." },
   { icon: Users, title: "Corporate Wear", desc: "Branded corporate apparel for teams, events, and companies." },
   { icon: Trophy, title: "Sports Teams", desc: "Complete team kits for football, futsal, badminton, and more." },
 ];
