@@ -11,7 +11,7 @@ const Services = () => (
   <section className="py-20 surface-dark">
     <div className="container">
       <h2 className="text-4xl font-display text-center mb-12">
-        <span className="text-surface-dark-foreground">Our </span>
+        <span className="text-foreground">Our </span>
         <span className="text-gradient">Services</span>
       </h2>
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
