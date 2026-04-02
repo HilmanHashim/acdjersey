@@ -4,7 +4,7 @@ const Map = () => (
       <h2 className="text-4xl font-display text-gradient text-center mb-10">Find Us</h2>
       <div className="rounded-lg overflow-hidden border border-border aspect-video max-w-4xl mx-auto">
         <iframe
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3984.2!2d101.6!3d3.1!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sAman+Putri%2C+Shah+Alam!5e0!3m2!1sen!2smy!4v1700000000000"
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3984.0!2d101.5936!3d3.1271!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31cc4f6a2d9f1b3d%3A0x0!2zQUNEIEplcnNleSBIUSBBbWFuIFB1dHJp!5e0!3m2!1sen!2smy!4v1700000000000!5m2!1sen!2smy"
           title="ACD Jersey HQ Location"
           width="100%"
           height="100%"
