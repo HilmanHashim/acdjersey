@@ -33,6 +33,17 @@ const agents = [
   },
 ];
 
+const designers = [
+  {
+    name: "FAIZ ACD",
+    phone: "017-280 9232",
+    whatsapp: "https://wa.me/60172809232",
+    role: "Designer",
+    bio: "Our creative mind behind every jersey design. Faiz transforms your ideas into stunning, print-ready artwork with precision and flair.",
+    image: "",
+  },
+];
+
 const Agents = () => (
   <div className="min-h-screen bg-background">
     <div className="surface-dark py-12">
@@ -73,6 +84,43 @@ const Agents = () => (
                 </div>
                 <Button variant="hero" size="lg" className="w-full" asChild>
                   <a href={agent.whatsapp} target="_blank" rel="noopener noreferrer">
+                    <MessageCircle className="mr-2 h-4 w-4" /> WhatsApp
+                  </a>
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section className="py-16 border-t border-border">
+      <div className="container">
+        <h2 className="text-3xl md:text-4xl font-display text-gradient mb-10 text-center">Our Designer</h2>
+        <div className="grid sm:grid-cols-1 gap-8 max-w-sm mx-auto">
+          {designers.map((d) => (
+            <Card key={d.name} className="bg-card border-border hover:border-primary/50 transition-colors">
+              <CardContent className="p-6 flex flex-col items-center text-center gap-5">
+                <div className="w-32 h-32 rounded-full bg-secondary flex items-center justify-center overflow-hidden">
+                  {d.image ? (
+                    <img src={d.image} alt={d.name} className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-4xl font-display text-foreground">
+                      {d.name.charAt(0)}
+                    </span>
+                  )}
+                </div>
+                <div className="space-y-1">
+                  <h3 className="font-display text-xl text-foreground">{d.name}</h3>
+                  <p className="text-primary text-sm font-medium">{d.role}</p>
+                </div>
+                <p className="text-muted-foreground text-sm leading-relaxed">{d.bio}</p>
+                <div className="flex items-center gap-2 text-muted-foreground text-sm">
+                  <Phone className="h-4 w-4" />
+                  <span>{d.phone}</span>
+                </div>
+                <Button variant="hero" size="lg" className="w-full" asChild>
+                  <a href={d.whatsapp} target="_blank" rel="noopener noreferrer">
                     <MessageCircle className="mr-2 h-4 w-4" /> WhatsApp
                   </a>
                 </Button>
