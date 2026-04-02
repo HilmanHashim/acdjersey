@@ -88,7 +88,7 @@ const CategoryCard = ({
       <div className="relative">
         <div
           ref={scrollRef}
-          className="flex gap-2 overflow-x-auto snap-x snap-mandatory p-2 scrollbar-hide"
+          className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           onScroll={() => {
             const el = scrollRef.current;
