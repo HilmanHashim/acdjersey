@@ -56,8 +56,8 @@ const agents = [
     whatsapp: "https://wa.me/60129248639",
     role: "Sales Executive",
     bio: "Passionate about connecting clients with the perfect apparel solutions, ensuring satisfaction from enquiry to delivery.",
-    image: "",
-    imageClass: "",
+    image: didoImg,
+    imageClass: "object-[center_30%]",
   },
   {
     name: "HILMAN ACD",
