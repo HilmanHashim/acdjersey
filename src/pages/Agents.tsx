@@ -25,7 +25,7 @@ const agents = [
     phone: "011-6844 8896",
     whatsapp: "https://wa.me/601168448896",
     role: "Sales Executive",
-    bio: "Specializes in corporate bulk orders and custom team jerseys. Always ready to help bring your design ideas to life.",
+    bio: "Want custom jerseys but don’t want the headache? Just send your idea, I’ll handle the rest 🤝",
     image: aliffImg,
   },
   {
@@ -56,8 +56,8 @@ const agents = [
     name: "HILMAN ACD",
     phone: "011-5929 4190",
     whatsapp: "https://wa.me/601159294190",
-    role: "Sales Executive/ Web and Data Engineer",
-    bio: "Dedicated to understanding client needs and delivering tailored apparel solutions with exceptional service.",
+    role: "Sales Executive / Web and Data Engineer",
+    bio: "Ready to help you find the perfect apparel for your team, event, or brand 👕✨ Fast response, easy to deal with, and always here to make the process smooth from start to finish 🙌",
     image: hilmanImg,
   },
 ];
@@ -102,19 +102,29 @@ const Agents = () => (
 
     <section className="py-16">
       <div className="container">
-        <h2 className="text-3xl md:text-4xl font-display text-gradient mb-10 text-center animate-slide-up" style={{ animationDelay: "0.15s" }}>Our Sales Executive</h2>
+        <h2
+          className="text-3xl md:text-4xl font-display text-gradient mb-10 text-center animate-slide-up"
+          style={{ animationDelay: "0.15s" }}
+        >
+          Our Sales Executive
+        </h2>
         <div className="flex flex-wrap justify-center gap-8 max-w-5xl mx-auto">
-
           {agents.map((agent, i) => (
-            <Card key={agent.name} className="bg-card border-border hover:border-primary/50 transition-colors animate-slide-up hover-scale w-full sm:w-[calc(50%-16px)] lg:w-[calc(33.333%-22px)]" style={{ animationDelay: `${0.3 + i * 0.15}s` }}>
+            <Card
+              key={agent.name}
+              className="bg-card border-border hover:border-primary/50 transition-colors animate-slide-up hover-scale w-full sm:w-[calc(50%-16px)] lg:w-[calc(33.333%-22px)]"
+              style={{ animationDelay: `${0.3 + i * 0.15}s` }}
+            >
               <CardContent className="p-6 flex flex-col items-center text-center gap-5">
                 <div className="w-32 h-32 rounded-full bg-secondary flex items-center justify-center overflow-hidden">
                   {agent.image ? (
-                    <img src={agent.image} alt={agent.name} className={`w-full h-full object-cover ${agent.name === "ALIFF ACD" ? "object-top" : agent.name === "JEED ACD" ? "object-[center_30%]" : agent.name === "HILMAN ACD" ? "scale-[1.8] object-[center_25%]" : ""}`} />
+                    <img
+                      src={agent.image}
+                      alt={agent.name}
+                      className={`w-full h-full object-cover ${agent.name === "ALIFF ACD" ? "object-top" : agent.name === "JEED ACD" ? "object-[center_30%]" : agent.name === "HILMAN ACD" ? "scale-[1.8] object-[center_25%]" : ""}`}
+                    />
                   ) : (
-                    <span className="text-4xl font-display text-foreground">
-                      {agent.name.charAt(0)}
-                    </span>
+                    <span className="text-4xl font-display text-foreground">{agent.name.charAt(0)}</span>
                   )}
                 </div>
                 <div className="space-y-1">
@@ -140,18 +150,25 @@ const Agents = () => (
 
     <section className="py-16 border-t border-border">
       <div className="container">
-        <h2 className="text-3xl md:text-4xl font-display text-gradient mb-10 text-center animate-slide-up" style={{ animationDelay: "0.75s" }}>Our Designers</h2>
+        <h2
+          className="text-3xl md:text-4xl font-display text-gradient mb-10 text-center animate-slide-up"
+          style={{ animationDelay: "0.75s" }}
+        >
+          Our Designers
+        </h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {designers.map((d) => (
-            <Card key={d.name} className="bg-card border-border hover:border-primary/50 transition-colors animate-slide-up hover-scale" style={{ animationDelay: "0.9s" }}>
+            <Card
+              key={d.name}
+              className="bg-card border-border hover:border-primary/50 transition-colors animate-slide-up hover-scale"
+              style={{ animationDelay: "0.9s" }}
+            >
               <CardContent className="p-6 flex flex-col items-center text-center gap-5">
                 <div className="w-32 h-32 rounded-full bg-secondary flex items-center justify-center overflow-hidden">
                   {d.image ? (
                     <img src={d.image} alt={d.name} className="w-full h-full object-cover" />
                   ) : (
-                    <span className="text-4xl font-display text-foreground">
-                      {d.name.charAt(0)}
-                    </span>
+                    <span className="text-4xl font-display text-foreground">{d.name.charAt(0)}</span>
                   )}
                 </div>
                 <div className="space-y-1">
