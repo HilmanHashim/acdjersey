@@ -66,7 +66,7 @@ const agents = [
     role: "Sales Executive / Web and Data Engineer",
     bio: "Ready to help you find the perfect apparel for your team, event, or brand 👕✨ Always here to make the process smooth from start to finish 🙌",
     image: hilmanImg,
-    imageClass: "scale-[3] object-[center_120%]", // zoom + move up
+    imageClass: "scale-[2.8] object-[center_110%]", // zoom + move up
   },
 ];
 
