@@ -1,12 +1,9 @@
 import { Phone, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import aliffImg from "@/assets/aliff-acd-new.png";
+import aliffImg from "@/assets/aliff-acd.jfif";
 import faizImg from "@/assets/faiz-acd.jfif";
 import imanImg from "@/assets/iman-acd.jfif";
 import umarImg from "@/assets/umar-acd.jfif";
-import jeedImg from "@/assets/jeed-acd.jfif";
-import adamImg from "@/assets/adam-acd.png";
-import hilmanImg from "@/assets/hilman-acd.png";
 import { Card, CardContent } from "@/components/ui/card";
 import Navbar from "@/components/Navbar";
 import teamBg from "@/assets/team-bg.jpeg";
@@ -42,7 +39,7 @@ const agents = [
     whatsapp: "https://wa.me/601124362516",
     role: "Sales Executive",
     bio: "Committed to providing a seamless ordering experience with prompt responses and personalized service for every client.",
-    image: jeedImg,
+    image: "",
   },
   {
     name: "DIDO ACD",
@@ -58,7 +55,7 @@ const agents = [
     whatsapp: "https://wa.me/601159294190",
     role: "Sales Executive/ Web and Data Engineer",
     bio: "Dedicated to understanding client needs and delivering tailored apparel solutions with exceptional service.",
-    image: hilmanImg,
+    image: "",
   },
 ];
 const designers = [
@@ -80,7 +77,7 @@ const designers = [
     name: "ADAM ACD",
     role: "Designer",
     bio: "Specializes in modern, dynamic jersey layouts that combine functionality with cutting-edge visual appeal.",
-    image: adamImg,
+    image: "",
   },
 ];
 
@@ -102,19 +99,30 @@ const Agents = () => (
 
     <section className="py-16">
       <div className="container">
-        <h2 className="text-3xl md:text-4xl font-display text-gradient mb-10 text-center animate-slide-up" style={{ animationDelay: "0.15s" }}>Our Sales Executive</h2>
+        <h2
+          className="text-3xl md:text-4xl font-display text-gradient mb-10 text-center animate-slide-up"
+          style={{ animationDelay: "0.15s" }}
+        >
+          Our Sales Executive
+        </h2>
         <div className="flex flex-wrap justify-center gap-8 max-w-5xl mx-auto">
-
           {agents.map((agent, i) => (
-            <Card key={agent.name} className="bg-card border-border hover:border-primary/50 transition-colors animate-slide-up hover-scale w-full sm:w-[calc(50%-16px)] lg:w-[calc(33.333%-22px)]" style={{ animationDelay: `${0.3 + i * 0.15}s` }}>
+            <Card
+              key={agent.name}
+              className="bg-card border-border hover:border-primary/50 transition-colors animate-slide-up hover-scale w-full sm:w-[calc(50%-16px)] lg:w-[calc(33.333%-22px)]"
+              style={{ animationDelay: `${0.3 + i * 0.15}s` }}
+            >
               <CardContent className="p-6 flex flex-col items-center text-center gap-5">
                 <div className="w-32 h-32 rounded-full bg-secondary flex items-center justify-center overflow-hidden">
                   {agent.image ? (
-                    <img src={agent.image} alt={agent.name} className={`w-full h-full object-cover ${agent.name === "ALIFF ACD" ? "object-top" : agent.name === "JEED ACD" ? "object-[center_30%]" : agent.name === "HILMAN ACD" ? "scale-[1.8] object-[center_25%]" : ""}`} />
+                    <img
+                      src={agent.image}
+                      alt={agent.name}
+                      className="w-full h-full object-cover"
+                      style={{ objectPosition: "center 20%" }}
+                    />
                   ) : (
-                    <span className="text-4xl font-display text-foreground">
-                      {agent.name.charAt(0)}
-                    </span>
+                    <span className="text-4xl font-display text-foreground">{agent.name.charAt(0)}</span>
                   )}
                 </div>
                 <div className="space-y-1">
@@ -140,18 +148,25 @@ const Agents = () => (
 
     <section className="py-16 border-t border-border">
       <div className="container">
-        <h2 className="text-3xl md:text-4xl font-display text-gradient mb-10 text-center animate-slide-up" style={{ animationDelay: "0.75s" }}>Our Designers</h2>
+        <h2
+          className="text-3xl md:text-4xl font-display text-gradient mb-10 text-center animate-slide-up"
+          style={{ animationDelay: "0.75s" }}
+        >
+          Our Designers
+        </h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {designers.map((d) => (
-            <Card key={d.name} className="bg-card border-border hover:border-primary/50 transition-colors animate-slide-up hover-scale" style={{ animationDelay: "0.9s" }}>
+            <Card
+              key={d.name}
+              className="bg-card border-border hover:border-primary/50 transition-colors animate-slide-up hover-scale"
+              style={{ animationDelay: "0.9s" }}
+            >
               <CardContent className="p-6 flex flex-col items-center text-center gap-5">
                 <div className="w-32 h-32 rounded-full bg-secondary flex items-center justify-center overflow-hidden">
                   {d.image ? (
                     <img src={d.image} alt={d.name} className="w-full h-full object-cover" />
                   ) : (
-                    <span className="text-4xl font-display text-foreground">
-                      {d.name.charAt(0)}
-                    </span>
+                    <span className="text-4xl font-display text-foreground">{d.name.charAt(0)}</span>
                   )}
                 </div>
                 <div className="space-y-1">
