@@ -23,6 +23,7 @@ const App = () => (
       <BrowserRouter>
         <ScrollToTop />
         <ScrollToTopButton />
+        <FacebookPixel />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/crm" element={<CRM />} />
