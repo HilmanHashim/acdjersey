@@ -57,7 +57,7 @@ const agents = [
     phone: "011-5929 4190",
     whatsapp: "https://wa.me/601159294190",
     role: "Sales Executive / Web and Data Engineer",
-    bio: "Ready to help you find the perfect apparel for your team, event, or brand 👕✨ Fast response, easy to deal with, and always here to make the process smooth from start to finish 🙌",
+    bio: "Ready to help you find the perfect apparel for your team, event, or brand 👕✨ Always here to make the process smooth from start to finish 🙌",
     image: hilmanImg,
   },
 ];
