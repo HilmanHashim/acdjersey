@@ -7,6 +7,8 @@ import umarImg from "@/assets/umar-acd.jfif";
 import jeedImg from "@/assets/jeed-acd.jfif";
 import adamImg from "@/assets/adam-acd.png";
 import hilmanImg from "@/assets/hilman-acd.png";
+import harithImg from "@/assets/harith-acd.jpeg";
+import didoImg from "@/assets/dido-acd.png";
 import { Card, CardContent } from "@/components/ui/card";
 import Navbar from "@/components/Navbar";
 import teamBg from "@/assets/team-bg.jpeg";
