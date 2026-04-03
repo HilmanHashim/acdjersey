@@ -30,7 +30,7 @@ const agents = [
     role: "Sales Executive",
     bio: "Want custom jerseys but don’t want the headache? Just send your idea, I’ll handle the rest 🤝",
     image: aliffImg,
-    imageClass: "object-top",
+    imageClass: "object-[center_30%]",
   },
   {
     name: "MUNIR ACD",
