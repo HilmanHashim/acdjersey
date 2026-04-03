@@ -58,7 +58,7 @@ const agents = [
     whatsapp: "https://wa.me/601159294190",
     role: "Sales Executive/ Web and Data Engineer",
     bio: "Dedicated to understanding client needs and delivering tailored apparel solutions with exceptional service.",
-    image: "",
+    image: hilmanImg,
   },
 ];
 const designers = [
