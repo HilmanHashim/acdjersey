@@ -57,7 +57,7 @@ const agents = [
     role: "Sales Executive",
     bio: "Passionate about connecting clients with the perfect apparel solutions, ensuring satisfaction from enquiry to delivery.",
     image: didoImg,
-    imageClass: "object-[center_30%]",
+    imageClass: "scale-[2.4] object-[center_90%]", // zoom + move up
   },
   {
     name: "HILMAN ACD",
@@ -92,7 +92,7 @@ const designers = [
     role: "Designer",
     bio: "Specializes in modern, dynamic jersey layouts that combine functionality with cutting-edge visual appeal.",
     image: adamImg,
-    imageClass: "object-[center_20%]",
+    imageClass: "object-[center_40%]",
   },
 ];
 
