@@ -76,7 +76,7 @@ const designers = [
     role: "Creative Director",
     bio: "Graphic Designer with 8+ years of experience, specializing in jersey, apparel, and print design. Known for delivering clean, elevated visuals with a strong attention to detail and premium finish.",
     image: faizImg,
-    imageClass: "object-[center_20%]",
+    imageClass: "object-[center_40%]",
   },
   {
     name: "HARITH ACD",
