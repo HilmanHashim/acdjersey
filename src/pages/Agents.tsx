@@ -109,7 +109,7 @@ const Agents = () => (
               <CardContent className="p-6 flex flex-col items-center text-center gap-5">
                 <div className="w-32 h-32 rounded-full bg-secondary flex items-center justify-center overflow-hidden">
                   {agent.image ? (
-                    <img src={agent.image} alt={agent.name} className="w-full h-full object-cover" />
+                    <img src={agent.image} alt={agent.name} className={`w-full h-full object-cover ${agent.name === "ALIFF ACD" || agent.name === "JEED ACD" ? "object-top" : ""}`} />
                   ) : (
                     <span className="text-4xl font-display text-foreground">
                       {agent.name.charAt(0)}
