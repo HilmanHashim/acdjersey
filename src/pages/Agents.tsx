@@ -41,7 +41,7 @@ const agents = [
     whatsapp: "https://wa.me/601124362516",
     role: "Sales Executive",
     bio: "Committed to providing a seamless ordering experience with prompt responses and personalized service for every client.",
-    image: "",
+    image: jeedImg,
   },
   {
     name: "DIDO ACD",
