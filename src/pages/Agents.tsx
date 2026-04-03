@@ -7,6 +7,8 @@ import umarImg from "@/assets/umar-acd.jfif";
 import jeedImg from "@/assets/jeed-acd.jfif";
 import adamImg from "@/assets/adam-acd.png";
 import hilmanImg from "@/assets/hilman-acd.png";
+import harithImg from "@/assets/harith-acd.jpeg";
+import didoImg from "@/assets/dido-acd.png";
 import { Card, CardContent } from "@/components/ui/card";
 import Navbar from "@/components/Navbar";
 import teamBg from "@/assets/team-bg.jpeg";
@@ -28,7 +30,7 @@ const agents = [
     role: "Sales Executive",
     bio: "Want custom jerseys but don’t want the headache? Just send your idea, I’ll handle the rest 🤝",
     image: aliffImg,
-    imageClass: "object-top",
+    imageClass: "object-[center_30%]",
   },
   {
     name: "MUNIR ACD",
@@ -54,8 +56,8 @@ const agents = [
     whatsapp: "https://wa.me/60129248639",
     role: "Sales Executive",
     bio: "Passionate about connecting clients with the perfect apparel solutions, ensuring satisfaction from enquiry to delivery.",
-    image: "",
-    imageClass: "",
+    image: didoImg,
+    imageClass: "object-[center_30%]",
   },
   {
     name: "HILMAN ACD",
@@ -82,8 +84,8 @@ const designers = [
     name: "HARITH ACD",
     role: "Designer",
     bio: "Brings bold, creative concepts to life with an eye for detail and a passion for standout sportswear design.",
-    image: "",
-    imageClass: "",
+    image: harithImg,
+    imageClass: "object-[center_25%]",
   },
   {
     name: "ADAM ACD",
