@@ -79,7 +79,7 @@ const designers = [
     name: "ADAM ACD",
     role: "Designer",
     bio: "Specializes in modern, dynamic jersey layouts that combine functionality with cutting-edge visual appeal.",
-    image: "",
+    image: adamImg,
   },
 ];
 
