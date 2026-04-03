@@ -6,6 +6,7 @@ import imanImg from "@/assets/iman-acd.jfif";
 import umarImg from "@/assets/umar-acd.jfif";
 import jeedImg from "@/assets/jeed-acd.jfif";
 import adamImg from "@/assets/adam-acd.png";
+import hilmanImg from "@/assets/hilman-acd.png";
 import { Card, CardContent } from "@/components/ui/card";
 import Navbar from "@/components/Navbar";
 import teamBg from "@/assets/team-bg.jpeg";
@@ -57,7 +58,7 @@ const agents = [
     whatsapp: "https://wa.me/601159294190",
     role: "Sales Executive/ Web and Data Engineer",
     bio: "Dedicated to understanding client needs and delivering tailored apparel solutions with exceptional service.",
-    image: "",
+    image: hilmanImg,
   },
 ];
 const designers = [
@@ -109,7 +110,7 @@ const Agents = () => (
               <CardContent className="p-6 flex flex-col items-center text-center gap-5">
                 <div className="w-32 h-32 rounded-full bg-secondary flex items-center justify-center overflow-hidden">
                   {agent.image ? (
-                    <img src={agent.image} alt={agent.name} className={`w-full h-full object-cover ${agent.name === "ALIFF ACD" || agent.name === "JEED ACD" ? "object-top" : ""}`} />
+                    <img src={agent.image} alt={agent.name} className={`w-full h-full object-cover ${agent.name === "ALIFF ACD" ? "object-top" : agent.name === "JEED ACD" ? "object-[center_20%]" : ""}`} />
                   ) : (
                     <span className="text-4xl font-display text-foreground">
                       {agent.name.charAt(0)}
