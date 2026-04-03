@@ -1,9 +1,11 @@
 import { Phone, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import aliffImg from "@/assets/aliff-acd.jfif";
+import aliffImg from "@/assets/aliff-acd-new.png";
 import faizImg from "@/assets/faiz-acd.jfif";
 import imanImg from "@/assets/iman-acd.jfif";
 import umarImg from "@/assets/umar-acd.jfif";
+import jeedImg from "@/assets/jeed-acd.jfif";
+import adamImg from "@/assets/adam-acd.png";
 import { Card, CardContent } from "@/components/ui/card";
 import Navbar from "@/components/Navbar";
 import teamBg from "@/assets/team-bg.jpeg";
