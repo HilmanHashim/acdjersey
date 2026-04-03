@@ -84,8 +84,8 @@ const designers = [
     name: "HARITH ACD",
     role: "Designer",
     bio: "Brings bold, creative concepts to life with an eye for detail and a passion for standout sportswear design.",
-    image: "",
-    imageClass: "",
+    image: harithImg,
+    imageClass: "object-[center_25%]",
   },
   {
     name: "ADAM ACD",
