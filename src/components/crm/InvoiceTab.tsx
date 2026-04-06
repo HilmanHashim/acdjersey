@@ -150,7 +150,7 @@ const InvoiceTab = () => {
     // Total summary
     doc.setFont("helvetica", "bold");
     doc.setFontSize(10);
-    const summaryX = pw / 2 - 30;
+    const summaryX = pw / 2 - 15;
     doc.text("TOTAL SHIRT", summaryX - 15, y);
     doc.text("ORDER", summaryX - 8, y + 5);
 
