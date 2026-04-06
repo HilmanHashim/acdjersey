@@ -342,6 +342,27 @@ const InvoiceTab = () => {
           </CardContent>
         </Card>
 
+        {/* Customer Details */}
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm">Customer Details</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div>
+              <label className="text-xs text-muted-foreground">Customer Name</label>
+              <Input placeholder="e.g. John Doe" value={customerName} onChange={(e) => setCustomerName(e.target.value)} />
+            </div>
+            <div>
+              <label className="text-xs text-muted-foreground">Contact Number</label>
+              <Input placeholder="e.g. +60 12-345 6789" value={customerPhone} onChange={(e) => setCustomerPhone(e.target.value)} />
+            </div>
+            <div>
+              <label className="text-xs text-muted-foreground">Address</label>
+              <Textarea placeholder="Customer address" value={customerAddress} onChange={(e) => setCustomerAddress(e.target.value)} className="text-xs" rows={2} />
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Terms */}
         <Card>
           <CardHeader className="pb-3">
