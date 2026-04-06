@@ -8,7 +8,7 @@ import { Plus, Trash2, FileText, Download } from "lucide-react";
 import { toast } from "sonner";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import acdLogo from "@/assets/logo-white.png";
+import acdLogo from "@/assets/logo-black.png";
 
 interface LineItem {
   description: string;
