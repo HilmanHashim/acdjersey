@@ -137,7 +137,7 @@ const InvoiceTab = () => {
       headStyles: { fillColor: [220, 220, 220], textColor: [0, 0, 0], fontStyle: "bold", lineColor: [150, 150, 150], lineWidth: 0.3 },
       bodyStyles: { lineColor: [150, 150, 150], lineWidth: 0.3 },
       alternateRowStyles: { fillColor: [245, 245, 245] },
-      margin: { left: pw / 2 - 75, right: margin },
+      margin: { left: 43, right: pw - 43 - 150 },
       columnStyles: {
         0: { cellWidth: 55 },
         1: { cellWidth: 30 },
