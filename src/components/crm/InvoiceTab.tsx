@@ -88,7 +88,7 @@ const InvoiceTab = () => {
         img.onerror = reject;
         img.src = acdLogo;
       });
-      doc.addImage(img, "PNG", pw - margin - 35, y - 3, 35, 20);
+      doc.addImage(img, "PNG", pw - margin - 28, y - 2, 28, 14);
     } catch {
       // Logo failed, continue without
     }
