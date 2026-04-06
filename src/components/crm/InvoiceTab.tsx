@@ -150,7 +150,7 @@ const InvoiceTab = () => {
       },
       bodyStyles: { lineColor: [180, 180, 180], lineWidth: 0.3 },
       alternateRowStyles: { fillColor: [240, 240, 240] },
-      margin: { left: margin + 25, right: margin },
+      margin: { left: margin + 33, right: margin },
       columnStyles: {
         0: { cellWidth: 55 },
         1: { cellWidth: 30 },
