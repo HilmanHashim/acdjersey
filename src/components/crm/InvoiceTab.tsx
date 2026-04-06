@@ -85,7 +85,7 @@ const InvoiceTab = () => {
         img.onerror = reject;
         img.src = acdLogo;
       });
-      doc.addImage(img, "PNG", pw - margin - 28, y - 3, 28, 28);
+      doc.addImage(img, "PNG", pw - margin - 35, y - 3, 35, 20);
     } catch {
       // Logo failed, continue without
     }
@@ -203,7 +203,7 @@ const InvoiceTab = () => {
     doc.text(depositNote, margin + 2, y);
 
     // Manager + payment section (right side)
-    const rightX = pw / 2 + 10;
+    const rightX = margin + 33;
     let ry = y - 20;
     doc.setFont("kollektif", "bold");
     doc.setFontSize(11);
