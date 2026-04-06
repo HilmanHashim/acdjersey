@@ -121,7 +121,8 @@ const InvoiceTab = () => {
     doc.text(`TITLE :  ${title.toUpperCase()}`, margin, y);
 
     // Customer details on the right side
-    const custX = pw / 2 + 10;
+    const tableRightEdge = pw - margin;
+    const custX = tableRightEdge - 55;
     let custY = y;
     if (customerName || customerPhone || customerAddress) {
       doc.setFont("kollektif", "bold");
@@ -214,7 +215,7 @@ const InvoiceTab = () => {
     doc.setTextColor(0);
 
     // Terms
-    y += 25;
+    y += 40;
     doc.setFont("kollektif", "bold");
     doc.setFontSize(10);
     doc.text(`VALIDITY : ${validity} days`, margin, y);
