@@ -210,7 +210,7 @@ const JobsheetTab = () => {
       theme: "grid",
       styles: { fontSize: 9, cellPadding: 2.5, halign: "center", valign: "middle" },
       headStyles: {
-        textColor: [255, 255, 255],
+        textColor: [0, 0, 0],
         fontStyle: "bold",
         lineColor: [0, 0, 0],
         lineWidth: 0.3,
