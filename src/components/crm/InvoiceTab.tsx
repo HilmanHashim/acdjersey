@@ -342,7 +342,6 @@ const InvoiceTab = () => {
           {items.map((item, i) => (
             <div key={i} className="grid grid-cols-[1fr_100px_80px_100px_36px] gap-2 items-center">
               <Input
-                placeholder="Item description"
                 placeholder="VNECK CROSS SHORTSLEEVE + NAMESET"
                 value={item.description}
                 onChange={(e) => updateItem(i, "description", e.target.value)}
