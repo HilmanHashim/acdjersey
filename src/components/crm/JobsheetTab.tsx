@@ -250,7 +250,7 @@ const JobsheetTab = () => {
           <CardContent className="space-y-3">
             <div>
               <label className="text-xs text-muted-foreground">Client Name</label>
-              <Input placeholder="e.g. DIDO ACD" value={clientName} onChange={(e) => setClientName(e.target.value)} />
+              <Input placeholder="e.g. ORCA" value={clientName} onChange={(e) => setClientName(e.target.value)} />
             </div>
             <div>
               <label className="text-xs text-muted-foreground">Job Name</label>
