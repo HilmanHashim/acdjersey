@@ -221,8 +221,16 @@ const InvoiceTab = () => {
     doc.setTextColor(0);
     doc.setFontSize(8);
     doc.setFont("helvetica", "normal");
-    doc.text(phone, margin + 5, y + 16);
-    doc.text(emailAddr, margin + 5, y + 21);
+    // Phone icon (small circle with receiver shape)
+    doc.setFontSize(10);
+    doc.text("\u260E", margin + 2, y + 16);
+    doc.setFontSize(8);
+    doc.text(phone, margin + 8, y + 16);
+    // Email icon (envelope shape)
+    doc.setFontSize(10);
+    doc.text("\u2709", margin + 2, y + 21);
+    doc.setFontSize(8);
+    doc.text(emailAddr, margin + 8, y + 21);
 
     doc.save(`Invoice_${invoiceNumber}.pdf`);
     toast.success("Invoice PDF generated!");
