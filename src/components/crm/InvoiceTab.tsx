@@ -119,7 +119,34 @@ const InvoiceTab = () => {
     doc.setFont("kollektif", "bold");
     doc.setFontSize(11);
     doc.text(`TITLE :  ${title.toUpperCase()}`, margin, y);
+
+    // Customer details on the right side
+    const custX = pw / 2 + 10;
+    let custY = y;
+    if (customerName || customerPhone || customerAddress) {
+      doc.setFont("kollektif", "bold");
+      doc.setFontSize(10);
+      doc.text("CUSTOMER DETAILS:", custX, custY);
+      custY += 6;
+      doc.setFont("kollektif", "normal");
+      if (customerName) {
+        doc.text(customerName.toUpperCase(), custX, custY);
+        custY += 5;
+      }
+      if (customerPhone) {
+        doc.text(customerPhone, custX, custY);
+        custY += 5;
+      }
+      if (customerAddress) {
+        const splitAddr = doc.splitTextToSize(customerAddress.toUpperCase(), pw / 2 - 25);
+        doc.text(splitAddr, custX, custY);
+        custY += splitAddr.length * 5;
+      }
+    }
+
     y += 6;
+    doc.setFont("kollektif", "bold");
+    doc.setFontSize(11);
     if (material) {
       doc.text(`MATERIAL: ${material.toUpperCase()}`, margin, y);
       y += 6;
@@ -128,6 +155,8 @@ const InvoiceTab = () => {
       doc.text(`SA : ${agent.toUpperCase()}`, margin, y);
       y += 6;
     }
+    // Ensure y is at least past customer details block
+    y = Math.max(y, custY);
 
     // Items table
     y += 4;
