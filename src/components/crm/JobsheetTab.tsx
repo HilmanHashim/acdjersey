@@ -78,6 +78,8 @@ const JobsheetTab = () => {
     const margin = 15;
     let y = 12;
 
+    const logoW = 22;
+    const logoH = 11;
     try {
       const img = new Image();
       img.crossOrigin = "anonymous";
@@ -86,15 +88,15 @@ const JobsheetTab = () => {
         img.onerror = reject;
         img.src = acdLogo;
       });
-      doc.addImage(img, "PNG", margin, y - 2, 28, 14);
+      doc.addImage(img, "PNG", margin, y - 1, logoW, logoH);
     } catch {}
 
-    doc.setFillColor(220, 30, 30);
-    doc.rect(margin + 32, y - 2, pw - margin * 2 - 32, 14, "F");
+    doc.setFillColor(0, 0, 0);
+    doc.rect(margin + logoW + 4, y - 2, pw - margin * 2 - logoW - 4, 14, "F");
     doc.setFont("helvetica", "bold");
     doc.setFontSize(18);
     doc.setTextColor(255, 255, 255);
-    doc.text("SUBLIMATION JOBSHEET", margin + 38, y + 8);
+    doc.text("SUBLIMATION JOBSHEET", margin + logoW + 10, y + 8);
     doc.setTextColor(0, 0, 0);
 
     y += 22;
