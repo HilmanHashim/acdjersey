@@ -103,7 +103,6 @@
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
-  }
 
   input[type="date"]::-webkit-calendar-picker-indicator {
     filter: invert(1);
