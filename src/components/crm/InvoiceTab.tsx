@@ -235,21 +235,18 @@ const InvoiceTab = () => {
     doc.setFontSize(8);
     doc.setFont("kollektif", "normal");
 
-    // Phone icon (simple circle with handset shape)
-    doc.setDrawColor(0);
-    doc.setFillColor(0);
-    doc.circle(margin + 7, y + 14.5, 2, "S");
-    doc.setFontSize(6);
-    doc.text("📞", margin + 5.2, y + 15.8);
+    // Phone icon - small phone rectangle
+    doc.setDrawColor(0, 0, 0);
+    doc.setLineWidth(0.4);
+    doc.roundedRect(margin + 5.5, y + 12.5, 2.5, 4, 0.5, 0.5, "S");
     doc.setFontSize(8);
-    doc.text(phone, margin + 12, y + 16);
+    doc.text(phone, margin + 10, y + 16);
 
-    // Email icon
-    doc.circle(margin + 7, y + 19.5, 2, "S");
-    doc.setFontSize(6);
-    doc.text("✉", margin + 5.5, y + 20.8);
-    doc.setFontSize(8);
-    doc.text(emailAddr, margin + 12, y + 21);
+    // Email icon - small envelope
+    doc.rect(margin + 5.5, y + 18, 3, 2, "S");
+    doc.line(margin + 5.5, y + 18, margin + 7, y + 19);
+    doc.line(margin + 8.5, y + 18, margin + 7, y + 19);
+    doc.text(emailAddr, margin + 10, y + 20.5);
 
     doc.save(`Invoice_${invoiceNumber}.pdf`);
     toast.success("Invoice PDF generated!");
