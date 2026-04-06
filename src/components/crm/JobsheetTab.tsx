@@ -305,21 +305,6 @@ const JobsheetTab = () => {
               <Input placeholder="e.g. DIAMOND 160GSM" value={material} onChange={(e) => setMaterial(e.target.value)} />
             </div>
             <div>
-              <label className="text-xs text-muted-foreground">Sales Agent (SA)</label>
-              <Select value={agent} onValueChange={setAgent}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select agent" />
-                </SelectTrigger>
-                <SelectContent>
-                  {agents.map((a) => (
-                    <SelectItem key={a} value={a}>
-                      {a}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
               <label className="text-xs text-muted-foreground">Mockup Image</label>
               <div className="flex items-center gap-2">
                 <label className="cursor-pointer flex items-center gap-2 px-3 py-2 border rounded-md text-sm text-muted-foreground hover:bg-accent transition-colors">
