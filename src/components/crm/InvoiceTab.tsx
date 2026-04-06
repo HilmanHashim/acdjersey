@@ -215,7 +215,7 @@ const InvoiceTab = () => {
     y += 10;
     doc.setFont("helvetica", "bold");
     doc.setFontSize(20);
-    doc.setTextColor(0, 180, 180);
+    doc.setTextColor(0, 0, 0);
     doc.text("THANK YOU!", margin, y + 8);
     doc.setTextColor(0);
     doc.setFontSize(8);
