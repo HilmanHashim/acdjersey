@@ -24,12 +24,17 @@ const agents = [
 const sizes = ["24", "34", "XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL", "6XL"];
 
 const categories = [
-  "ADULTS: SHORTSLEEVE",
-  "ADULTS: LONGSLEEVE",
-  "KIDS: SHORTSLEEVE",
-  "KIDS: LONGSLEEVE",
-  "LADIES: SHORTSLEEVE",
-  "LADIES: LONGSLEEVE",
+  "ADULTS: SHORT SLEEVE",
+  "ADULTS: LONG SLEEVE",
+  "ADULTS: SINGLET",
+  "ADULTS: MUSLIMAH",
+  "KIDS: SHORT SLEEVE",
+  "KIDS: LONG SLEEVE",
+  "KIDS: SINGLET",
+  "LADIES: SHORT SLEEVE",
+  "LADIES: LONG SLEEVE",
+  "LADIES: SINGLET",
+  "LADIES: MUSLIMAH",
 ];
 
 interface SizeRow {
@@ -43,7 +48,7 @@ const JobsheetTab = () => {
   const [jobName, setJobName] = useState("");
   const [dateIn, setDateIn] = useState(new Date().toISOString().split("T")[0]);
   const [dateOut, setDateOut] = useState("");
-  const [category, setCategory] = useState("ADULTS: SHORTSLEEVE");
+  const [category, setCategory] = useState("ADULTS: SHORT SLEEVE");
   const [type, setType] = useState("");
   const [material, setMaterial] = useState("");
   const [agent, setAgent] = useState("");
@@ -195,14 +200,6 @@ const JobsheetTab = () => {
     doc.text(material.toUpperCase() || "-", detailX + 24, dy);
     doc.setTextColor(0, 0, 0);
 
-    if (agent) {
-      dy += 6;
-      doc.setFont("helvetica", "bold");
-      doc.text("SA :", detailX, dy);
-      doc.setTextColor(30, 100, 200);
-      doc.text(agent.toUpperCase(), detailX + 12, dy);
-      doc.setTextColor(0, 0, 0);
-    }
 
     const tableBody = sizeRows.map((r) => [r.size, r.qty || "", r.nameset]);
 
