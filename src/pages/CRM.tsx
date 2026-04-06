@@ -182,7 +182,7 @@ const CRM = () => {
         </div>
       </header>
       <main className="container py-6 max-w-5xl">
-        <Tabs defaultValue="dashboard">
+        <Tabs defaultValue="dashboard" className="relative">
           <TabsList className="grid w-full grid-cols-7 mb-6">
             <TabsTrigger value="dashboard" className="gap-2"><LayoutDashboard className="h-4 w-4" /><span className="hidden sm:inline">Dashboard</span></TabsTrigger>
             <TabsTrigger value="leads" className="gap-2"><Target className="h-4 w-4" /><span className="hidden sm:inline">Leads</span></TabsTrigger>
@@ -192,13 +192,13 @@ const CRM = () => {
             <TabsTrigger value="reminders" className="gap-2"><Bell className="h-4 w-4" /><span className="hidden sm:inline">Reminders</span></TabsTrigger>
             <TabsTrigger value="users" className="gap-2"><Shield className="h-4 w-4" /><span className="hidden sm:inline">Users</span></TabsTrigger>
           </TabsList>
-          <TabsContent value="dashboard"><DashboardTab /></TabsContent>
-          <TabsContent value="leads"><LeadsTab /></TabsContent>
-          <TabsContent value="orders"><OrdersTab /></TabsContent>
-          <TabsContent value="invoice"><InvoiceTab /></TabsContent>
-          <TabsContent value="jobsheet"><JobsheetTab /></TabsContent>
-          <TabsContent value="reminders"><RemindersTab /></TabsContent>
-          <TabsContent value="users"><UsersTab currentUserId={user.id} /></TabsContent>
+          <TabsContent value="dashboard" forceMount className="data-[state=inactive]:hidden"><DashboardTab /></TabsContent>
+          <TabsContent value="leads" forceMount className="data-[state=inactive]:hidden"><LeadsTab /></TabsContent>
+          <TabsContent value="orders" forceMount className="data-[state=inactive]:hidden"><OrdersTab /></TabsContent>
+          <TabsContent value="invoice" forceMount className="data-[state=inactive]:hidden"><InvoiceTab /></TabsContent>
+          <TabsContent value="jobsheet" forceMount className="data-[state=inactive]:hidden"><JobsheetTab /></TabsContent>
+          <TabsContent value="reminders" forceMount className="data-[state=inactive]:hidden"><RemindersTab /></TabsContent>
+          <TabsContent value="users" forceMount className="data-[state=inactive]:hidden"><UsersTab currentUserId={user.id} /></TabsContent>
         </Tabs>
       </main>
     </div>
