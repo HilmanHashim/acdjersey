@@ -34,6 +34,9 @@ const InvoiceTab = () => {
   const [title, setTitle] = useState("");
   const [material, setMaterial] = useState("");
   const [agent, setAgent] = useState("");
+  const [customerName, setCustomerName] = useState("");
+  const [customerPhone, setCustomerPhone] = useState("");
+  const [customerAddress, setCustomerAddress] = useState("");
   const [items, setItems] = useState<LineItem[]>([{ description: "", price: 0, quantity: 0 }]);
   const [validity, setValidity] = useState("60");
   const [paymentTerm, setPaymentTerm] = useState("14");
@@ -116,7 +119,34 @@ const InvoiceTab = () => {
     doc.setFont("kollektif", "bold");
     doc.setFontSize(11);
     doc.text(`TITLE :  ${title.toUpperCase()}`, margin, y);
+
+    // Customer details on the right side
+    const custX = pw / 2 + 10;
+    let custY = y;
+    if (customerName || customerPhone || customerAddress) {
+      doc.setFont("kollektif", "bold");
+      doc.setFontSize(10);
+      doc.text("CUSTOMER DETAILS:", custX, custY);
+      custY += 6;
+      doc.setFont("kollektif", "normal");
+      if (customerName) {
+        doc.text(customerName.toUpperCase(), custX, custY);
+        custY += 5;
+      }
+      if (customerPhone) {
+        doc.text(customerPhone, custX, custY);
+        custY += 5;
+      }
+      if (customerAddress) {
+        const splitAddr = doc.splitTextToSize(customerAddress.toUpperCase(), pw / 2 - 25);
+        doc.text(splitAddr, custX, custY);
+        custY += splitAddr.length * 5;
+      }
+    }
+
     y += 6;
+    doc.setFont("kollektif", "bold");
+    doc.setFontSize(11);
     if (material) {
       doc.text(`MATERIAL: ${material.toUpperCase()}`, margin, y);
       y += 6;
@@ -125,6 +155,8 @@ const InvoiceTab = () => {
       doc.text(`SA : ${agent.toUpperCase()}`, margin, y);
       y += 6;
     }
+    // Ensure y is at least past customer details block
+    y = Math.max(y, custY);
 
     // Items table
     y += 4;
@@ -306,6 +338,27 @@ const InvoiceTab = () => {
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Customer Details */}
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm">Customer Details</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div>
+              <label className="text-xs text-muted-foreground">Customer Name</label>
+              <Input placeholder="e.g. John Doe" value={customerName} onChange={(e) => setCustomerName(e.target.value)} />
+            </div>
+            <div>
+              <label className="text-xs text-muted-foreground">Contact Number</label>
+              <Input placeholder="e.g. +60 12-345 6789" value={customerPhone} onChange={(e) => setCustomerPhone(e.target.value)} />
+            </div>
+            <div>
+              <label className="text-xs text-muted-foreground">Address</label>
+              <Textarea placeholder="Customer address" value={customerAddress} onChange={(e) => setCustomerAddress(e.target.value)} className="text-xs" rows={2} />
             </div>
           </CardContent>
         </Card>
