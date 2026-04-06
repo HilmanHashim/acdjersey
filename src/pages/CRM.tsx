@@ -4,13 +4,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link, useNavigate } from "react-router-dom";
-import { Package, Bell, ArrowLeft, LogOut, Shield, Target, LayoutDashboard, KeyRound } from "lucide-react";
+import { Package, Bell, ArrowLeft, LogOut, Shield, Target, LayoutDashboard, FileText } from "lucide-react";
 import { toast } from "sonner";
 import OrdersTab from "@/components/crm/OrdersTab";
 import RemindersTab from "@/components/crm/RemindersTab";
 import UsersTab from "@/components/crm/UsersTab";
 import LeadsTab from "@/components/crm/LeadsTab";
 import DashboardTab from "@/components/crm/DashboardTab";
+import InvoiceTab from "@/components/crm/InvoiceTab";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const CRM = () => {
@@ -181,16 +182,18 @@ const CRM = () => {
       </header>
       <main className="container py-6 max-w-5xl">
         <Tabs defaultValue="dashboard">
-          <TabsList className="grid w-full grid-cols-5 mb-6">
+          <TabsList className="grid w-full grid-cols-6 mb-6">
             <TabsTrigger value="dashboard" className="gap-2"><LayoutDashboard className="h-4 w-4" /><span className="hidden sm:inline">Dashboard</span></TabsTrigger>
             <TabsTrigger value="leads" className="gap-2"><Target className="h-4 w-4" /><span className="hidden sm:inline">Leads</span></TabsTrigger>
             <TabsTrigger value="orders" className="gap-2"><Package className="h-4 w-4" /><span className="hidden sm:inline">Orders</span></TabsTrigger>
+            <TabsTrigger value="invoice" className="gap-2"><FileText className="h-4 w-4" /><span className="hidden sm:inline">Invoice</span></TabsTrigger>
             <TabsTrigger value="reminders" className="gap-2"><Bell className="h-4 w-4" /><span className="hidden sm:inline">Reminders</span></TabsTrigger>
             <TabsTrigger value="users" className="gap-2"><Shield className="h-4 w-4" /><span className="hidden sm:inline">Users</span></TabsTrigger>
           </TabsList>
           <TabsContent value="dashboard"><DashboardTab /></TabsContent>
           <TabsContent value="leads"><LeadsTab /></TabsContent>
           <TabsContent value="orders"><OrdersTab /></TabsContent>
+          <TabsContent value="invoice"><InvoiceTab /></TabsContent>
           <TabsContent value="reminders"><RemindersTab /></TabsContent>
           <TabsContent value="users"><UsersTab currentUserId={user.id} /></TabsContent>
         </Tabs>
