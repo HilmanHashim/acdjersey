@@ -203,7 +203,7 @@ const InvoiceTab = () => {
     doc.text(depositNote, margin + 2, y);
 
     // Manager + payment section (right side)
-    const rightX = margin + 33;
+    const rightX = pw - margin - 65;
     let ry = y - 20;
     doc.setFont("kollektif", "bold");
     doc.setFontSize(11);
