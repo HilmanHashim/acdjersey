@@ -8,7 +8,7 @@ import { Plus, Trash2, FileText, Download } from "lucide-react";
 import { toast } from "sonner";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import acdLogo from "@/assets/logo-white.png";
+import acdLogo from "@/assets/logo-black.png";
 
 interface LineItem {
   description: string;
@@ -136,7 +136,7 @@ const InvoiceTab = () => {
       styles: { fontSize: 9, cellPadding: 4, halign: "center", valign: "middle" },
       headStyles: { fillColor: [255, 255, 255], textColor: [0, 0, 0], fontStyle: "bold", lineColor: [0, 0, 0], lineWidth: 0.3 },
       bodyStyles: { lineColor: [0, 0, 0], lineWidth: 0.3 },
-      margin: { left: margin + 10, right: margin + 10 },
+      margin: { left: margin + 20, right: margin },
       columnStyles: {
         0: { cellWidth: 55 },
         1: { cellWidth: 30 },
@@ -150,7 +150,7 @@ const InvoiceTab = () => {
     // Total summary
     doc.setFont("helvetica", "bold");
     doc.setFontSize(10);
-    const summaryX = pw / 2 - 30;
+    const summaryX = pw / 2 - 15;
     doc.text("TOTAL SHIRT", summaryX - 15, y);
     doc.text("ORDER", summaryX - 8, y + 5);
 
@@ -215,7 +215,7 @@ const InvoiceTab = () => {
     y += 10;
     doc.setFont("helvetica", "bold");
     doc.setFontSize(20);
-    doc.setTextColor(0, 180, 180);
+    doc.setTextColor(0, 0, 0);
     doc.text("THANK YOU!", margin, y + 8);
     doc.setTextColor(0);
     doc.setFontSize(8);
