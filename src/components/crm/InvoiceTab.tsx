@@ -85,7 +85,7 @@ const InvoiceTab = () => {
         img.onerror = reject;
         img.src = acdLogo;
       });
-      doc.addImage(img, "PNG", pw - margin - 40, y - 5, 40, 18);
+      doc.addImage(img, "PNG", pw - margin - 28, y - 3, 28, 28);
     } catch {
       // Logo failed, continue without
     }
@@ -142,14 +142,15 @@ const InvoiceTab = () => {
       theme: "grid",
       styles: { fontSize: 9, cellPadding: 4, halign: "center", valign: "middle" },
       headStyles: {
-        fillColor: [255, 255, 255],
-        textColor: [0, 0, 0],
+        fillColor: [60, 60, 60],
+        textColor: [255, 255, 255],
         fontStyle: "bold",
-        lineColor: [0, 0, 0],
+        lineColor: [60, 60, 60],
         lineWidth: 0.3,
       },
-      bodyStyles: { lineColor: [0, 0, 0], lineWidth: 0.3 },
-      margin: { left: margin + 20, right: margin },
+      bodyStyles: { lineColor: [180, 180, 180], lineWidth: 0.3 },
+      alternateRowStyles: { fillColor: [240, 240, 240] },
+      margin: { left: margin + 25, right: margin },
       columnStyles: {
         0: { cellWidth: 55 },
         1: { cellWidth: 30 },
@@ -163,20 +164,20 @@ const InvoiceTab = () => {
     // Total summary
     doc.setFont("kollektif", "bold");
     doc.setFontSize(10);
-    const summaryX = pw / 2 - 15;
-    doc.text("TOTAL SHIRT", summaryX - 15, y);
-    doc.text("ORDER", summaryX - 8, y + 5);
+    const summaryX = pw / 2;
+    doc.text("TOTAL SHIRT", summaryX - 10, y);
+    doc.text("ORDER", summaryX - 3, y + 5);
 
     // Yellow box for PCS
     doc.setFillColor(255, 213, 0);
-    doc.rect(summaryX + 15, y - 5, 30, 12, "F");
+    doc.rect(summaryX + 20, y - 5, 30, 12, "F");
     doc.setTextColor(0);
-    doc.text(`${totalPcs} PCS`, summaryX + 20, y + 3);
+    doc.text(`${totalPcs} PCS`, summaryX + 25, y + 3);
 
     // Cyan box for amount
     doc.setFillColor(0, 220, 220);
-    doc.rect(summaryX + 48, y - 5, 35, 12, "F");
-    doc.text(`RM${totalAmount.toLocaleString()}`, summaryX + 52, y + 3);
+    doc.rect(summaryX + 53, y - 5, 35, 12, "F");
+    doc.text(`RM${totalAmount.toLocaleString()}`, summaryX + 57, y + 3);
 
     doc.setTextColor(0);
 
@@ -233,8 +234,22 @@ const InvoiceTab = () => {
     doc.setTextColor(0);
     doc.setFontSize(8);
     doc.setFont("kollektif", "normal");
-    doc.text(phone, margin + 5, y + 16);
-    doc.text(emailAddr, margin + 5, y + 21);
+
+    // Phone icon (simple circle with handset shape)
+    doc.setDrawColor(0);
+    doc.setFillColor(0);
+    doc.circle(margin + 7, y + 14.5, 2, "S");
+    doc.setFontSize(6);
+    doc.text("📞", margin + 5.2, y + 15.8);
+    doc.setFontSize(8);
+    doc.text(phone, margin + 12, y + 16);
+
+    // Email icon
+    doc.circle(margin + 7, y + 19.5, 2, "S");
+    doc.setFontSize(6);
+    doc.text("✉", margin + 5.5, y + 20.8);
+    doc.setFontSize(8);
+    doc.text(emailAddr, margin + 12, y + 21);
 
     doc.save(`Invoice_${invoiceNumber}.pdf`);
     toast.success("Invoice PDF generated!");
