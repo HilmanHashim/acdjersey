@@ -134,14 +134,15 @@ const InvoiceTab = () => {
       body: tableData,
       theme: "grid",
       styles: { fontSize: 9, cellPadding: 4, halign: "center", valign: "middle" },
-      headStyles: { fillColor: [255, 255, 255], textColor: [0, 0, 0], fontStyle: "bold", lineColor: [0, 0, 0], lineWidth: 0.3 },
-      bodyStyles: { lineColor: [0, 0, 0], lineWidth: 0.3 },
-      margin: { left: margin + 20, right: margin },
+      headStyles: { fillColor: [220, 220, 220], textColor: [0, 0, 0], fontStyle: "bold", lineColor: [150, 150, 150], lineWidth: 0.3 },
+      bodyStyles: { lineColor: [150, 150, 150], lineWidth: 0.3 },
+      alternateRowStyles: { fillColor: [245, 245, 245] },
+      margin: { left: pw / 2 - 75, right: margin },
       columnStyles: {
         0: { cellWidth: 55 },
         1: { cellWidth: 30 },
         2: { cellWidth: 30 },
-        3: { cellWidth: 30 },
+        3: { cellWidth: 35 },
       },
     });
 
@@ -150,20 +151,20 @@ const InvoiceTab = () => {
     // Total summary
     doc.setFont("helvetica", "bold");
     doc.setFontSize(10);
-    const summaryX = pw / 2 - 15;
-    doc.text("TOTAL SHIRT", summaryX - 15, y);
-    doc.text("ORDER", summaryX - 8, y + 5);
+    const summaryX = pw / 2;
+    doc.text("TOTAL SHIRT", summaryX - 10, y);
+    doc.text("ORDER", summaryX - 3, y + 5);
 
     // Yellow box for PCS
     doc.setFillColor(255, 213, 0);
-    doc.rect(summaryX + 15, y - 5, 30, 12, "F");
+    doc.rect(summaryX + 20, y - 5, 30, 12, "F");
     doc.setTextColor(0);
-    doc.text(`${totalPcs} PCS`, summaryX + 20, y + 3);
+    doc.text(`${totalPcs} PCS`, summaryX + 25, y + 3);
 
     // Cyan box for amount
     doc.setFillColor(0, 220, 220);
-    doc.rect(summaryX + 48, y - 5, 35, 12, "F");
-    doc.text(`RM${totalAmount.toLocaleString()}`, summaryX + 52, y + 3);
+    doc.rect(summaryX + 53, y - 5, 35, 12, "F");
+    doc.text(`RM${totalAmount.toLocaleString()}`, summaryX + 57, y + 3);
 
     doc.setTextColor(0);
 
