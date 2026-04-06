@@ -8,7 +8,7 @@ import { Plus, Trash2, FileText, Download } from "lucide-react";
 import { toast } from "sonner";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import acdLogo from "@/assets/logo-black.png";
+import acdLogo from "@/assets/logo-white.png";
 
 interface LineItem {
   description: string;
@@ -17,8 +17,15 @@ interface LineItem {
 }
 
 const agents = [
-  "ALIFF ACD", "DIDO ACD", "HARITH ACD", "UMAR ACD",
-  "FAIZ ACD", "HILMAN ACD", "IMAN ACD", "JEED ACD", "ADAM ACD"
+  "ALIFF ACD",
+  "DIDO ACD",
+  "HARITH ACD",
+  "UMAR ACD",
+  "FAIZ ACD",
+  "HILMAN ACD",
+  "IMAN ACD",
+  "JEED ACD",
+  "ADAM ACD",
 ];
 
 const InvoiceTab = () => {
@@ -32,7 +39,7 @@ const InvoiceTab = () => {
   const [paymentTerm, setPaymentTerm] = useState("14");
   const [deliveryTerm, setDeliveryTerm] = useState("20");
   const [notes, setNotes] = useState(
-    "Prices are subjected to change without prior notice. We hope that our quotation is favourable to you and looking forward to receive your valued orders in due course. Thank and regards."
+    "Prices are subjected to change without prior notice. We hope that our quotation is favourable to you and looking forward to receive your valued orders in due course. Thank and regards.",
   );
   const [depositNote, setDepositNote] = useState("50 % Deposit is required before procceed an order");
   const [managerName, setManagerName] = useState("AHMAD UMAR NAZMI");
@@ -78,19 +85,19 @@ const InvoiceTab = () => {
         img.onerror = reject;
         img.src = acdLogo;
       });
-      doc.addImage(img, "PNG", pw - margin - 30, y - 2, 30, 10);
+      doc.addImage(img, "PNG", pw - margin - 40, y - 5, 40, 18);
     } catch {
       // Logo failed, continue without
     }
 
     // Header
-    doc.setFont("helvetica", "bold");
+    doc.setFont("kollektif", "bold");
     doc.setFontSize(28);
     doc.text("INVOICE", margin, y + 8);
 
     y += 20;
     doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
+    doc.setFont("kollektif", "normal");
     doc.text("Date:", margin, y);
     y += 5;
     doc.text(formatDate(invoiceDate), margin, y);
@@ -106,7 +113,7 @@ const InvoiceTab = () => {
     doc.line(margin, y, margin + 60, y);
 
     y += 8;
-    doc.setFont("helvetica", "bold");
+    doc.setFont("kollektif", "bold");
     doc.setFontSize(11);
     doc.text(`TITLE :  ${title.toUpperCase()}`, margin, y);
     y += 6;
@@ -125,7 +132,7 @@ const InvoiceTab = () => {
       it.description.toUpperCase(),
       `RM ${it.price.toFixed(0)}`,
       `${it.quantity}PCS`,
-      `RM ${(it.price * it.quantity).toLocaleString()}`
+      `RM ${(it.price * it.quantity).toLocaleString()}`,
     ]);
 
     autoTable(doc, {
@@ -134,53 +141,58 @@ const InvoiceTab = () => {
       body: tableData,
       theme: "grid",
       styles: { fontSize: 9, cellPadding: 4, halign: "center", valign: "middle" },
-      headStyles: { fillColor: [220, 220, 220], textColor: [0, 0, 0], fontStyle: "bold", lineColor: [150, 150, 150], lineWidth: 0.3 },
-      bodyStyles: { lineColor: [150, 150, 150], lineWidth: 0.3 },
-      alternateRowStyles: { fillColor: [245, 245, 245] },
-      margin: { left: 43, right: pw - 43 - 150 },
+      headStyles: {
+        fillColor: [255, 255, 255],
+        textColor: [0, 0, 0],
+        fontStyle: "bold",
+        lineColor: [0, 0, 0],
+        lineWidth: 0.3,
+      },
+      bodyStyles: { lineColor: [0, 0, 0], lineWidth: 0.3 },
+      margin: { left: margin + 10, right: margin + 10 },
       columnStyles: {
         0: { cellWidth: 55 },
         1: { cellWidth: 30 },
         2: { cellWidth: 30 },
-        3: { cellWidth: 35 },
+        3: { cellWidth: 30 },
       },
     });
 
     y = (doc as any).lastAutoTable.finalY + 10;
 
     // Total summary
-    doc.setFont("helvetica", "bold");
+    doc.setFont("kollektif", "bold");
     doc.setFontSize(10);
-    const summaryX = pw / 2;
-    doc.text("TOTAL SHIRT", summaryX - 10, y);
-    doc.text("ORDER", summaryX - 3, y + 5);
+    const summaryX = pw / 2 - 30;
+    doc.text("TOTAL SHIRT", summaryX - 15, y);
+    doc.text("ORDER", summaryX - 8, y + 5);
 
     // Yellow box for PCS
     doc.setFillColor(255, 213, 0);
-    doc.rect(summaryX + 20, y - 5, 30, 12, "F");
+    doc.rect(summaryX + 15, y - 5, 30, 12, "F");
     doc.setTextColor(0);
-    doc.text(`${totalPcs} PCS`, summaryX + 25, y + 3);
+    doc.text(`${totalPcs} PCS`, summaryX + 20, y + 3);
 
     // Cyan box for amount
     doc.setFillColor(0, 220, 220);
-    doc.rect(summaryX + 53, y - 5, 35, 12, "F");
-    doc.text(`RM${totalAmount.toLocaleString()}`, summaryX + 57, y + 3);
+    doc.rect(summaryX + 48, y - 5, 35, 12, "F");
+    doc.text(`RM${totalAmount.toLocaleString()}`, summaryX + 52, y + 3);
 
     doc.setTextColor(0);
 
     // Terms
     y += 25;
-    doc.setFont("helvetica", "bold");
+    doc.setFont("kollektif", "bold");
     doc.setFontSize(10);
     doc.text(`VALIDITY : ${validity} days`, margin, y);
     y += 6;
-    doc.text(`PAYMENT TERM: ${paymentTerm} days`, margin + 2, y);
+    doc.text(`PAYMENT TERM: ${paymentTerm} days`, margin, y);
     y += 6;
-    doc.text(`DELIVERY TERM : ${deliveryTerm} days`, margin + 2, y);
+    doc.text(`DELIVERY TERM : ${deliveryTerm} days`, margin, y);
 
     // Notes
     y += 8;
-    doc.setFont("helvetica", "normal");
+    doc.setFont("kollektif", "normal");
     doc.setFontSize(8);
     const splitNotes = doc.splitTextToSize(`Note : ${notes}`, pw / 2 - 10);
     doc.text(splitNotes, margin, y);
@@ -192,7 +204,7 @@ const InvoiceTab = () => {
     // Manager + payment section (right side)
     const rightX = pw / 2 + 10;
     let ry = y - 20;
-    doc.setFont("helvetica", "bold");
+    doc.setFont("kollektif", "bold");
     doc.setFontSize(11);
     doc.text(managerName, rightX, ry);
     ry += 6;
@@ -200,37 +212,29 @@ const InvoiceTab = () => {
 
     ry += 10;
     doc.setFontSize(9);
-    doc.setFont("helvetica", "normal");
+    doc.setFont("kollektif", "normal");
     doc.text("Payment Method:", rightX, ry);
     ry += 6;
     doc.text("Bank Name: ", rightX, ry);
-    doc.setFont("helvetica", "bold");
+    doc.setFont("kollektif", "bold");
     doc.text(bankName, rightX + 22, ry);
     ry += 6;
-    doc.setFont("helvetica", "normal");
+    doc.setFont("kollektif", "normal");
     doc.text("Account Number: ", rightX, ry);
-    doc.setFont("helvetica", "bold");
+    doc.setFont("kollektif", "bold");
     doc.text(accountNumber, rightX + 30, ry);
 
     // Thank you + contact
     y += 10;
-    doc.setFont("helvetica", "bold");
+    doc.setFont("kollektif", "bold");
     doc.setFontSize(20);
-    doc.setTextColor(0, 0, 0);
+    doc.setTextColor(0, 180, 180);
     doc.text("THANK YOU!", margin, y + 8);
     doc.setTextColor(0);
     doc.setFontSize(8);
-    doc.setFont("helvetica", "normal");
-    // Phone icon (small circle with receiver shape)
-    doc.setFontSize(10);
-    doc.text("\u260E", margin + 2, y + 16);
-    doc.setFontSize(8);
-    doc.text(phone, margin + 8, y + 16);
-    // Email icon (envelope shape)
-    doc.setFontSize(10);
-    doc.text("\u2709", margin + 2, y + 21);
-    doc.setFontSize(8);
-    doc.text(emailAddr, margin + 8, y + 21);
+    doc.setFont("kollektif", "normal");
+    doc.text(phone, margin + 5, y + 16);
+    doc.text(emailAddr, margin + 5, y + 21);
 
     doc.save(`Invoice_${invoiceNumber}.pdf`);
     toast.success("Invoice PDF generated!");
@@ -250,7 +254,9 @@ const InvoiceTab = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Invoice Details */}
         <Card>
-          <CardHeader className="pb-3"><CardTitle className="text-sm">Invoice Details</CardTitle></CardHeader>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm">Invoice Details</CardTitle>
+          </CardHeader>
           <CardContent className="space-y-3">
             <div className="grid grid-cols-2 gap-3">
               <div>
@@ -259,7 +265,11 @@ const InvoiceTab = () => {
               </div>
               <div>
                 <label className="text-xs text-muted-foreground">Invoice No.</label>
-                <Input placeholder="e.g. 00448" value={invoiceNumber} onChange={(e) => setInvoiceNumber(e.target.value)} />
+                <Input
+                  placeholder="e.g. 00448"
+                  value={invoiceNumber}
+                  onChange={(e) => setInvoiceNumber(e.target.value)}
+                />
               </div>
             </div>
             <div>
@@ -273,9 +283,15 @@ const InvoiceTab = () => {
             <div>
               <label className="text-xs text-muted-foreground">Sales Agent (SA)</label>
               <Select value={agent} onValueChange={setAgent}>
-                <SelectTrigger><SelectValue placeholder="Select agent" /></SelectTrigger>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select agent" />
+                </SelectTrigger>
                 <SelectContent>
-                  {agents.map((a) => <SelectItem key={a} value={a}>{a}</SelectItem>)}
+                  {agents.map((a) => (
+                    <SelectItem key={a} value={a}>
+                      {a}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -284,7 +300,9 @@ const InvoiceTab = () => {
 
         {/* Terms */}
         <Card>
-          <CardHeader className="pb-3"><CardTitle className="text-sm">Terms & Conditions</CardTitle></CardHeader>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm">Terms & Conditions</CardTitle>
+          </CardHeader>
           <CardContent className="space-y-3">
             <div className="grid grid-cols-3 gap-3">
               <div>
@@ -316,13 +334,16 @@ const InvoiceTab = () => {
       <Card>
         <CardHeader className="pb-3 flex flex-row items-center justify-between">
           <CardTitle className="text-sm">Line Items</CardTitle>
-          <Button variant="outline" size="sm" onClick={addItem}><Plus className="h-3 w-3 mr-1" /> Add Item</Button>
+          <Button variant="outline" size="sm" onClick={addItem}>
+            <Plus className="h-3 w-3 mr-1" /> Add Item
+          </Button>
         </CardHeader>
         <CardContent className="space-y-2">
           {items.map((item, i) => (
             <div key={i} className="grid grid-cols-[1fr_100px_80px_100px_36px] gap-2 items-center">
               <Input
                 placeholder="Item description"
+                placeholder="VNECK CROSS SHORTSLEEVE + NAMESET"
                 value={item.description}
                 onChange={(e) => updateItem(i, "description", e.target.value)}
               />
@@ -338,9 +359,7 @@ const InvoiceTab = () => {
                 value={item.quantity || ""}
                 onChange={(e) => updateItem(i, "quantity", parseInt(e.target.value) || 0)}
               />
-              <div className="text-sm font-medium text-right">
-                RM {(item.price * item.quantity).toLocaleString()}
-              </div>
+              <div className="text-sm font-medium text-right">RM {(item.price * item.quantity).toLocaleString()}</div>
               {items.length > 1 && (
                 <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => removeItem(i)}>
                   <Trash2 className="h-3.5 w-3.5 text-destructive" />
@@ -357,7 +376,9 @@ const InvoiceTab = () => {
 
       {/* Payment & Contact */}
       <Card>
-        <CardHeader className="pb-3"><CardTitle className="text-sm">Payment & Contact Info</CardTitle></CardHeader>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm">Payment & Contact Info</CardTitle>
+        </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
