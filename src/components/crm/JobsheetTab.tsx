@@ -10,8 +10,15 @@ import autoTable from "jspdf-autotable";
 import acdLogo from "@/assets/black-3.png";
 
 const agents = [
-  "ALIFF ACD", "DIDO ACD", "HARITH ACD", "UMAR ACD",
-  "FAIZ ACD", "HILMAN ACD", "IMAN ACD", "JEED ACD", "ADAM ACD",
+  "ALIFF ACD",
+  "DIDO ACD",
+  "HARITH ACD",
+  "UMAR ACD",
+  "FAIZ ACD",
+  "HILMAN ACD",
+  "IMAN ACD",
+  "JEED ACD",
+  "ADAM ACD",
 ];
 
 const sizes = ["24", "34", "XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL", "6XL"];
@@ -41,9 +48,7 @@ const JobsheetTab = () => {
   const [material, setMaterial] = useState("");
   const [agent, setAgent] = useState("");
   const [mockupImage, setMockupImage] = useState<string | null>(null);
-  const [sizeRows, setSizeRows] = useState<SizeRow[]>(
-    sizes.map((s) => ({ size: s, qty: 0, nameset: "" }))
-  );
+  const [sizeRows, setSizeRows] = useState<SizeRow[]>(sizes.map((s) => ({ size: s, qty: 0, nameset: "" })));
 
   const totalPcs = sizeRows.reduce((s, r) => s + (r.qty || 0), 0);
 
@@ -255,7 +260,7 @@ const JobsheetTab = () => {
           <CardContent className="space-y-3">
             <div>
               <label className="text-xs text-muted-foreground">Client Name</label>
-              <Input placeholder="e.g. ORCA" value={clientName} onChange={(e) => setClientName(e.target.value)} />
+              <Input placeholder="e.g. ALYPH ACD" value={clientName} onChange={(e) => setClientName(e.target.value)} />
             </div>
             <div>
               <label className="text-xs text-muted-foreground">Job Name</label>
@@ -274,10 +279,14 @@ const JobsheetTab = () => {
             <div>
               <label className="text-xs text-muted-foreground">Category</label>
               <Select value={category} onValueChange={setCategory}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
                   {categories.map((c) => (
-                    <SelectItem key={c} value={c}>{c}</SelectItem>
+                    <SelectItem key={c} value={c}>
+                      {c}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -301,10 +310,14 @@ const JobsheetTab = () => {
             <div>
               <label className="text-xs text-muted-foreground">Sales Agent (SA)</label>
               <Select value={agent} onValueChange={setAgent}>
-                <SelectTrigger><SelectValue placeholder="Select agent" /></SelectTrigger>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select agent" />
+                </SelectTrigger>
                 <SelectContent>
                   {agents.map((a) => (
-                    <SelectItem key={a} value={a}>{a}</SelectItem>
+                    <SelectItem key={a} value={a}>
+                      {a}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
