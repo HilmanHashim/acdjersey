@@ -210,11 +210,22 @@ const JobsheetTab = () => {
       theme: "grid",
       styles: { fontSize: 9, cellPadding: 2.5, halign: "center", valign: "middle" },
       headStyles: {
-        fillColor: [0, 190, 220],
         textColor: [255, 255, 255],
         fontStyle: "bold",
         lineColor: [0, 0, 0],
         lineWidth: 0.3,
+      },
+      didParseCell: (data: any) => {
+        if (data.section === "head") {
+          if (data.column.index === 0) {
+            data.cell.styles.fillColor = [220, 30, 30];
+          } else if (data.column.index === 1) {
+            data.cell.styles.fillColor = [240, 200, 0];
+            data.cell.styles.textColor = [0, 0, 0];
+          } else if (data.column.index === 2) {
+            data.cell.styles.fillColor = [0, 190, 220];
+          }
+        }
       },
       bodyStyles: { lineColor: [0, 0, 0], lineWidth: 0.3 },
       margin: { left: tableStartX, right: margin },
