@@ -168,7 +168,7 @@ const JobsheetTab = () => {
     y += 10;
 
     const detailX = margin;
-    const tableStartX = margin + 60;
+    const tableStartX = margin + 85;
     const detailY = y;
 
     doc.setFont("helvetica", "bold");
