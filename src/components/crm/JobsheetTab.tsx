@@ -136,8 +136,11 @@ const JobsheetTab = () => {
           mockImg.onerror = reject;
           mockImg.src = mockupImage;
         });
-        const imgW = pw - margin * 2 - 40;
-        const imgH = 60;
+        const maxW = pw - margin * 2 - 20;
+        const maxH = 70;
+        const ratio = Math.min(maxW / mockImg.naturalWidth, maxH / mockImg.naturalHeight);
+        const imgW = mockImg.naturalWidth * ratio;
+        const imgH = mockImg.naturalHeight * ratio;
         const imgX = (pw - imgW) / 2;
         doc.addImage(mockImg, "JPEG", imgX, y, imgW, imgH);
         y += imgH + 8;
