@@ -34,6 +34,9 @@ const InvoiceTab = () => {
   const [title, setTitle] = useState("");
   const [material, setMaterial] = useState("");
   const [agent, setAgent] = useState("");
+  const [customerName, setCustomerName] = useState("");
+  const [customerPhone, setCustomerPhone] = useState("");
+  const [customerAddress, setCustomerAddress] = useState("");
   const [items, setItems] = useState<LineItem[]>([{ description: "", price: 0, quantity: 0 }]);
   const [validity, setValidity] = useState("60");
   const [paymentTerm, setPaymentTerm] = useState("14");
