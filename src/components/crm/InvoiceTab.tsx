@@ -219,15 +219,13 @@ const InvoiceTab = () => {
     y += 16;
     doc.setFont("kollektif", "bold");
     doc.setFontSize(10);
-    doc.text("DEPOSIT", summaryX - 10, y);
-    doc.text("AMOUNT", summaryX - 7, y + 5);
+    doc.text("DEPOSIT AMOUNT", summaryX - 10, y + 3);
 
-    // Blue box for deposit
-    doc.setFillColor(59, 130, 246);
-    doc.rect(summaryX + 20, y - 5, 65, 12, "F");
-    doc.setTextColor(255, 255, 255);
-    doc.text(`RM${depositAmount.toLocaleString()}`, summaryX + 25, y + 3);
+    // Light grey box for deposit
+    doc.setFillColor(230, 230, 230);
+    doc.rect(summaryX + 30, y - 5, 55, 12, "F");
     doc.setTextColor(0);
+    doc.text(`RM${depositAmount.toLocaleString()}`, summaryX + 35, y + 3);
 
     // Terms
     y += 40;
