@@ -416,7 +416,8 @@ const InvoiceTab = () => {
     doc.line(margin + 8.5, y + 18, margin + 7, y + 19);
     doc.text(emailAddr, margin + 10, y + 20.5);
 
-    doc.save(`Invoice_${currentInvoiceNumber}.pdf`);
+    const safeTitle = title ? `_${title.replace(/[^a-zA-Z0-9]/g, "_")}` : "";
+    doc.save(`Invoice_${currentInvoiceNumber.replace(/\//g, "-")}${safeTitle}.pdf`);
     toast.success("Invoice PDF generated!");
   };
 
