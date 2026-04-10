@@ -37,7 +37,8 @@ const InvoiceTab = () => {
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
   const [customerAddress, setCustomerAddress] = useState("");
-  const [items, setItems] = useState<LineItem[]>([{ description: "", price: 0, quantity: 0 }]);
+  const [jerseyItems, setJerseyItems] = useState<LineItem[]>([{ description: "", price: 0, quantity: 0 }]);
+  const [designItems, setDesignItems] = useState<LineItem[]>([{ description: "", price: 0, quantity: 0 }]);
   const [validity, setValidity] = useState("60");
   const [paymentTerm, setPaymentTerm] = useState("14");
   const [deliveryTerm, setDeliveryTerm] = useState("20");
@@ -56,16 +57,32 @@ const InvoiceTab = () => {
   const [phone, setPhone] = useState("+60 19 - 339 6681");
   const [emailAddr, setEmailAddr] = useState("umarnazmi10@gmail.com");
 
-  const addItem = () => setItems([...items, { description: "", price: 0, quantity: 0 }]);
-  const removeItem = (i: number) => setItems(items.filter((_, idx) => idx !== i));
-  const updateItem = (i: number, field: keyof LineItem, value: string | number) => {
-    const updated = [...items];
+  const addJerseyItem = () => setJerseyItems([...jerseyItems, { description: "", price: 0, quantity: 0 }]);
+  const removeJerseyItem = (i: number) => setJerseyItems(jerseyItems.filter((_, idx) => idx !== i));
+  const updateJerseyItem = (i: number, field: keyof LineItem, value: string | number) => {
+    const updated = [...jerseyItems];
     (updated[i] as any)[field] = value;
-    setItems(updated);
+    setJerseyItems(updated);
   };
 
-  const totalPcs = items.reduce((s, it) => s + (it.quantity || 0), 0);
-  const totalAmount = items.reduce((s, it) => s + (it.price || 0) * (it.quantity || 0), 0);
+  const addDesignItem = () => setDesignItems([...designItems, { description: "", price: 0, quantity: 0 }]);
+  const removeDesignItem = (i: number) => setDesignItems(designItems.filter((_, idx) => idx !== i));
+  const updateDesignItem = (i: number, field: keyof LineItem, value: string | number) => {
+    const updated = [...designItems];
+    (updated[i] as any)[field] = value;
+    setDesignItems(updated);
+  };
+
+  const hasJerseyItems = jerseyItems.some((it) => it.description.trim() !== "" || it.price > 0 || it.quantity > 0);
+  const hasDesignItems = designItems.some((it) => it.description.trim() !== "" || it.price > 0 || it.quantity > 0);
+
+  const jerseyPcs = jerseyItems.reduce((s, it) => s + (it.quantity || 0), 0);
+  const jerseyAmount = jerseyItems.reduce((s, it) => s + (it.price || 0) * (it.quantity || 0), 0);
+  const designPcs = designItems.reduce((s, it) => s + (it.quantity || 0), 0);
+  const designAmount = designItems.reduce((s, it) => s + (it.price || 0) * (it.quantity || 0), 0);
+
+  const totalPcs = jerseyPcs + designPcs;
+  const totalAmount = jerseyAmount + designAmount;
 
   const formatDate = (dateStr: string) => {
     const d = new Date(dateStr);
