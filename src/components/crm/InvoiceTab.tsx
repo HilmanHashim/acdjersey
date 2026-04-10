@@ -51,7 +51,7 @@ const InvoiceTab = () => {
   const [shirtDepositEnabled, setShirtDepositEnabled] = useState(true);
   const [shirtDepositPercent, setShirtDepositPercent] = useState(50);
   const [designDepositEnabled, setDesignDepositEnabled] = useState(false);
-  const [designDepositPercent, setDesignDepositPercent] = useState(50);
+  const [designDepositPercent, setDesignDepositPercent] = useState(100);
   const [depositNote, setDepositNote] = useState("50 % Deposit is required before procceed an order");
   const [managerName, setManagerName] = useState("AHMAD UMAR NAZMI");
   const [managerTitle, setManagerTitle] = useState("MANAGER");
@@ -108,15 +108,38 @@ const InvoiceTab = () => {
   };
 
   const generatePDF = async () => {
-    if (!invoiceNumber || !title || (!hasJerseyItems && !hasDesignItems)) {
-      toast.error("Please fill in invoice number, title, and at least one item");
+    if (!title || (!hasJerseyItems && !hasDesignItems)) {
+      toast.error("Please fill in title and at least one item");
       return;
+    }
+
+    // Auto-generate invoice number if not set
+    let currentInvoiceNumber = invoiceNumber;
+    if (!currentInvoiceNumber) {
+      try {
+        const { data, error } = await supabase.rpc("get_next_invoice_number");
+        if (error) throw error;
+        currentInvoiceNumber = data;
+        setInvoiceNumber(data);
+        setIsInvoiceNumberLocked(true);
+      } catch (err: any) {
+        toast.error("Failed to generate invoice number: " + err.message);
+        return;
+      }
+    } else if (!isInvoiceNumberLocked) {
+      // If manually entered, still increment the sequence
+      try {
+        await supabase.rpc("get_next_invoice_number");
+      } catch {
+        // Non-blocking
+      }
+      setIsInvoiceNumberLocked(true);
     }
 
     // Log the invoice
     try {
       await supabase.from("invoices_log").insert({
-        invoice_number: invoiceNumber,
+        invoice_number: currentInvoiceNumber,
         title,
         total_amount: totalAmount,
       });
@@ -161,7 +184,7 @@ const InvoiceTab = () => {
     y += 6;
     doc.text("No. Invoice :", margin, y);
     y += 5;
-    doc.text(invoiceNumber, margin, y);
+    doc.text(currentInvoiceNumber, margin, y);
     y += 3;
     doc.line(margin, y, margin + 60, y);
 
@@ -390,7 +413,7 @@ const InvoiceTab = () => {
     doc.line(margin + 8.5, y + 18, margin + 7, y + 19);
     doc.text(emailAddr, margin + 10, y + 20.5);
 
-    doc.save(`Invoice_${invoiceNumber}.pdf`);
+    doc.save(`Invoice_${currentInvoiceNumber}.pdf`);
     toast.success("Invoice PDF generated!");
   };
 
