@@ -108,9 +108,32 @@ const InvoiceTab = () => {
   };
 
   const generatePDF = async () => {
-    if (!invoiceNumber || !title || (!hasJerseyItems && !hasDesignItems)) {
-      toast.error("Please fill in invoice number, title, and at least one item");
+    if (!title || (!hasJerseyItems && !hasDesignItems)) {
+      toast.error("Please fill in title and at least one item");
       return;
+    }
+
+    // Auto-generate invoice number if not set
+    let currentInvoiceNumber = invoiceNumber;
+    if (!currentInvoiceNumber) {
+      try {
+        const { data, error } = await supabase.rpc("get_next_invoice_number");
+        if (error) throw error;
+        currentInvoiceNumber = data;
+        setInvoiceNumber(data);
+        setIsInvoiceNumberLocked(true);
+      } catch (err: any) {
+        toast.error("Failed to generate invoice number: " + err.message);
+        return;
+      }
+    } else if (!isInvoiceNumberLocked) {
+      // If manually entered, still increment the sequence
+      try {
+        await supabase.rpc("get_next_invoice_number");
+      } catch {
+        // Non-blocking
+      }
+      setIsInvoiceNumberLocked(true);
     }
 
     // Log the invoice
