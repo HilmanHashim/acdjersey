@@ -114,28 +114,37 @@ export type Database = {
       }
       invoices_log: {
         Row: {
+          client_name: string | null
+          client_phone: string | null
           created_at: string
           created_by: string | null
           id: string
           invoice_number: string
+          project_title: string | null
           status: string
           title: string | null
           total_amount: number | null
         }
         Insert: {
+          client_name?: string | null
+          client_phone?: string | null
           created_at?: string
           created_by?: string | null
           id?: string
           invoice_number: string
+          project_title?: string | null
           status?: string
           title?: string | null
           total_amount?: number | null
         }
         Update: {
+          client_name?: string | null
+          client_phone?: string | null
           created_at?: string
           created_by?: string | null
           id?: string
           invoice_number?: string
+          project_title?: string | null
           status?: string
           title?: string | null
           total_amount?: number | null
