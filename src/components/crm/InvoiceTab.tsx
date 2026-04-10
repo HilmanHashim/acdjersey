@@ -51,7 +51,7 @@ const InvoiceTab = () => {
   const [shirtDepositEnabled, setShirtDepositEnabled] = useState(true);
   const [shirtDepositPercent, setShirtDepositPercent] = useState(50);
   const [designDepositEnabled, setDesignDepositEnabled] = useState(false);
-  const [designDepositPercent, setDesignDepositPercent] = useState(50);
+  const [designDepositPercent, setDesignDepositPercent] = useState(100);
   const [depositNote, setDepositNote] = useState("50 % Deposit is required before procceed an order");
   const [managerName, setManagerName] = useState("AHMAD UMAR NAZMI");
   const [managerTitle, setManagerTitle] = useState("MANAGER");
