@@ -91,6 +91,57 @@ export type Database = {
           },
         ]
       }
+      invoice_sequences: {
+        Row: {
+          id: string
+          last_number: number
+          month: number
+          year: number
+        }
+        Insert: {
+          id?: string
+          last_number?: number
+          month: number
+          year: number
+        }
+        Update: {
+          id?: string
+          last_number?: number
+          month?: number
+          year?: number
+        }
+        Relationships: []
+      }
+      invoices_log: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          invoice_number: string
+          status: string
+          title: string | null
+          total_amount: number | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          invoice_number: string
+          status?: string
+          title?: string | null
+          total_amount?: number | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          invoice_number?: string
+          status?: string
+          title?: string | null
+          total_amount?: number | null
+        }
+        Relationships: []
+      }
       leads: {
         Row: {
           created_at: string
@@ -253,6 +304,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_next_invoice_number: { Args: never; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
