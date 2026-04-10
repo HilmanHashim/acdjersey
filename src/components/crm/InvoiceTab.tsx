@@ -481,7 +481,7 @@ const InvoiceTab = () => {
                   onChange={(e) => setShirtDepositEnabled(e.target.checked)}
                   className="rounded"
                 />
-                <span className="text-xs">Shirt Deposit</span>
+                <span className="text-xs">Jersey Deposit</span>
                 <Input
                   type="number"
                   value={shirtDepositPercent}
