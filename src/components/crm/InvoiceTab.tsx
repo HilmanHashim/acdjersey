@@ -138,6 +138,7 @@ const InvoiceTab = () => {
 
     // Log the invoice
     try {
+      const { data: { user } } = await supabase.auth.getUser();
       await supabase.from("invoices_log").insert({
         invoice_number: currentInvoiceNumber,
         title: title || null,
@@ -145,7 +146,8 @@ const InvoiceTab = () => {
         client_name: customerName || null,
         client_phone: customerPhone || null,
         project_title: title || null,
-      });
+        created_by_email: user?.email || null,
+      } as any);
     } catch {
       // Non-blocking
     }
