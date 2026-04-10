@@ -118,6 +118,7 @@ export type Database = {
           client_phone: string | null
           created_at: string
           created_by: string | null
+          created_by_email: string | null
           id: string
           invoice_number: string
           project_title: string | null
@@ -130,6 +131,7 @@ export type Database = {
           client_phone?: string | null
           created_at?: string
           created_by?: string | null
+          created_by_email?: string | null
           id?: string
           invoice_number: string
           project_title?: string | null
@@ -142,6 +144,7 @@ export type Database = {
           client_phone?: string | null
           created_at?: string
           created_by?: string | null
+          created_by_email?: string | null
           id?: string
           invoice_number?: string
           project_title?: string | null

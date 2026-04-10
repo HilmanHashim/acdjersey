@@ -1,0 +1,1 @@
+ALTER TABLE public.invoices_log ADD COLUMN created_by_email text;
