@@ -20,7 +20,9 @@ serve(async (req) => {
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey);
     const publishableKey = Deno.env.get("SUPABASE_ANON_KEY") || Deno.env.get("SUPABASE_PUBLISHABLE_KEY")!;
-    const supabaseAuth = createClient(supabaseUrl, publishableKey);
+    const supabaseAuth = createClient(supabaseUrl, publishableKey, {
+      global: { headers: { Authorization: authHeader || "" } },
+    });
 
     // ─── FORGOT PASSWORD (no auth required) ───
     if (req.method === "POST" && action === "forgot_password") {
