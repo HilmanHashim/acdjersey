@@ -90,7 +90,7 @@ const InvoiceTab = () => {
   };
 
   const generatePDF = async () => {
-    if (!invoiceNumber || !title || items.length === 0) {
+    if (!invoiceNumber || !title || (!hasJerseyItems && !hasDesignItems)) {
       toast.error("Please fill in invoice number, title, and at least one item");
       return;
     }
@@ -180,40 +180,59 @@ const InvoiceTab = () => {
     // Ensure y is at least past customer details block
     y = Math.max(y, custY);
 
-    // Items table
+    // Helper to render a table section
+    const renderTable = (label: string, tableItems: LineItem[]) => {
+      y += 4;
+      doc.setFont("kollektif", "bold");
+      doc.setFontSize(10);
+      doc.text(label.toUpperCase(), margin, y);
+      y += 6;
+
+      const tableData = tableItems.map((it) => [
+        it.description.toUpperCase(),
+        `RM ${it.price.toFixed(0)}`,
+        `${it.quantity}PCS`,
+        `RM ${(it.price * it.quantity).toLocaleString()}`,
+      ]);
+
+      autoTable(doc, {
+        startY: y,
+        head: [["Item Description", "Price", "Quantity", "TOTAL"]],
+        body: tableData,
+        theme: "grid",
+        styles: { fontSize: 9, cellPadding: 4, halign: "center", valign: "middle" },
+        headStyles: {
+          fillColor: [60, 60, 60],
+          textColor: [255, 255, 255],
+          fontStyle: "bold",
+          lineColor: [60, 60, 60],
+          lineWidth: 0.3,
+        },
+        bodyStyles: { lineColor: [180, 180, 180], lineWidth: 0.3 },
+        alternateRowStyles: { fillColor: [240, 240, 240] },
+        margin: { left: margin + 33, right: margin },
+        columnStyles: {
+          0: { cellWidth: 55 },
+          1: { cellWidth: 30 },
+          2: { cellWidth: 30 },
+          3: { cellWidth: 30 },
+        },
+      });
+
+      y = (doc as any).lastAutoTable.finalY + 6;
+    };
+
+    // Render jersey table
+    if (hasJerseyItems) {
+      renderTable("Jersey", jerseyItems.filter((it) => it.description.trim() || it.price > 0 || it.quantity > 0));
+    }
+
+    // Render design table
+    if (hasDesignItems) {
+      renderTable("Design", designItems.filter((it) => it.description.trim() || it.price > 0 || it.quantity > 0));
+    }
+
     y += 4;
-    const tableData = items.map((it) => [
-      it.description.toUpperCase(),
-      `RM ${it.price.toFixed(0)}`,
-      `${it.quantity}PCS`,
-      `RM ${(it.price * it.quantity).toLocaleString()}`,
-    ]);
-
-    autoTable(doc, {
-      startY: y,
-      head: [["Item Description", "Price", "Quantity", "TOTAL"]],
-      body: tableData,
-      theme: "grid",
-      styles: { fontSize: 9, cellPadding: 4, halign: "center", valign: "middle" },
-      headStyles: {
-        fillColor: [60, 60, 60],
-        textColor: [255, 255, 255],
-        fontStyle: "bold",
-        lineColor: [60, 60, 60],
-        lineWidth: 0.3,
-      },
-      bodyStyles: { lineColor: [180, 180, 180], lineWidth: 0.3 },
-      alternateRowStyles: { fillColor: [240, 240, 240] },
-      margin: { left: margin + 33, right: margin },
-      columnStyles: {
-        0: { cellWidth: 55 },
-        1: { cellWidth: 30 },
-        2: { cellWidth: 30 },
-        3: { cellWidth: 30 },
-      },
-    });
-
-    y = (doc as any).lastAutoTable.finalY + 10;
 
     // Total summary
     doc.setFont("kollektif", "bold");
@@ -238,21 +257,21 @@ const InvoiceTab = () => {
     // Deposit amounts
     let totalDeposit = 0;
 
-    if (shirtDepositEnabled) {
-      const shirtDeposit = totalAmount * (shirtDepositPercent / 100);
+    if (shirtDepositEnabled && hasJerseyItems) {
+      const shirtDeposit = jerseyAmount * (shirtDepositPercent / 100);
       totalDeposit += shirtDeposit;
       y += 16;
       doc.setFont("kollektif", "bold");
       doc.setFontSize(10);
-      doc.text(`DEPOSIT (SHIRT ${shirtDepositPercent}%)`, summaryX - 10, y + 3);
+      doc.text(`DEPOSIT (JERSEY ${shirtDepositPercent}%)`, summaryX - 10, y + 3);
       doc.setFillColor(230, 230, 230);
       doc.rect(summaryX + 40, y - 5, 45, 12, "F");
       doc.setTextColor(0);
       doc.text(`RM${shirtDeposit.toLocaleString()}`, summaryX + 44, y + 3);
     }
 
-    if (designDepositEnabled) {
-      const designDeposit = totalAmount * (designDepositPercent / 100);
+    if (designDepositEnabled && hasDesignItems) {
+      const designDeposit = designAmount * (designDepositPercent / 100);
       totalDeposit += designDeposit;
       y += 16;
       doc.setFont("kollektif", "bold");
@@ -264,7 +283,7 @@ const InvoiceTab = () => {
       doc.text(`RM${designDeposit.toLocaleString()}`, summaryX + 44, y + 3);
     }
 
-    if (shirtDepositEnabled || designDepositEnabled) {
+    if (totalDeposit > 0) {
       y += 16;
       doc.setFont("kollektif", "bold");
       doc.setFontSize(10);
@@ -494,48 +513,71 @@ const InvoiceTab = () => {
         </Card>
       </div>
 
-      {/* Line Items */}
+      {/* Jersey Line Items */}
       <Card>
         <CardHeader className="pb-3 flex flex-row items-center justify-between">
-          <CardTitle className="text-sm">Line Items</CardTitle>
-          <Button variant="outline" size="sm" onClick={addItem}>
+          <CardTitle className="text-sm">Jersey Items</CardTitle>
+          <Button variant="outline" size="sm" onClick={addJerseyItem}>
             <Plus className="h-3 w-3 mr-1" /> Add Item
           </Button>
         </CardHeader>
         <CardContent className="space-y-2">
-          {items.map((item, i) => (
+          {jerseyItems.map((item, i) => (
             <div key={i} className="grid grid-cols-[1fr_100px_80px_100px_36px] gap-2 items-center">
-              <Input
-                placeholder="VNECK CROSS SHORTSLEEVE + NAMESET"
-                value={item.description}
-                onChange={(e) => updateItem(i, "description", e.target.value)}
-              />
-              <Input
-                type="number"
-                placeholder="Price (RM)"
-                value={item.price || ""}
-                onChange={(e) => updateItem(i, "price", parseFloat(e.target.value) || 0)}
-              />
-              <Input
-                type="number"
-                placeholder="Qty"
-                value={item.quantity || ""}
-                onChange={(e) => updateItem(i, "quantity", parseInt(e.target.value) || 0)}
-              />
+              <Input placeholder="VNECK CROSS SHORTSLEEVE + NAMESET" value={item.description} onChange={(e) => updateJerseyItem(i, "description", e.target.value)} />
+              <Input type="number" placeholder="Price (RM)" value={item.price || ""} onChange={(e) => updateJerseyItem(i, "price", parseFloat(e.target.value) || 0)} />
+              <Input type="number" placeholder="Qty" value={item.quantity || ""} onChange={(e) => updateJerseyItem(i, "quantity", parseInt(e.target.value) || 0)} />
               <div className="text-sm font-medium text-right">RM {(item.price * item.quantity).toLocaleString()}</div>
-              {items.length > 1 && (
-                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => removeItem(i)}>
+              {jerseyItems.length > 1 && (
+                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => removeJerseyItem(i)}>
                   <Trash2 className="h-3.5 w-3.5 text-destructive" />
                 </Button>
               )}
             </div>
           ))}
           <div className="flex justify-end gap-6 pt-3 border-t text-sm font-semibold">
-            <span>Total: {totalPcs} PCS</span>
-            <span>RM {totalAmount.toLocaleString()}</span>
+            <span>Total: {jerseyPcs} PCS</span>
+            <span>RM {jerseyAmount.toLocaleString()}</span>
           </div>
         </CardContent>
       </Card>
+
+      {/* Design Line Items */}
+      <Card>
+        <CardHeader className="pb-3 flex flex-row items-center justify-between">
+          <CardTitle className="text-sm">Design Items</CardTitle>
+          <Button variant="outline" size="sm" onClick={addDesignItem}>
+            <Plus className="h-3 w-3 mr-1" /> Add Item
+          </Button>
+        </CardHeader>
+        <CardContent className="space-y-2">
+          {designItems.map((item, i) => (
+            <div key={i} className="grid grid-cols-[1fr_100px_80px_100px_36px] gap-2 items-center">
+              <Input placeholder="LOGO DESIGN / MOCKUP" value={item.description} onChange={(e) => updateDesignItem(i, "description", e.target.value)} />
+              <Input type="number" placeholder="Price (RM)" value={item.price || ""} onChange={(e) => updateDesignItem(i, "price", parseFloat(e.target.value) || 0)} />
+              <Input type="number" placeholder="Qty" value={item.quantity || ""} onChange={(e) => updateDesignItem(i, "quantity", parseInt(e.target.value) || 0)} />
+              <div className="text-sm font-medium text-right">RM {(item.price * item.quantity).toLocaleString()}</div>
+              {designItems.length > 1 && (
+                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => removeDesignItem(i)}>
+                  <Trash2 className="h-3.5 w-3.5 text-destructive" />
+                </Button>
+              )}
+            </div>
+          ))}
+          <div className="flex justify-end gap-6 pt-3 border-t text-sm font-semibold">
+            <span>Total: {designPcs} PCS</span>
+            <span>RM {designAmount.toLocaleString()}</span>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Grand Total */}
+      {(hasJerseyItems || hasDesignItems) && (
+        <div className="flex justify-end gap-6 text-sm font-bold px-2">
+          <span>Grand Total: {totalPcs} PCS</span>
+          <span>RM {totalAmount.toLocaleString()}</span>
+        </div>
+      )}
 
       {/* Payment & Contact */}
       <Card>
