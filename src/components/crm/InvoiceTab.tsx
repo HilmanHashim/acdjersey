@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Trash2, FileText, Download } from "lucide-react";
+import { Plus, Trash2, FileText, Download, RefreshCw, Pencil } from "lucide-react";
 import { toast } from "sonner";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -31,6 +32,8 @@ const agents = [
 const InvoiceTab = () => {
   const [invoiceDate, setInvoiceDate] = useState(new Date().toISOString().split("T")[0]);
   const [invoiceNumber, setInvoiceNumber] = useState("");
+  const [isInvoiceNumberLocked, setIsInvoiceNumberLocked] = useState(false);
+  const [isGeneratingNumber, setIsGeneratingNumber] = useState(false);
   const [title, setTitle] = useState("");
   const [material, setMaterial] = useState("");
   const [agent, setAgent] = useState("");
@@ -89,10 +92,36 @@ const InvoiceTab = () => {
     return `${d.getDate()}/${d.getMonth() + 1}/ ${d.getFullYear()}`;
   };
 
+  const generateInvoiceNumber = async () => {
+    setIsGeneratingNumber(true);
+    try {
+      const { data, error } = await supabase.rpc("get_next_invoice_number");
+      if (error) throw error;
+      setInvoiceNumber(data);
+      setIsInvoiceNumberLocked(true);
+      toast.success(`Invoice number generated: ${data}`);
+    } catch (err: any) {
+      toast.error("Failed to generate invoice number: " + err.message);
+    } finally {
+      setIsGeneratingNumber(false);
+    }
+  };
+
   const generatePDF = async () => {
     if (!invoiceNumber || !title || (!hasJerseyItems && !hasDesignItems)) {
       toast.error("Please fill in invoice number, title, and at least one item");
       return;
+    }
+
+    // Log the invoice
+    try {
+      await supabase.from("invoices_log").insert({
+        invoice_number: invoiceNumber,
+        title,
+        total_amount: totalAmount,
+      });
+    } catch {
+      // Non-blocking
     }
 
     const doc = new jsPDF("p", "mm", "a4");
@@ -390,11 +419,24 @@ const InvoiceTab = () => {
               </div>
               <div>
                 <label className="text-xs text-muted-foreground">Invoice No.</label>
-                <Input
-                  placeholder="e.g. 00448"
-                  value={invoiceNumber}
-                  onChange={(e) => setInvoiceNumber(e.target.value)}
-                />
+                <div className="flex gap-1">
+                  <Input
+                    placeholder="Click Generate"
+                    value={invoiceNumber}
+                    onChange={(e) => setInvoiceNumber(e.target.value)}
+                    disabled={isInvoiceNumberLocked}
+                    className="flex-1"
+                  />
+                  {!isInvoiceNumberLocked ? (
+                    <Button variant="outline" size="icon" className="h-9 w-9 shrink-0" onClick={generateInvoiceNumber} disabled={isGeneratingNumber} title="Generate invoice number">
+                      <RefreshCw className={`h-3.5 w-3.5 ${isGeneratingNumber ? "animate-spin" : ""}`} />
+                    </Button>
+                  ) : (
+                    <Button variant="outline" size="icon" className="h-9 w-9 shrink-0" onClick={() => setIsInvoiceNumberLocked(false)} title="Amend invoice number">
+                      <Pencil className="h-3.5 w-3.5" />
+                    </Button>
+                  )}
+                </div>
               </div>
             </div>
             <div>
