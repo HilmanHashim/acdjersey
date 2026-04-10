@@ -472,43 +472,6 @@ const InvoiceTab = () => {
               <label className="text-xs text-muted-foreground">Deposit Note</label>
               <Input value={depositNote} onChange={(e) => setDepositNote(e.target.value)} />
             </div>
-            <div className="space-y-3 pt-2 border-t">
-              <label className="text-xs font-medium">Deposit Options</label>
-              <div className="flex items-center gap-3">
-                <input
-                  type="checkbox"
-                  checked={shirtDepositEnabled}
-                  onChange={(e) => setShirtDepositEnabled(e.target.checked)}
-                  className="rounded"
-                />
-                <span className="text-xs">Jersey Deposit</span>
-                <Input
-                  type="number"
-                  value={shirtDepositPercent}
-                  onChange={(e) => setShirtDepositPercent(parseFloat(e.target.value) || 0)}
-                  className="w-20"
-                  disabled={!shirtDepositEnabled}
-                />
-                <span className="text-xs text-muted-foreground">%</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <input
-                  type="checkbox"
-                  checked={designDepositEnabled}
-                  onChange={(e) => setDesignDepositEnabled(e.target.checked)}
-                  className="rounded"
-                />
-                <span className="text-xs">Design Deposit</span>
-                <Input
-                  type="number"
-                  value={designDepositPercent}
-                  onChange={(e) => setDesignDepositPercent(parseFloat(e.target.value) || 0)}
-                  className="w-20"
-                  disabled={!designDepositEnabled}
-                />
-                <span className="text-xs text-muted-foreground">%</span>
-              </div>
-            </div>
           </CardContent>
         </Card>
       </div>
@@ -535,9 +498,18 @@ const InvoiceTab = () => {
               )}
             </div>
           ))}
-          <div className="flex justify-end gap-6 pt-3 border-t text-sm font-semibold">
-            <span>Total: {jerseyPcs} PCS</span>
-            <span>RM {jerseyAmount.toLocaleString()}</span>
+          <div className="flex items-center justify-between pt-3 border-t">
+            <div className="flex items-center gap-2">
+              <input type="checkbox" checked={shirtDepositEnabled} onChange={(e) => setShirtDepositEnabled(e.target.checked)} className="rounded" />
+              <span className="text-xs">Deposit</span>
+              <Input type="number" value={shirtDepositPercent} onChange={(e) => setShirtDepositPercent(parseFloat(e.target.value) || 0)} className="w-16 h-7 text-xs" disabled={!shirtDepositEnabled} />
+              <span className="text-xs text-muted-foreground">%</span>
+              {shirtDepositEnabled && <span className="text-xs font-medium ml-2">= RM {(jerseyAmount * shirtDepositPercent / 100).toLocaleString()}</span>}
+            </div>
+            <div className="flex gap-6 text-sm font-semibold">
+              <span>Total: {jerseyPcs} PCS</span>
+              <span>RM {jerseyAmount.toLocaleString()}</span>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -564,9 +536,18 @@ const InvoiceTab = () => {
               )}
             </div>
           ))}
-          <div className="flex justify-end gap-6 pt-3 border-t text-sm font-semibold">
-            <span>Total: {designPcs} PCS</span>
-            <span>RM {designAmount.toLocaleString()}</span>
+          <div className="flex items-center justify-between pt-3 border-t">
+            <div className="flex items-center gap-2">
+              <input type="checkbox" checked={designDepositEnabled} onChange={(e) => setDesignDepositEnabled(e.target.checked)} className="rounded" />
+              <span className="text-xs">Deposit</span>
+              <Input type="number" value={designDepositPercent} onChange={(e) => setDesignDepositPercent(parseFloat(e.target.value) || 0)} className="w-16 h-7 text-xs" disabled={!designDepositEnabled} />
+              <span className="text-xs text-muted-foreground">%</span>
+              {designDepositEnabled && <span className="text-xs font-medium ml-2">= RM {(designAmount * designDepositPercent / 100).toLocaleString()}</span>}
+            </div>
+            <div className="flex gap-6 text-sm font-semibold">
+              <span>Total: {designPcs} PCS</span>
+              <span>RM {designAmount.toLocaleString()}</span>
+            </div>
           </div>
         </CardContent>
       </Card>
