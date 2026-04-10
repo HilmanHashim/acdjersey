@@ -184,7 +184,7 @@ const InvoiceTab = () => {
     y += 6;
     doc.text("No. Invoice :", margin, y);
     y += 5;
-    doc.text(invoiceNumber, margin, y);
+    doc.text(currentInvoiceNumber, margin, y);
     y += 3;
     doc.line(margin, y, margin + 60, y);
 
@@ -413,7 +413,7 @@ const InvoiceTab = () => {
     doc.line(margin + 8.5, y + 18, margin + 7, y + 19);
     doc.text(emailAddr, margin + 10, y + 20.5);
 
-    doc.save(`Invoice_${invoiceNumber}.pdf`);
+    doc.save(`Invoice_${currentInvoiceNumber}.pdf`);
     toast.success("Invoice PDF generated!");
   };
 
