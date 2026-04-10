@@ -140,8 +140,11 @@ const InvoiceTab = () => {
     try {
       await supabase.from("invoices_log").insert({
         invoice_number: currentInvoiceNumber,
-        title,
+        title: title || null,
         total_amount: totalAmount,
+        client_name: customerName || null,
+        client_phone: customerPhone || null,
+        project_title: title || null,
       });
     } catch {
       // Non-blocking
