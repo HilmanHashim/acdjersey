@@ -139,7 +139,7 @@ const InvoiceTab = () => {
     // Log the invoice
     try {
       await supabase.from("invoices_log").insert({
-        invoice_number: invoiceNumber,
+        invoice_number: currentInvoiceNumber,
         title,
         total_amount: totalAmount,
       });
