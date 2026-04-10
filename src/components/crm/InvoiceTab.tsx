@@ -44,6 +44,10 @@ const InvoiceTab = () => {
   const [notes, setNotes] = useState(
     "Prices are subjected to change without prior notice. We hope that our quotation is favourable to you and looking forward to receive your valued orders in due course. Thank and regards.",
   );
+  const [shirtDepositEnabled, setShirtDepositEnabled] = useState(true);
+  const [shirtDepositPercent, setShirtDepositPercent] = useState(50);
+  const [designDepositEnabled, setDesignDepositEnabled] = useState(false);
+  const [designDepositPercent, setDesignDepositPercent] = useState(50);
   const [depositNote, setDepositNote] = useState("50 % Deposit is required before procceed an order");
   const [managerName, setManagerName] = useState("AHMAD UMAR NAZMI");
   const [managerTitle, setManagerTitle] = useState("MANAGER");
@@ -214,18 +218,45 @@ const InvoiceTab = () => {
 
     doc.setTextColor(0);
 
-    // Deposit amount
-    const depositAmount = totalAmount * 0.5;
-    y += 16;
-    doc.setFont("kollektif", "bold");
-    doc.setFontSize(10);
-    doc.text("DEPOSIT AMOUNT", summaryX - 10, y + 3);
+    // Deposit amounts
+    let totalDeposit = 0;
 
-    // Light grey box for deposit
-    doc.setFillColor(230, 230, 230);
-    doc.rect(summaryX + 30, y - 5, 55, 12, "F");
-    doc.setTextColor(0);
-    doc.text(`RM${depositAmount.toLocaleString()}`, summaryX + 35, y + 3);
+    if (shirtDepositEnabled) {
+      const shirtDeposit = totalAmount * (shirtDepositPercent / 100);
+      totalDeposit += shirtDeposit;
+      y += 16;
+      doc.setFont("kollektif", "bold");
+      doc.setFontSize(10);
+      doc.text(`DEPOSIT (SHIRT ${shirtDepositPercent}%)`, summaryX - 10, y + 3);
+      doc.setFillColor(230, 230, 230);
+      doc.rect(summaryX + 40, y - 5, 45, 12, "F");
+      doc.setTextColor(0);
+      doc.text(`RM${shirtDeposit.toLocaleString()}`, summaryX + 44, y + 3);
+    }
+
+    if (designDepositEnabled) {
+      const designDeposit = totalAmount * (designDepositPercent / 100);
+      totalDeposit += designDeposit;
+      y += 16;
+      doc.setFont("kollektif", "bold");
+      doc.setFontSize(10);
+      doc.text(`DEPOSIT (DESIGN ${designDepositPercent}%)`, summaryX - 10, y + 3);
+      doc.setFillColor(230, 230, 230);
+      doc.rect(summaryX + 40, y - 5, 45, 12, "F");
+      doc.setTextColor(0);
+      doc.text(`RM${designDeposit.toLocaleString()}`, summaryX + 44, y + 3);
+    }
+
+    if (shirtDepositEnabled || designDepositEnabled) {
+      y += 16;
+      doc.setFont("kollektif", "bold");
+      doc.setFontSize(10);
+      doc.text("TOTAL DEPOSIT", summaryX - 10, y + 3);
+      doc.setFillColor(210, 210, 210);
+      doc.rect(summaryX + 40, y - 5, 45, 12, "F");
+      doc.setTextColor(0);
+      doc.text(`RM${totalDeposit.toLocaleString()}`, summaryX + 44, y + 3);
+    }
 
     // Terms
     y += 40;
@@ -404,6 +435,43 @@ const InvoiceTab = () => {
             <div>
               <label className="text-xs text-muted-foreground">Deposit Note</label>
               <Input value={depositNote} onChange={(e) => setDepositNote(e.target.value)} />
+            </div>
+            <div className="space-y-3 pt-2 border-t">
+              <label className="text-xs font-medium">Deposit Options</label>
+              <div className="flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  checked={shirtDepositEnabled}
+                  onChange={(e) => setShirtDepositEnabled(e.target.checked)}
+                  className="rounded"
+                />
+                <span className="text-xs">Shirt Deposit</span>
+                <Input
+                  type="number"
+                  value={shirtDepositPercent}
+                  onChange={(e) => setShirtDepositPercent(parseFloat(e.target.value) || 0)}
+                  className="w-20"
+                  disabled={!shirtDepositEnabled}
+                />
+                <span className="text-xs text-muted-foreground">%</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  checked={designDepositEnabled}
+                  onChange={(e) => setDesignDepositEnabled(e.target.checked)}
+                  className="rounded"
+                />
+                <span className="text-xs">Design Deposit</span>
+                <Input
+                  type="number"
+                  value={designDepositPercent}
+                  onChange={(e) => setDesignDepositPercent(parseFloat(e.target.value) || 0)}
+                  className="w-20"
+                  disabled={!designDepositEnabled}
+                />
+                <span className="text-xs text-muted-foreground">%</span>
+              </div>
             </div>
           </CardContent>
         </Card>
