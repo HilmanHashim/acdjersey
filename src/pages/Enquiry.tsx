@@ -114,7 +114,7 @@ const Enquiry = () => {
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-foreground">Organisation / Team</label>
               <Input
-                placeholder="e.g. Kelab Sukan ABC"
+                placeholder="e.g. Falcon FC"
                 value={form.organisation}
                 onChange={(e) => setForm({ ...form, organisation: e.target.value })}
                 maxLength={200}
