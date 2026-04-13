@@ -49,9 +49,13 @@ const InvoiceTab = () => {
     "Prices are subjected to change without prior notice. We hope that our quotation is favourable to you and looking forward to receive your valued orders in due course. Thank and regards.",
   );
   const [shirtDepositEnabled, setShirtDepositEnabled] = useState(true);
+  const [shirtDepositMode, setShirtDepositMode] = useState<"percent" | "custom">("percent");
   const [shirtDepositPercent, setShirtDepositPercent] = useState(50);
+  const [shirtDepositCustom, setShirtDepositCustom] = useState(0);
   const [designDepositEnabled, setDesignDepositEnabled] = useState(false);
+  const [designDepositMode, setDesignDepositMode] = useState<"percent" | "custom">("percent");
   const [designDepositPercent, setDesignDepositPercent] = useState(100);
+  const [designDepositCustom, setDesignDepositCustom] = useState(0);
   const [depositNote, setDepositNote] = useState("50 % Deposit is required before procceed an order");
   const [managerName, setManagerName] = useState("AHMAD UMAR NAZMI");
   const [managerTitle, setManagerTitle] = useState("MANAGER");
@@ -357,11 +361,14 @@ const InvoiceTab = () => {
 
     y += rowH + 2;
 
-    // Row 3: 50%
-    const fiftyPercent = jerseyAmount * 0.5;
+    // Row 3: Shirt deposit
+    const shirtDepositAmount = shirtDepositEnabled
+      ? (shirtDepositMode === "percent" ? jerseyAmount * shirtDepositPercent / 100 : shirtDepositCustom)
+      : 0;
+    const shirtDepositLabel = shirtDepositMode === "percent" ? `${shirtDepositPercent}%` : "DEPOSIT";
     doc.setFont("kollektif", "bold");
     doc.setFontSize(8);
-    doc.text("50%", labelRightX, y + rowH / 2 + 1, { align: "right" });
+    doc.text(shirtDepositLabel, labelRightX, y + rowH / 2 + 1, { align: "right" });
 
     doc.setFillColor(0, 220, 220);
     doc.rect(cyanX, y, cyanW, rowH, "F");
@@ -370,12 +377,12 @@ const InvoiceTab = () => {
     doc.rect(yellowX, y, yellowW, rowH, "F");
     doc.setTextColor(0);
     doc.setFontSize(9);
-    doc.text(`RM ${fiftyPercent.toLocaleString()}`, yellowX + 3, y + rowH / 2 + 1);
+    doc.text(`RM ${shirtDepositAmount.toLocaleString()}`, yellowX + 3, y + rowH / 2 + 1);
 
     y += rowH + 2;
 
     // Row 4: BALANCE
-    const balance = jerseyAmount - depoDesignAmount - fiftyPercent;
+    const balance = jerseyAmount - depoDesignAmount - shirtDepositAmount;
     doc.setFont("kollektif", "bold");
     doc.setFontSize(8);
     doc.text("BALANCE", labelRightX, y + rowH / 2 + 1, { align: "right" });
@@ -610,12 +617,22 @@ const InvoiceTab = () => {
             </div>
           ))}
           <div className="flex items-center justify-between pt-3 border-t">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <input type="checkbox" checked={shirtDepositEnabled} onChange={(e) => setShirtDepositEnabled(e.target.checked)} className="rounded" />
               <span className="text-xs">Deposit</span>
-              <Input type="number" value={shirtDepositPercent} onChange={(e) => setShirtDepositPercent(parseFloat(e.target.value) || 0)} className="w-16 h-7 text-xs" disabled={!shirtDepositEnabled} />
-              <span className="text-xs text-muted-foreground">%</span>
-              {shirtDepositEnabled && <span className="text-xs font-medium ml-2">= RM {(jerseyAmount * shirtDepositPercent / 100).toLocaleString()}</span>}
+              <select value={shirtDepositMode} onChange={(e) => setShirtDepositMode(e.target.value as "percent" | "custom")} disabled={!shirtDepositEnabled} className="h-7 text-xs rounded border border-input bg-background px-2">
+                <option value="percent">%</option>
+                <option value="custom">RM</option>
+              </select>
+              {shirtDepositMode === "percent" ? (
+                <>
+                  <Input type="number" value={shirtDepositPercent} onChange={(e) => setShirtDepositPercent(parseFloat(e.target.value) || 0)} className="w-16 h-7 text-xs" disabled={!shirtDepositEnabled} />
+                  <span className="text-xs text-muted-foreground">%</span>
+                </>
+              ) : (
+                <Input type="number" value={shirtDepositCustom || ""} onChange={(e) => setShirtDepositCustom(parseFloat(e.target.value) || 0)} className="w-24 h-7 text-xs" disabled={!shirtDepositEnabled} placeholder="Amount" />
+              )}
+              {shirtDepositEnabled && <span className="text-xs font-medium ml-2">= RM {(shirtDepositMode === "percent" ? jerseyAmount * shirtDepositPercent / 100 : shirtDepositCustom).toLocaleString()}</span>}
             </div>
             <div className="flex gap-6 text-sm font-semibold">
               <span>Total: {jerseyPcs} PCS</span>
@@ -648,12 +665,22 @@ const InvoiceTab = () => {
             </div>
           ))}
           <div className="flex items-center justify-between pt-3 border-t">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <input type="checkbox" checked={designDepositEnabled} onChange={(e) => setDesignDepositEnabled(e.target.checked)} className="rounded" />
               <span className="text-xs">Deposit</span>
-              <Input type="number" value={designDepositPercent} onChange={(e) => setDesignDepositPercent(parseFloat(e.target.value) || 0)} className="w-16 h-7 text-xs" disabled={!designDepositEnabled} />
-              <span className="text-xs text-muted-foreground">%</span>
-              {designDepositEnabled && <span className="text-xs font-medium ml-2">= RM {(designAmount * designDepositPercent / 100).toLocaleString()}</span>}
+              <select value={designDepositMode} onChange={(e) => setDesignDepositMode(e.target.value as "percent" | "custom")} disabled={!designDepositEnabled} className="h-7 text-xs rounded border border-input bg-background px-2">
+                <option value="percent">%</option>
+                <option value="custom">RM</option>
+              </select>
+              {designDepositMode === "percent" ? (
+                <>
+                  <Input type="number" value={designDepositPercent} onChange={(e) => setDesignDepositPercent(parseFloat(e.target.value) || 0)} className="w-16 h-7 text-xs" disabled={!designDepositEnabled} />
+                  <span className="text-xs text-muted-foreground">%</span>
+                </>
+              ) : (
+                <Input type="number" value={designDepositCustom || ""} onChange={(e) => setDesignDepositCustom(parseFloat(e.target.value) || 0)} className="w-24 h-7 text-xs" disabled={!designDepositEnabled} placeholder="Amount" />
+              )}
+              {designDepositEnabled && <span className="text-xs font-medium ml-2">= RM {(designDepositMode === "percent" ? designAmount * designDepositPercent / 100 : designDepositCustom).toLocaleString()}</span>}
             </div>
             <div className="flex gap-6 text-sm font-semibold">
               <span>Total: {designPcs} PCS</span>
