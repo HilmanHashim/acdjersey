@@ -288,7 +288,10 @@ const InvoiceTab = () => {
       renderTable("Jersey", jerseyItems.filter((it) => it.description.trim() || it.price > 0 || it.quantity > 0));
     }
 
-    // Design items excluded from line item table per user request — only shown in summary boxes
+    // Render design charges table
+    if (hasDesignItems) {
+      renderTable("Design Charges", designItems.filter((it) => it.description.trim() || it.price > 0 || it.quantity > 0));
+    }
 
     y += 4;
 
@@ -297,66 +300,69 @@ const InvoiceTab = () => {
     doc.setFontSize(9);
 
     const summaryRightEdge = pw - margin;
-    const yellowW = 35;
-    const cyanW = 40;
+    const yellowW = 38;
+    const cyanW = 50;
     const yellowX = summaryRightEdge - yellowW;
     const cyanX = yellowX - cyanW - 2;
-    const labelRightX = cyanX - 5;
-    const rowH = 10;
+    const labelRightX = cyanX - 4;
+    const rowH = 8;
 
     // Build jersey description lines
     const jerseyDescLines: string[] = [];
     if (hasJerseyItems) {
       jerseyItems.filter(it => it.description.trim() || it.price > 0 || it.quantity > 0).forEach(it => {
-        const unit = it.price === 0 ? "FREE" : "";
-        jerseyDescLines.push(`${it.quantity} PCS/${unit}${unit ? " " : ""}${it.description.toUpperCase()}`);
+        jerseyDescLines.push(`${it.quantity} PCS ${it.description.toUpperCase()}`);
       });
     }
-    const row1H = Math.max(rowH, jerseyDescLines.length * 5 + 4);
+    const row1H = Math.max(rowH, jerseyDescLines.length * 4 + 4);
 
     // Row 1: TOTAL SHIRT ORDER
     doc.setFont("kollektif", "bold");
-    doc.setFontSize(8);
+    doc.setFontSize(7);
     doc.text("TOTAL SHIRT", labelRightX, y + row1H / 2 - 1, { align: "right" });
-    doc.text("ORDER", labelRightX, y + row1H / 2 + 4, { align: "right" });
+    doc.text("ORDER", labelRightX, y + row1H / 2 + 3, { align: "right" });
 
     doc.setFillColor(0, 220, 220);
     doc.rect(cyanX, y, cyanW, row1H, "F");
     doc.setTextColor(0);
-    doc.setFontSize(7);
-    let descY = y + 5;
+    doc.setFontSize(6);
+    let descY = y + 4;
     jerseyDescLines.forEach(line => {
-      doc.text(line, cyanX + 2, descY);
-      descY += 5;
+      const truncated = line.length > 28 ? line.substring(0, 26) + ".." : line;
+      doc.text(truncated, cyanX + 1.5, descY);
+      descY += 4;
     });
 
     doc.setFillColor(255, 213, 0);
     doc.rect(yellowX, y, yellowW, row1H, "F");
     doc.setTextColor(0);
-    doc.setFontSize(9);
-    doc.text(`RM ${jerseyAmount.toLocaleString()}`, yellowX + 3, y + row1H / 2 + 2);
+    doc.setFontSize(8);
+    doc.text(`RM ${jerseyAmount.toLocaleString()}`, yellowX + yellowW / 2, y + row1H / 2 + 1.5, { align: "center" });
 
     y += row1H + 2;
 
-    // Row 2: DEPO DESIGN
+    // Row 2: LOCK DEPOSIT
     doc.setFont("kollektif", "bold");
-    doc.setFontSize(8);
-    doc.text("DEPO DESIGN", labelRightX, y + rowH / 2 + 1, { align: "right" });
+    doc.setFontSize(7);
+    doc.text("LOCK DEPOSIT", labelRightX, y + rowH / 2 + 1, { align: "right" });
 
     doc.setFillColor(0, 220, 220);
     doc.rect(cyanX, y, cyanW, rowH, "F");
     doc.setTextColor(0);
-    doc.setFontSize(9);
+    doc.setFontSize(7);
     if (designDepositEnabled && hasDesignItems) {
-      doc.text("PAID", cyanX + cyanW / 2 - 5, y + rowH / 2 + 1);
+      doc.text("PAID", cyanX + cyanW / 2, y + rowH / 2 + 1, { align: "center" });
     }
 
-    const depoDesignAmount = (designDepositEnabled && hasDesignItems) ? designAmount : 0;
+    const depoDesignAmount = (designDepositEnabled && hasDesignItems)
+      ? (designDepositMode === "percent" ? designAmount * designDepositPercent / 100 : designDepositCustom)
+      : 0;
     doc.setFillColor(255, 213, 0);
     doc.rect(yellowX, y, yellowW, rowH, "F");
     doc.setTextColor(0);
+    doc.setFontSize(8);
     if (depoDesignAmount > 0) {
-      doc.text(`RM${depoDesignAmount.toLocaleString()}`, yellowX + 3, y + rowH / 2 + 1);
+      doc.text(`RM ${depoDesignAmount.toLocaleString()}`, yellowX + yellowW / 2, y + rowH / 2 + 1, { align: "center" });
     }
 
     y += rowH + 2;
@@ -367,7 +373,7 @@ const InvoiceTab = () => {
       : 0;
     const shirtDepositLabel = shirtDepositMode === "percent" ? `${shirtDepositPercent}%` : "DEPOSIT";
     doc.setFont("kollektif", "bold");
-    doc.setFontSize(8);
+    doc.setFontSize(7);
     doc.text(shirtDepositLabel, labelRightX, y + rowH / 2 + 1, { align: "right" });
 
     doc.setFillColor(0, 220, 220);
@@ -376,15 +382,15 @@ const InvoiceTab = () => {
     doc.setFillColor(255, 213, 0);
     doc.rect(yellowX, y, yellowW, rowH, "F");
     doc.setTextColor(0);
-    doc.setFontSize(9);
-    doc.text(`RM ${shirtDepositAmount.toLocaleString()}`, yellowX + 3, y + rowH / 2 + 1);
+    doc.setFontSize(8);
+    doc.text(`RM ${shirtDepositAmount.toLocaleString()}`, yellowX + yellowW / 2, y + rowH / 2 + 1, { align: "center" });
 
     y += rowH + 2;
 
     // Row 4: BALANCE
     const balance = jerseyAmount - depoDesignAmount - shirtDepositAmount;
     doc.setFont("kollektif", "bold");
-    doc.setFontSize(8);
+    doc.setFontSize(7);
     doc.text("BALANCE", labelRightX, y + rowH / 2 + 1, { align: "right" });
 
     doc.setFillColor(0, 220, 220);
@@ -393,8 +399,8 @@ const InvoiceTab = () => {
     doc.setFillColor(255, 213, 0);
     doc.rect(yellowX, y, yellowW, rowH, "F");
     doc.setTextColor(0);
-    doc.setFontSize(9);
-    doc.text(`RM ${balance.toLocaleString()}`, yellowX + 3, y + rowH / 2 + 1);
+    doc.setFontSize(8);
+    doc.text(`RM ${balance.toLocaleString()}`, yellowX + yellowW / 2, y + rowH / 2 + 1, { align: "center" });
 
     doc.setTextColor(0);
 
