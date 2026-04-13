@@ -288,7 +288,10 @@ const InvoiceTab = () => {
       renderTable("Jersey", jerseyItems.filter((it) => it.description.trim() || it.price > 0 || it.quantity > 0));
     }
 
-    // Design items excluded from line item table per user request — only shown in summary boxes
+    // Render design charges table
+    if (hasDesignItems) {
+      renderTable("Design Charges", designItems.filter((it) => it.description.trim() || it.price > 0 || it.quantity > 0));
+    }
 
     y += 4;
 
