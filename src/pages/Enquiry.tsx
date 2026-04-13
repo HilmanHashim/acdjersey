@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Send, CheckCircle } from "lucide-react";
+import { Send } from "lucide-react";
 
 const jerseyTypes = [
   "Running Jersey",
@@ -21,7 +21,7 @@ const jerseyTypes = [
 ];
 
 const Enquiry = () => {
-  const [submitted, setSubmitted] = useState(false);
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     name: "",
@@ -47,7 +47,7 @@ const Enquiry = () => {
         jersey_type: form.jersey_type || null,
       });
       if (error) throw error;
-      setSubmitted(true);
+      navigate("/enquiry-submitted");
     } catch (err: any) {
       toast.error("Failed to submit enquiry. Please try again.");
     } finally {
@@ -55,26 +55,6 @@ const Enquiry = () => {
     }
   };
 
-  if (submitted) {
-    return (
-      <>
-        <Navbar />
-        <section className="min-h-[70vh] flex items-center justify-center px-4">
-          <div className="text-center space-y-4 max-w-md animate-slide-up">
-            <CheckCircle className="h-16 w-16 text-green-500 mx-auto" />
-            <h1 className="text-3xl font-display text-gradient">Thank You!</h1>
-            <p className="text-muted-foreground">
-              Your enquiry has been submitted successfully. Our team will contact you shortly!
-            </p>
-            <Button variant="hero" onClick={() => { setSubmitted(false); setForm({ name: "", phone: "", organisation: "", estimated_quantity: "", jersey_type: "" }); }}>
-              Submit Another Enquiry
-            </Button>
-          </div>
-        </section>
-        <Footer />
-      </>
-    );
-  }
 
   return (
     <>
