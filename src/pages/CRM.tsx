@@ -185,14 +185,14 @@ const CRM = () => {
       <main className="container py-6 max-w-5xl">
         <Tabs defaultValue="dashboard" className="relative">
           <TabsList className="grid w-full grid-cols-8 mb-6">
-            <TabsTrigger value="dashboard" className="gap-2"><LayoutDashboard className="h-4 w-4" /><span className="hidden sm:inline">Dashboard</span></TabsTrigger>
-            <TabsTrigger value="enquiry" className="gap-2"><Inbox className="h-4 w-4" /><span className="hidden sm:inline">Enquiry Follow Up</span></TabsTrigger>
-            <TabsTrigger value="leads" className="gap-2"><Target className="h-4 w-4" /><span className="hidden sm:inline">Leads</span></TabsTrigger>
-            <TabsTrigger value="orders" className="gap-2"><Package className="h-4 w-4" /><span className="hidden sm:inline">Orders</span></TabsTrigger>
-            <TabsTrigger value="invoice" className="gap-2"><FileText className="h-4 w-4" /><span className="hidden sm:inline">Invoice</span></TabsTrigger>
-            <TabsTrigger value="jobsheet" className="gap-2"><ClipboardList className="h-4 w-4" /><span className="hidden sm:inline">Jobsheet</span></TabsTrigger>
-            <TabsTrigger value="reminders" className="gap-2"><Bell className="h-4 w-4" /><span className="hidden sm:inline">Reminders</span></TabsTrigger>
-            <TabsTrigger value="users" className="gap-2"><Shield className="h-4 w-4" /><span className="hidden sm:inline">Users</span></TabsTrigger>
+            <TabsTrigger value="dashboard" className="gap-1.5 text-xs"><LayoutDashboard className="h-4 w-4" /><span className="hidden sm:inline">Dashboard</span></TabsTrigger>
+            <TabsTrigger value="enquiry" className="gap-1.5 text-xs"><Inbox className="h-4 w-4" /><span className="hidden sm:inline">Follow Up</span></TabsTrigger>
+            <TabsTrigger value="leads" className="gap-1.5 text-xs"><Target className="h-4 w-4" /><span className="hidden sm:inline">Leads</span></TabsTrigger>
+            <TabsTrigger value="orders" className="gap-1.5 text-xs"><Package className="h-4 w-4" /><span className="hidden sm:inline">Orders</span></TabsTrigger>
+            <TabsTrigger value="invoice" className="gap-1.5 text-xs"><FileText className="h-4 w-4" /><span className="hidden sm:inline">Invoice</span></TabsTrigger>
+            <TabsTrigger value="jobsheet" className="gap-1.5 text-xs"><ClipboardList className="h-4 w-4" /><span className="hidden sm:inline">Jobsheet</span></TabsTrigger>
+            <TabsTrigger value="reminders" className="gap-1.5 text-xs"><Bell className="h-4 w-4" /><span className="hidden sm:inline">Reminders</span></TabsTrigger>
+            <TabsTrigger value="users" className="gap-1.5 text-xs"><Shield className="h-4 w-4" /><span className="hidden sm:inline">Users</span></TabsTrigger>
           </TabsList>
           <TabsContent value="dashboard" forceMount className="data-[state=inactive]:hidden"><DashboardTab /></TabsContent>
           <TabsContent value="enquiry" forceMount className="data-[state=inactive]:hidden"><EnquiryTab /></TabsContent>
