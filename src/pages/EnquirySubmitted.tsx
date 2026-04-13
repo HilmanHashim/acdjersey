@@ -1,10 +1,18 @@
+import { useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/landing/Footer";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { CheckCircle } from "lucide-react";
 
-const EnquirySubmitted = () => (
+const EnquirySubmitted = () => {
+  useEffect(() => {
+    if (typeof window.fbq === "function") {
+      window.fbq("track", "Lead");
+    }
+  }, []);
+
+  return (
   <>
     <Navbar />
     <section className="min-h-[70vh] flex items-center justify-center px-4">
@@ -21,6 +29,7 @@ const EnquirySubmitted = () => (
     </section>
     <Footer />
   </>
-);
+  );
+};
 
 export default EnquirySubmitted;
