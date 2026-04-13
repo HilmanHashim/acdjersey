@@ -8,7 +8,7 @@ const corsHeaders = {
 const json = (data: any, status = 200) =>
   new Response(JSON.stringify(data), { status, headers: { ...corsHeaders, "Content-Type": "application/json" } });
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
@@ -47,14 +47,17 @@ serve(async (req) => {
 
     // All other actions require authentication
     const authHeader = req.headers.get("Authorization");
-    if (!authHeader) return json({ error: "Unauthorized" }, 401);
+    if (!authHeader?.startsWith("Bearer ")) return json({ error: "Unauthorized" }, 401);
 
+    const token = authHeader.replace("Bearer ", "");
     const supabaseAuth = createClient(supabaseUrl, publishableKey, {
       global: { headers: { Authorization: authHeader } },
     });
 
-    const { data: { user: caller }, error: callerError } = await supabaseAuth.auth.getUser();
-    if (callerError || !caller) return json({ error: "Unauthorized" }, 401);
+    const { data: claimsData, error: claimsError } = await supabaseAuth.auth.getClaims(token);
+    if (claimsError || !claimsData?.claims) return json({ error: "Unauthorized" }, 401);
+
+    const callerId = claimsData.claims.sub as string;
 
     // Fetch caller's roles
     const { data: callerRoles } = await supabaseAdmin
