@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link, useNavigate } from "react-router-dom";
-import { Package, Bell, ArrowLeft, LogOut, Shield, Target, LayoutDashboard, FileText, ClipboardList } from "lucide-react";
+import { Package, Bell, ArrowLeft, LogOut, Shield, Target, LayoutDashboard, FileText, ClipboardList, Inbox } from "lucide-react";
 import { toast } from "sonner";
 import OrdersTab from "@/components/crm/OrdersTab";
 import RemindersTab from "@/components/crm/RemindersTab";
@@ -13,6 +13,7 @@ import LeadsTab from "@/components/crm/LeadsTab";
 import DashboardTab from "@/components/crm/DashboardTab";
 import InvoiceTab from "@/components/crm/InvoiceTab";
 import JobsheetTab from "@/components/crm/JobsheetTab";
+import EnquiryTab from "@/components/crm/EnquiryTab";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const CRM = () => {
@@ -183,8 +184,9 @@ const CRM = () => {
       </header>
       <main className="container py-6 max-w-5xl">
         <Tabs defaultValue="dashboard" className="relative">
-          <TabsList className="grid w-full grid-cols-7 mb-6">
+          <TabsList className="grid w-full grid-cols-8 mb-6">
             <TabsTrigger value="dashboard" className="gap-2"><LayoutDashboard className="h-4 w-4" /><span className="hidden sm:inline">Dashboard</span></TabsTrigger>
+            <TabsTrigger value="enquiry" className="gap-2"><Inbox className="h-4 w-4" /><span className="hidden sm:inline">Enquiry</span></TabsTrigger>
             <TabsTrigger value="leads" className="gap-2"><Target className="h-4 w-4" /><span className="hidden sm:inline">Leads</span></TabsTrigger>
             <TabsTrigger value="orders" className="gap-2"><Package className="h-4 w-4" /><span className="hidden sm:inline">Orders</span></TabsTrigger>
             <TabsTrigger value="invoice" className="gap-2"><FileText className="h-4 w-4" /><span className="hidden sm:inline">Invoice</span></TabsTrigger>
@@ -193,6 +195,7 @@ const CRM = () => {
             <TabsTrigger value="users" className="gap-2"><Shield className="h-4 w-4" /><span className="hidden sm:inline">Users</span></TabsTrigger>
           </TabsList>
           <TabsContent value="dashboard" forceMount className="data-[state=inactive]:hidden"><DashboardTab /></TabsContent>
+          <TabsContent value="enquiry" forceMount className="data-[state=inactive]:hidden"><EnquiryTab /></TabsContent>
           <TabsContent value="leads" forceMount className="data-[state=inactive]:hidden"><LeadsTab /></TabsContent>
           <TabsContent value="orders" forceMount className="data-[state=inactive]:hidden"><OrdersTab /></TabsContent>
           <TabsContent value="invoice" forceMount className="data-[state=inactive]:hidden"><InvoiceTab /></TabsContent>

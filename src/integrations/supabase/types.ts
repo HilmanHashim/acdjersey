@@ -50,6 +50,48 @@ export type Database = {
         }
         Relationships: []
       }
+      enquiries: {
+        Row: {
+          created_at: string
+          estimated_quantity: number | null
+          followed_up_by: string | null
+          id: string
+          jersey_type: string | null
+          name: string
+          notes: string | null
+          organisation: string | null
+          phone: string
+          status: Database["public"]["Enums"]["enquiry_status"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          estimated_quantity?: number | null
+          followed_up_by?: string | null
+          id?: string
+          jersey_type?: string | null
+          name: string
+          notes?: string | null
+          organisation?: string | null
+          phone: string
+          status?: Database["public"]["Enums"]["enquiry_status"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          estimated_quantity?: number | null
+          followed_up_by?: string | null
+          id?: string
+          jersey_type?: string | null
+          name?: string
+          notes?: string | null
+          organisation?: string | null
+          phone?: string
+          status?: Database["public"]["Enums"]["enquiry_status"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       follow_up_reminders: {
         Row: {
           contact_id: string
@@ -327,6 +369,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "user" | "superadmin"
+      enquiry_status: "new" | "contacted" | "converted" | "closed"
       lead_stage: "cold" | "prospect" | "first_buy"
       order_status:
         | "pending"
@@ -463,6 +506,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "user", "superadmin"],
+      enquiry_status: ["new", "contacted", "converted", "closed"],
       lead_stage: ["cold", "prospect", "first_buy"],
       order_status: [
         "pending",
