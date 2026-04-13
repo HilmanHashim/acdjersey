@@ -9,6 +9,7 @@ import Agents from "./pages/Agents.tsx";
 import AboutUs from "./pages/AboutUs.tsx";
 import Catalogue from "./pages/Catalogue.tsx";
 import Enquiry from "./pages/Enquiry.tsx";
+import EnquirySubmitted from "./pages/EnquirySubmitted.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import ScrollToTop from "./components/ScrollToTop";
 import ScrollToTopButton from "./components/ScrollToTopButton";
@@ -32,6 +33,7 @@ const App = () => (
           <Route path="/about" element={<AboutUs />} />
           <Route path="/catalogue" element={<Catalogue />} />
           <Route path="/enquiry" element={<Enquiry />} />
+          <Route path="/enquiry-submitted" element={<EnquirySubmitted />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
