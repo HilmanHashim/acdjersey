@@ -63,7 +63,7 @@ Deno.serve(async (req) => {
     const { data: callerRoles } = await supabaseAdmin
       .from("user_roles")
       .select("role")
-      .eq("user_id", caller.id);
+      .eq("user_id", callerId);
 
     const callerRoleSet = new Set((callerRoles ?? []).map((r: any) => r.role));
     const isSuperadmin = callerRoleSet.has("superadmin");
@@ -109,11 +109,11 @@ Deno.serve(async (req) => {
       if (!user_id) return json({ error: "user_id required" }, 400);
 
       // Non-admins can only change their own password
-      if (!isAdmin && user_id !== caller.id) return json({ error: "You can only update your own account" }, 403);
+      if (!isAdmin && user_id !== callerId) return json({ error: "You can only update your own account" }, 403);
       if (!isAdmin && email) return json({ error: "Only admins can change email addresses" }, 403);
 
       // Admin cannot change superadmin's password
-      if (!isSuperadmin && user_id !== caller.id) {
+      if (!isSuperadmin && user_id !== callerId) {
         const { data: targetRoles } = await supabaseAdmin.from("user_roles").select("role").eq("user_id", user_id);
         const targetIsSuperadmin = (targetRoles ?? []).some((r: any) => r.role === "superadmin");
         if (targetIsSuperadmin) return json({ error: "Only superadmins can modify superadmin accounts" }, 403);
