@@ -52,10 +52,7 @@ const InvoiceTab = () => {
   const [shirtDepositMode, setShirtDepositMode] = useState<"percent" | "custom">("percent");
   const [shirtDepositPercent, setShirtDepositPercent] = useState(50);
   const [shirtDepositCustom, setShirtDepositCustom] = useState(0);
-  const [designDepositEnabled, setDesignDepositEnabled] = useState(false);
-  const [designDepositMode, setDesignDepositMode] = useState<"percent" | "custom">("percent");
-  const [designDepositPercent, setDesignDepositPercent] = useState(100);
-  const [designDepositCustom, setDesignDepositCustom] = useState(0);
+  const [lockDepositAmount, setLockDepositAmount] = useState(0);
   const [depositNote, setDepositNote] = useState("50 % Deposit is required before procceed an order");
   const [managerName, setManagerName] = useState("AHMAD UMAR NAZMI");
   const [managerTitle, setManagerTitle] = useState("MANAGER");
@@ -288,9 +285,9 @@ const InvoiceTab = () => {
       renderTable("Jersey", jerseyItems.filter((it) => it.description.trim() || it.price > 0 || it.quantity > 0));
     }
 
-    // Render design charges table
+    // Render add on items table (only if filled)
     if (hasDesignItems) {
-      renderTable("Design Charges", designItems.filter((it) => it.description.trim() || it.price > 0 || it.quantity > 0));
+      renderTable("Add On Items", designItems.filter((it) => it.description.trim() || it.price > 0 || it.quantity > 0));
     }
 
     y += 4;
@@ -307,19 +304,24 @@ const InvoiceTab = () => {
     const labelRightX = cyanX - 4;
     const rowH = 8;
 
-    // Build jersey description lines
-    const jerseyDescLines: string[] = [];
+    // Build description lines for all items
+    const orderDescLines: string[] = [];
     if (hasJerseyItems) {
       jerseyItems.filter(it => it.description.trim() || it.price > 0 || it.quantity > 0).forEach(it => {
-        jerseyDescLines.push(`${it.quantity} PCS ${it.description.toUpperCase()}`);
+        orderDescLines.push(`${it.quantity} PCS ${it.description.toUpperCase()}`);
       });
     }
-    const row1H = Math.max(rowH, jerseyDescLines.length * 4 + 4);
+    if (hasDesignItems) {
+      designItems.filter(it => it.description.trim() || it.price > 0 || it.quantity > 0).forEach(it => {
+        orderDescLines.push(`${it.quantity} PCS ${it.description.toUpperCase()}`);
+      });
+    }
+    const row1H = Math.max(rowH, orderDescLines.length * 4 + 4);
 
-    // Row 1: TOTAL SHIRT ORDER
+    // Row 1: TOTAL ORDER (jersey + add on)
     doc.setFont("kollektif", "bold");
     doc.setFontSize(7);
-    doc.text("TOTAL SHIRT", labelRightX, y + row1H / 2 - 1, { align: "right" });
+    doc.text("TOTAL", labelRightX, y + row1H / 2 - 1, { align: "right" });
     doc.text("ORDER", labelRightX, y + row1H / 2 + 3, { align: "right" });
 
     doc.setFillColor(0, 220, 220);
@@ -327,7 +329,7 @@ const InvoiceTab = () => {
     doc.setTextColor(0);
     doc.setFontSize(6);
     let descY = y + 4;
-    jerseyDescLines.forEach(line => {
+    orderDescLines.forEach(line => {
       const truncated = line.length > 28 ? line.substring(0, 26) + ".." : line;
       doc.text(truncated, cyanX + 1.5, descY);
       descY += 4;
@@ -337,39 +339,34 @@ const InvoiceTab = () => {
     doc.rect(yellowX, y, yellowW, row1H, "F");
     doc.setTextColor(0);
     doc.setFontSize(8);
-    doc.text(`RM ${jerseyAmount.toLocaleString()}`, yellowX + yellowW / 2, y + row1H / 2 + 1.5, { align: "center" });
+    doc.text(`RM ${totalAmount.toLocaleString()}`, yellowX + yellowW / 2, y + row1H / 2 + 1.5, { align: "center" });
 
     y += row1H + 2;
 
-    // Row 2: LOCK DEPOSIT
-    doc.setFont("kollektif", "bold");
-    doc.setFontSize(7);
-    doc.text("LOCK DEPOSIT", labelRightX, y + rowH / 2 + 1, { align: "right" });
+    // Row 2: LOCK DEPOSIT (only if filled)
+    if (lockDepositAmount > 0) {
+      doc.setFont("kollektif", "bold");
+      doc.setFontSize(7);
+      doc.text("LOCK DEPOSIT", labelRightX, y + rowH / 2 + 1, { align: "right" });
 
-    doc.setFillColor(0, 220, 220);
-    doc.rect(cyanX, y, cyanW, rowH, "F");
-    doc.setTextColor(0);
-    doc.setFontSize(7);
-    if (designDepositEnabled && hasDesignItems) {
+      doc.setFillColor(0, 220, 220);
+      doc.rect(cyanX, y, cyanW, rowH, "F");
+      doc.setTextColor(0);
+      doc.setFontSize(7);
       doc.text("PAID", cyanX + cyanW / 2, y + rowH / 2 + 1, { align: "center" });
+
+      doc.setFillColor(255, 213, 0);
+      doc.rect(yellowX, y, yellowW, rowH, "F");
+      doc.setTextColor(0);
+      doc.setFontSize(8);
+      doc.text(`RM ${lockDepositAmount.toLocaleString()}`, yellowX + yellowW / 2, y + rowH / 2 + 1, { align: "center" });
+
+      y += rowH + 2;
     }
 
-    const depoDesignAmount = (designDepositEnabled && hasDesignItems)
-      ? (designDepositMode === "percent" ? designAmount * designDepositPercent / 100 : designDepositCustom)
-      : 0;
-    doc.setFillColor(255, 213, 0);
-    doc.rect(yellowX, y, yellowW, rowH, "F");
-    doc.setTextColor(0);
-    doc.setFontSize(8);
-    if (depoDesignAmount > 0) {
-      doc.text(`RM ${depoDesignAmount.toLocaleString()}`, yellowX + yellowW / 2, y + rowH / 2 + 1, { align: "center" });
-    }
-
-    y += rowH + 2;
-
-    // Row 3: Shirt deposit
+    // Row 3: Deposit (on total order = jersey + add on)
     const shirtDepositAmount = shirtDepositEnabled
-      ? (shirtDepositMode === "percent" ? jerseyAmount * shirtDepositPercent / 100 : shirtDepositCustom)
+      ? (shirtDepositMode === "percent" ? totalAmount * shirtDepositPercent / 100 : shirtDepositCustom)
       : 0;
     const shirtDepositLabel = shirtDepositMode === "percent" ? `${shirtDepositPercent}%` : "DEPOSIT";
     doc.setFont("kollektif", "bold");
@@ -388,7 +385,7 @@ const InvoiceTab = () => {
     y += rowH + 2;
 
     // Row 4: BALANCE
-    const balance = jerseyAmount - depoDesignAmount - shirtDepositAmount;
+    const balance = totalAmount - lockDepositAmount - shirtDepositAmount;
     doc.setFont("kollektif", "bold");
     doc.setFontSize(7);
     doc.text("BALANCE", labelRightX, y + rowH / 2 + 1, { align: "right" });
@@ -625,7 +622,7 @@ const InvoiceTab = () => {
           <div className="flex items-center justify-between pt-3 border-t">
             <div className="flex items-center gap-2 flex-wrap">
               <input type="checkbox" checked={shirtDepositEnabled} onChange={(e) => setShirtDepositEnabled(e.target.checked)} className="rounded" />
-              <span className="text-xs">Deposit</span>
+              <span className="text-xs">Deposit (on Total Order)</span>
               <select value={shirtDepositMode} onChange={(e) => setShirtDepositMode(e.target.value as "percent" | "custom")} disabled={!shirtDepositEnabled} className="h-7 text-xs rounded border border-input bg-background px-2">
                 <option value="percent">%</option>
                 <option value="custom">RM</option>
@@ -638,7 +635,7 @@ const InvoiceTab = () => {
               ) : (
                 <Input type="number" value={shirtDepositCustom || ""} onChange={(e) => setShirtDepositCustom(parseFloat(e.target.value) || 0)} className="w-24 h-7 text-xs" disabled={!shirtDepositEnabled} placeholder="Amount" />
               )}
-              {shirtDepositEnabled && <span className="text-xs font-medium ml-2">= RM {(shirtDepositMode === "percent" ? jerseyAmount * shirtDepositPercent / 100 : shirtDepositCustom).toLocaleString()}</span>}
+              {shirtDepositEnabled && <span className="text-xs font-medium ml-2">= RM {(shirtDepositMode === "percent" ? totalAmount * shirtDepositPercent / 100 : shirtDepositCustom).toLocaleString()}</span>}
             </div>
             <div className="flex gap-6 text-sm font-semibold">
               <span>Total: {jerseyPcs} PCS</span>
@@ -648,10 +645,10 @@ const InvoiceTab = () => {
         </CardContent>
       </Card>
 
-      {/* Design Line Items */}
+      {/* Add On Items */}
       <Card>
         <CardHeader className="pb-3 flex flex-row items-center justify-between">
-          <CardTitle className="text-sm">Design Items</CardTitle>
+          <CardTitle className="text-sm">Add On Items</CardTitle>
           <Button variant="outline" size="sm" onClick={addDesignItem}>
             <Plus className="h-3 w-3 mr-1" /> Add Item
           </Button>
@@ -670,29 +667,27 @@ const InvoiceTab = () => {
               )}
             </div>
           ))}
-          <div className="flex items-center justify-between pt-3 border-t">
-            <div className="flex items-center gap-2 flex-wrap">
-              <input type="checkbox" checked={designDepositEnabled} onChange={(e) => setDesignDepositEnabled(e.target.checked)} className="rounded" />
-              <span className="text-xs">Deposit</span>
-              <select value={designDepositMode} onChange={(e) => setDesignDepositMode(e.target.value as "percent" | "custom")} disabled={!designDepositEnabled} className="h-7 text-xs rounded border border-input bg-background px-2">
-                <option value="percent">%</option>
-                <option value="custom">RM</option>
-              </select>
-              {designDepositMode === "percent" ? (
-                <>
-                  <Input type="number" value={designDepositPercent} onChange={(e) => setDesignDepositPercent(parseFloat(e.target.value) || 0)} className="w-16 h-7 text-xs" disabled={!designDepositEnabled} />
-                  <span className="text-xs text-muted-foreground">%</span>
-                </>
-              ) : (
-                <Input type="number" value={designDepositCustom || ""} onChange={(e) => setDesignDepositCustom(parseFloat(e.target.value) || 0)} className="w-24 h-7 text-xs" disabled={!designDepositEnabled} placeholder="Amount" />
-              )}
-              {designDepositEnabled && <span className="text-xs font-medium ml-2">= RM {(designDepositMode === "percent" ? designAmount * designDepositPercent / 100 : designDepositCustom).toLocaleString()}</span>}
-            </div>
+          <div className="flex items-center justify-end pt-3 border-t">
             <div className="flex gap-6 text-sm font-semibold">
               <span>Total: {designPcs} PCS</span>
               <span>RM {designAmount.toLocaleString()}</span>
             </div>
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Lock Deposit */}
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm">Lock Deposit</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center gap-3">
+            <label className="text-xs text-muted-foreground whitespace-nowrap">Lock Deposit Amount (RM)</label>
+            <Input type="number" placeholder="0" value={lockDepositAmount || ""} onChange={(e) => setLockDepositAmount(parseFloat(e.target.value) || 0)} className="w-40" />
+            {lockDepositAmount > 0 && <span className="text-xs font-medium">RM {lockDepositAmount.toLocaleString()}</span>}
+          </div>
+          <p className="text-xs text-muted-foreground mt-1">Amount paid by customer to lock the order. Leave 0 or empty to hide from invoice.</p>
         </CardContent>
       </Card>
 
