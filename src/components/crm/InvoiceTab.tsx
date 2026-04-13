@@ -291,65 +291,108 @@ const InvoiceTab = () => {
 
     y += 4;
 
-    // Total summary
+    // Summary table matching reference layout
     doc.setFont("kollektif", "bold");
     doc.setFontSize(10);
-    const summaryX = pw / 2;
-    doc.text("TOTAL SHIRT", summaryX - 10, y);
-    doc.text("ORDER", summaryX - 3, y + 5);
 
-    // Yellow box for PCS
-    doc.setFillColor(255, 213, 0);
-    doc.rect(summaryX + 20, y - 5, 30, 12, "F");
-    doc.setTextColor(0);
-    doc.text(`${totalPcs} PCS`, summaryX + 25, y + 3);
+    const labelX = margin;
+    const cyanX = margin + 45;
+    const cyanW = 55;
+    const yellowX = cyanX + cyanW + 3;
+    const yellowW = 45;
+    const rowH = 14;
 
-    // Cyan box for amount
+    // Build jersey description lines (e.g. "56 PCS/FREE\n1 PCS/FREE REFLECTIVE\n1 UNIT")
+    const jerseyDescLines: string[] = [];
+    if (hasJerseyItems) {
+      jerseyItems.filter(it => it.description.trim() || it.price > 0 || it.quantity > 0).forEach(it => {
+        jerseyDescLines.push(`${it.quantity} PCS/${it.description.toUpperCase()}`);
+      });
+    }
+    const row1H = Math.max(rowH, jerseyDescLines.length * 5 + 6);
+
+    // Row 1: TOTAL SHIRT ORDER
+    doc.setFont("kollektif", "bold");
+    doc.setFontSize(9);
+    doc.text("TOTAL SHIRT", labelX, y + row1H / 2 - 1);
+    doc.text("ORDER", labelX, y + row1H / 2 + 4);
+
+    // Cyan box with item breakdown
     doc.setFillColor(0, 220, 220);
-    doc.rect(summaryX + 53, y - 5, 35, 12, "F");
-    doc.text(`RM${totalAmount.toLocaleString()}`, summaryX + 57, y + 3);
+    doc.rect(cyanX, y, cyanW, row1H, "F");
+    doc.setTextColor(0);
+    doc.setFontSize(8);
+    let descY = y + 5;
+    jerseyDescLines.forEach(line => {
+      doc.text(line, cyanX + 3, descY);
+      descY += 5;
+    });
+
+    // Yellow box with total amount
+    doc.setFillColor(255, 213, 0);
+    doc.rect(yellowX, y, yellowW, row1H, "F");
+    doc.setTextColor(0);
+    doc.setFontSize(10);
+    doc.text(`RM ${jerseyAmount.toLocaleString()}`, yellowX + 5, y + row1H / 2 + 2);
+
+    y += row1H + 2;
+
+    // Row 2: DEPO DESIGN
+    doc.setFont("kollektif", "bold");
+    doc.setFontSize(9);
+    doc.text("DEPO DESIGN", labelX, y + rowH / 2 + 2);
+
+    doc.setFillColor(0, 220, 220);
+    doc.rect(cyanX, y, cyanW, rowH, "F");
+    doc.setTextColor(0);
+    doc.setFontSize(10);
+    if (designDepositEnabled && hasDesignItems) {
+      doc.text("PAID", cyanX + cyanW / 2 - 6, y + rowH / 2 + 2);
+    }
+
+    const depoDesignAmount = (designDepositEnabled && hasDesignItems) ? designAmount : 0;
+    doc.setFillColor(255, 213, 0);
+    doc.rect(yellowX, y, yellowW, rowH, "F");
+    doc.setTextColor(0);
+    if (depoDesignAmount > 0) {
+      doc.text(`RM${depoDesignAmount.toLocaleString()}`, yellowX + 5, y + rowH / 2 + 2);
+    }
+
+    y += rowH + 2;
+
+    // Row 3: 50% (50% of jersey amount only, not including design deposit)
+    const fiftyPercent = jerseyAmount * 0.5;
+    doc.setFont("kollektif", "bold");
+    doc.setFontSize(9);
+    doc.text("50%", labelX, y + rowH / 2 + 2);
+
+    doc.setFillColor(0, 220, 220);
+    doc.rect(cyanX, y, cyanW, rowH, "F");
+
+    doc.setFillColor(255, 213, 0);
+    doc.rect(yellowX, y, yellowW, rowH, "F");
+    doc.setTextColor(0);
+    doc.setFontSize(10);
+    doc.text(`RM ${fiftyPercent.toLocaleString()}`, yellowX + 5, y + rowH / 2 + 2);
+
+    y += rowH + 2;
+
+    // Row 4: BALANCE = total shirt order - depo design - 50%
+    const balance = jerseyAmount - depoDesignAmount - fiftyPercent;
+    doc.setFont("kollektif", "bold");
+    doc.setFontSize(9);
+    doc.text("BALANCE", labelX, y + rowH / 2 + 2);
+
+    doc.setFillColor(0, 220, 220);
+    doc.rect(cyanX, y, cyanW, rowH, "F");
+
+    doc.setFillColor(255, 213, 0);
+    doc.rect(yellowX, y, yellowW, rowH, "F");
+    doc.setTextColor(0);
+    doc.setFontSize(10);
+    doc.text(`RM ${balance.toLocaleString()}`, yellowX + 5, y + rowH / 2 + 2);
 
     doc.setTextColor(0);
-
-    // Deposit amounts
-    let totalDeposit = 0;
-
-    if (shirtDepositEnabled && hasJerseyItems) {
-      const shirtDeposit = jerseyAmount * (shirtDepositPercent / 100);
-      totalDeposit += shirtDeposit;
-      y += 16;
-      doc.setFont("kollektif", "bold");
-      doc.setFontSize(10);
-      doc.text(`DEPOSIT (JERSEY ${shirtDepositPercent}%)`, summaryX - 10, y + 3);
-      doc.setFillColor(230, 230, 230);
-      doc.rect(summaryX + 40, y - 5, 45, 12, "F");
-      doc.setTextColor(0);
-      doc.text(`RM${shirtDeposit.toLocaleString()}`, summaryX + 44, y + 3);
-    }
-
-    if (designDepositEnabled && hasDesignItems) {
-      const designDeposit = designAmount * (designDepositPercent / 100);
-      totalDeposit += designDeposit;
-      y += 16;
-      doc.setFont("kollektif", "bold");
-      doc.setFontSize(10);
-      doc.text(`DEPOSIT (DESIGN ${designDepositPercent}%)`, summaryX - 10, y + 3);
-      doc.setFillColor(230, 230, 230);
-      doc.rect(summaryX + 40, y - 5, 45, 12, "F");
-      doc.setTextColor(0);
-      doc.text(`RM${designDeposit.toLocaleString()}`, summaryX + 44, y + 3);
-    }
-
-    if (totalDeposit > 0) {
-      y += 16;
-      doc.setFont("kollektif", "bold");
-      doc.setFontSize(10);
-      doc.text("TOTAL DEPOSIT", summaryX - 10, y + 3);
-      doc.setFillColor(210, 210, 210);
-      doc.rect(summaryX + 40, y - 5, 45, 12, "F");
-      doc.setTextColor(0);
-      doc.text(`RM${totalDeposit.toLocaleString()}`, summaryX + 44, y + 3);
-    }
 
     // Terms
     y += 40;
