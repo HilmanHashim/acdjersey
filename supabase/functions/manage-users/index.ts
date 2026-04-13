@@ -1,5 +1,4 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "npm:@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -9,7 +8,7 @@ const corsHeaders = {
 const json = (data: any, status = 200) =>
   new Response(JSON.stringify(data), { status, headers: { ...corsHeaders, "Content-Type": "application/json" } });
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
@@ -48,20 +47,23 @@ serve(async (req) => {
 
     // All other actions require authentication
     const authHeader = req.headers.get("Authorization");
-    if (!authHeader) return json({ error: "Unauthorized" }, 401);
+    if (!authHeader?.startsWith("Bearer ")) return json({ error: "Unauthorized" }, 401);
 
+    const token = authHeader.replace("Bearer ", "");
     const supabaseAuth = createClient(supabaseUrl, publishableKey, {
       global: { headers: { Authorization: authHeader } },
     });
 
-    const { data: { user: caller }, error: callerError } = await supabaseAuth.auth.getUser();
-    if (callerError || !caller) return json({ error: "Unauthorized" }, 401);
+    const { data: claimsData, error: claimsError } = await supabaseAuth.auth.getClaims(token);
+    if (claimsError || !claimsData?.claims) return json({ error: "Unauthorized" }, 401);
+
+    const callerId = claimsData.claims.sub as string;
 
     // Fetch caller's roles
     const { data: callerRoles } = await supabaseAdmin
       .from("user_roles")
       .select("role")
-      .eq("user_id", caller.id);
+      .eq("user_id", callerId);
 
     const callerRoleSet = new Set((callerRoles ?? []).map((r: any) => r.role));
     const isSuperadmin = callerRoleSet.has("superadmin");
@@ -107,11 +109,11 @@ serve(async (req) => {
       if (!user_id) return json({ error: "user_id required" }, 400);
 
       // Non-admins can only change their own password
-      if (!isAdmin && user_id !== caller.id) return json({ error: "You can only update your own account" }, 403);
+      if (!isAdmin && user_id !== callerId) return json({ error: "You can only update your own account" }, 403);
       if (!isAdmin && email) return json({ error: "Only admins can change email addresses" }, 403);
 
       // Admin cannot change superadmin's password
-      if (!isSuperadmin && user_id !== caller.id) {
+      if (!isSuperadmin && user_id !== callerId) {
         const { data: targetRoles } = await supabaseAdmin.from("user_roles").select("role").eq("user_id", user_id);
         const targetIsSuperadmin = (targetRoles ?? []).some((r: any) => r.role === "superadmin");
         if (targetIsSuperadmin) return json({ error: "Only superadmins can modify superadmin accounts" }, 403);
