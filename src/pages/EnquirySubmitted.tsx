@@ -29,6 +29,7 @@ const EnquirySubmitted = () => {
     </section>
     <Footer />
   </>
-);
+  );
+};
 
 export default EnquirySubmitted;
