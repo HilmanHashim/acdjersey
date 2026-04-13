@@ -1,7 +1,7 @@
 import heroImage from "@/assets/hero-bg.jpg";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Phone, MapPin } from "lucide-react";
+import { Phone, MapPin, Send } from "lucide-react";
 
 const Hero = () => (
   <section className="relative min-h-[90vh] flex items-center overflow-hidden surface-dark">
@@ -21,6 +21,11 @@ const Hero = () => (
         </p>
         <div className="flex flex-wrap gap-4 pt-2">
           <Button variant="hero" size="lg" asChild>
+            <Link to="/enquiry">
+              <Send className="mr-2 h-5 w-5" /> Get A Quote
+            </Link>
+          </Button>
+          <Button size="lg" asChild className="bg-white/10 border border-white/20 text-white hover:bg-white/20 backdrop-blur-sm font-display uppercase tracking-wider">
             <Link to="/agents">
               <Phone className="mr-2 h-5 w-5" /> Contact Us
             </Link>
