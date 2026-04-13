@@ -247,9 +247,9 @@ const InvoiceTab = () => {
 
       const tableData = tableItems.map((it) => [
         it.description.toUpperCase(),
-        `RM ${it.price.toFixed(0)}`,
-        `${it.quantity}PCS`,
-        `RM ${(it.price * it.quantity).toLocaleString()}`,
+        it.price > 0 ? `RM ${it.price.toFixed(0)}` : "-",
+        `${it.quantity} ${it.quantity === 1 ? "UNIT" : "PCS"}`,
+        it.price > 0 ? `RM ${(it.price * it.quantity).toLocaleString()}` : "-",
       ]);
 
       autoTable(doc, {
