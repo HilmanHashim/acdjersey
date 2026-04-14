@@ -170,7 +170,7 @@ const JobsheetTab = () => {
     doc.setTextColor(0, 0, 0);
 
     y += 10;
-    const validMockups = entry.mockupImages.filter((m) => m !== null) as string[];
+    const validMockups = (entry.mockupImages || []).filter((m) => m !== null) as string[];
     if (validMockups.length > 0) {
       const mockImgCount = validMockups.length;
       const maxTotalW = pw - margin * 2 - 20;
@@ -399,7 +399,7 @@ const JobsheetTab = () => {
               <div>
                 <label className="text-xs text-muted-foreground">Mockup Images (max 2)</label>
                 <div className="flex items-center gap-3 flex-wrap">
-                  {entry.mockupImages.map((img, imgIdx) => (
+                  {(entry.mockupImages || [null, null]).map((img, imgIdx) => (
                     <div key={imgIdx} className="flex items-center gap-2">
                       <label className="cursor-pointer flex items-center gap-2 px-3 py-2 border rounded-md text-sm text-muted-foreground hover:bg-accent transition-colors">
                         <ImagePlus className="h-4 w-4" />
