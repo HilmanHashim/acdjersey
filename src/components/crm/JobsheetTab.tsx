@@ -35,7 +35,7 @@ interface JobsheetEntry {
   category: string;
   type: string;
   material: string;
-  mockupImage: string | null;
+  mockupImages: (string | null)[];
   sizeRows: SizeRow[];
 }
 
@@ -43,7 +43,7 @@ const createEmptyEntry = (): JobsheetEntry => ({
   category: "ADULTS: SHORT SLEEVE",
   type: "",
   material: "",
-  mockupImage: null,
+  mockupImages: [null, null],
   sizeRows: sizes.map((s) => ({ size: s, qty: 0, nameset: "" })),
 });
 
@@ -79,12 +79,32 @@ const JobsheetTab = () => {
     setEntries((prev) => prev.filter((_, i) => i !== idx));
   };
 
-  const handleMockupUpload = (entryIdx: number, e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleMockupUpload = (entryIdx: number, imgIdx: number, e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = (ev) => updateEntry(entryIdx, { mockupImage: ev.target?.result as string });
+    reader.onload = (ev) => {
+      setEntries((prev) =>
+        prev.map((entry, i) => {
+          if (i !== entryIdx) return entry;
+          const updated = [...entry.mockupImages];
+          updated[imgIdx] = ev.target?.result as string;
+          return { ...entry, mockupImages: updated };
+        })
+      );
+    };
     reader.readAsDataURL(file);
+  };
+
+  const removeMockup = (entryIdx: number, imgIdx: number) => {
+    setEntries((prev) =>
+      prev.map((entry, i) => {
+        if (i !== entryIdx) return entry;
+        const updated = [...entry.mockupImages];
+        updated[imgIdx] = null;
+        return { ...entry, mockupImages: updated };
+      })
+    );
   };
 
   const formatDate = (dateStr: string) => {
@@ -150,25 +170,40 @@ const JobsheetTab = () => {
     doc.setTextColor(0, 0, 0);
 
     y += 10;
-    if (entry.mockupImage) {
-      try {
-        const mockImg = new Image();
-        mockImg.crossOrigin = "anonymous";
-        await new Promise<void>((resolve, reject) => {
-          mockImg.onload = () => resolve();
-          mockImg.onerror = reject;
-          mockImg.src = entry.mockupImage!;
-        });
-        const maxW = pw - margin * 2 - 20;
-        const maxH = 70;
-        const ratio = Math.min(maxW / mockImg.naturalWidth, maxH / mockImg.naturalHeight);
-        const imgW = mockImg.naturalWidth * ratio;
-        const imgH = mockImg.naturalHeight * ratio;
-        const imgX = (pw - imgW) / 2;
-        doc.addImage(mockImg, "JPEG", imgX, y, imgW, imgH);
-        y += imgH + 8;
-      } catch {
-        y += 5;
+    const validMockups = entry.mockupImages.filter((m) => m !== null) as string[];
+    if (validMockups.length > 0) {
+      const mockImgCount = validMockups.length;
+      const maxTotalW = pw - margin * 2 - 20;
+      const maxPerImg = mockImgCount === 1 ? maxTotalW : (maxTotalW - 10) / 2;
+      const maxH = 70;
+      let totalW = 0;
+      const loaded: { img: HTMLImageElement; w: number; h: number }[] = [];
+      for (const src of validMockups) {
+        try {
+          const mockImg = new Image();
+          mockImg.crossOrigin = "anonymous";
+          await new Promise<void>((resolve, reject) => {
+            mockImg.onload = () => resolve();
+            mockImg.onerror = reject;
+            mockImg.src = src;
+          });
+          const ratio = Math.min(maxPerImg / mockImg.naturalWidth, maxH / mockImg.naturalHeight);
+          const imgW = mockImg.naturalWidth * ratio;
+          const imgH = mockImg.naturalHeight * ratio;
+          loaded.push({ img: mockImg, w: imgW, h: imgH });
+          totalW += imgW;
+        } catch {}
+      }
+      if (loaded.length > 0) {
+        const gap = loaded.length > 1 ? 10 : 0;
+        let imgX = (pw - (totalW + gap * (loaded.length - 1))) / 2;
+        let maxRenderedH = 0;
+        for (const { img, w, h } of loaded) {
+          doc.addImage(img, "JPEG", imgX, y, w, h);
+          imgX += w + gap;
+          maxRenderedH = Math.max(maxRenderedH, h);
+        }
+        y += maxRenderedH + 8;
       }
     } else {
       const boxW = pw - margin * 2 - 40;
@@ -362,16 +397,29 @@ const JobsheetTab = () => {
               </div>
 
               <div>
-                <label className="text-xs text-muted-foreground">Mockup Image</label>
-                <div className="flex items-center gap-2">
-                  <label className="cursor-pointer flex items-center gap-2 px-3 py-2 border rounded-md text-sm text-muted-foreground hover:bg-accent transition-colors">
-                    <ImagePlus className="h-4 w-4" />
-                    {entry.mockupImage ? "Change Image" : "Upload Mockup"}
-                    <input type="file" accept="image/*" className="hidden" onChange={(e) => handleMockupUpload(idx, e)} />
-                  </label>
-                  {entry.mockupImage && (
-                    <img src={entry.mockupImage} alt="Mockup preview" className="h-12 w-12 object-cover rounded border" />
-                  )}
+                <label className="text-xs text-muted-foreground">Mockup Images (max 2)</label>
+                <div className="flex items-center gap-3 flex-wrap">
+                  {entry.mockupImages.map((img, imgIdx) => (
+                    <div key={imgIdx} className="flex items-center gap-2">
+                      <label className="cursor-pointer flex items-center gap-2 px-3 py-2 border rounded-md text-sm text-muted-foreground hover:bg-accent transition-colors">
+                        <ImagePlus className="h-4 w-4" />
+                        {img ? `Change #${imgIdx + 1}` : `Upload #${imgIdx + 1}`}
+                        <input type="file" accept="image/*" className="hidden" onChange={(e) => handleMockupUpload(idx, imgIdx, e)} />
+                      </label>
+                      {img && (
+                        <div className="relative">
+                          <img src={img} alt={`Mockup ${imgIdx + 1}`} className="h-12 w-12 object-cover rounded border" />
+                          <button
+                            type="button"
+                            onClick={() => removeMockup(idx, imgIdx)}
+                            className="absolute -top-1.5 -right-1.5 bg-destructive text-destructive-foreground rounded-full h-4 w-4 flex items-center justify-center text-[10px] leading-none"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  ))}
                 </div>
               </div>
 
