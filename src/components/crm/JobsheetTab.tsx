@@ -35,6 +35,7 @@ interface JobsheetEntry {
   category: string;
   type: string;
   material: string;
+  remark: string;
   mockupImages: (string | null)[];
   sizeRows: SizeRow[];
 }
@@ -43,6 +44,7 @@ const createEmptyEntry = (): JobsheetEntry => ({
   category: "ADULTS: SHORT SLEEVE",
   type: "",
   material: "",
+  remark: "",
   mockupImages: [null, null],
   sizeRows: sizes.map((s) => ({ size: s, qty: 0, nameset: "" })),
 });
