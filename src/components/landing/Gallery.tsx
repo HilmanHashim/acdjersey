@@ -39,8 +39,8 @@ const Gallery = () => {
                 key={i}
                 src={src}
                 alt={`Project ${i + 1}`}
-                className={`w-full h-auto block transition-opacity duration-700 ${
-                  i === current ? "relative opacity-100" : "absolute inset-0 opacity-0"
+                className={`absolute inset-0 w-full h-full object-contain transition-opacity duration-700 ${
+                  i === current ? "opacity-100" : "opacity-0"
                 }`}
               />
             ))}
