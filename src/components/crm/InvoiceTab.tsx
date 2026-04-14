@@ -24,7 +24,7 @@ const agents = [
   "UMAR ACD",
   "FAIZ ACD",
   "HILMAN ACD",
-  "IMAN ACD",
+  "MUNIR ACD",
   "JEED ACD",
   "ADAM ACD",
 ];
@@ -139,7 +139,9 @@ const InvoiceTab = () => {
 
     // Log the invoice
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       await supabase.from("invoices_log").insert({
         invoice_number: currentInvoiceNumber,
         title: title || null,
@@ -282,12 +284,18 @@ const InvoiceTab = () => {
 
     // Render jersey table
     if (hasJerseyItems) {
-      renderTable("Jersey", jerseyItems.filter((it) => it.description.trim() || it.price > 0 || it.quantity > 0));
+      renderTable(
+        "Jersey",
+        jerseyItems.filter((it) => it.description.trim() || it.price > 0 || it.quantity > 0),
+      );
     }
 
     // Render add on items table (only if filled)
     if (hasDesignItems) {
-      renderTable("Add On Items", designItems.filter((it) => it.description.trim() || it.price > 0 || it.quantity > 0));
+      renderTable(
+        "Add On Items",
+        designItems.filter((it) => it.description.trim() || it.price > 0 || it.quantity > 0),
+      );
     }
 
     y += 4;
@@ -307,14 +315,18 @@ const InvoiceTab = () => {
     // Build description lines for all items
     const orderDescLines: string[] = [];
     if (hasJerseyItems) {
-      jerseyItems.filter(it => it.description.trim() || it.price > 0 || it.quantity > 0).forEach(it => {
-        orderDescLines.push(`${it.quantity} PCS ${it.description.toUpperCase()}`);
-      });
+      jerseyItems
+        .filter((it) => it.description.trim() || it.price > 0 || it.quantity > 0)
+        .forEach((it) => {
+          orderDescLines.push(`${it.quantity} PCS ${it.description.toUpperCase()}`);
+        });
     }
     if (hasDesignItems) {
-      designItems.filter(it => it.description.trim() || it.price > 0 || it.quantity > 0).forEach(it => {
-        orderDescLines.push(`${it.quantity} PCS ${it.description.toUpperCase()}`);
-      });
+      designItems
+        .filter((it) => it.description.trim() || it.price > 0 || it.quantity > 0)
+        .forEach((it) => {
+          orderDescLines.push(`${it.quantity} PCS ${it.description.toUpperCase()}`);
+        });
     }
     const row1H = Math.max(rowH, orderDescLines.length * 4 + 4);
 
@@ -329,7 +341,7 @@ const InvoiceTab = () => {
     doc.setTextColor(0);
     doc.setFontSize(6);
     let descY = y + 4;
-    orderDescLines.forEach(line => {
+    orderDescLines.forEach((line) => {
       const truncated = line.length > 28 ? line.substring(0, 26) + ".." : line;
       doc.text(truncated, cyanX + 1.5, descY);
       descY += 4;
@@ -359,14 +371,18 @@ const InvoiceTab = () => {
       doc.rect(yellowX, y, yellowW, rowH, "F");
       doc.setTextColor(0);
       doc.setFontSize(8);
-      doc.text(`RM ${lockDepositAmount.toLocaleString()}`, yellowX + yellowW / 2, y + rowH / 2 + 1, { align: "center" });
+      doc.text(`RM ${lockDepositAmount.toLocaleString()}`, yellowX + yellowW / 2, y + rowH / 2 + 1, {
+        align: "center",
+      });
 
       y += rowH + 2;
     }
 
     // Row 3: Deposit (on total order = jersey + add on)
     const shirtDepositAmount = shirtDepositEnabled
-      ? (shirtDepositMode === "percent" ? totalAmount * shirtDepositPercent / 100 : shirtDepositCustom)
+      ? shirtDepositMode === "percent"
+        ? (totalAmount * shirtDepositPercent) / 100
+        : shirtDepositCustom
       : 0;
     const shirtDepositLabel = shirtDepositMode === "percent" ? `${shirtDepositPercent}%` : "DEPOSIT";
     doc.setFont("kollektif", "bold");
@@ -507,11 +523,24 @@ const InvoiceTab = () => {
                     className="flex-1"
                   />
                   {!isInvoiceNumberLocked ? (
-                    <Button variant="outline" size="icon" className="h-9 w-9 shrink-0" onClick={generateInvoiceNumber} disabled={isGeneratingNumber} title="Generate invoice number">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-9 w-9 shrink-0"
+                      onClick={generateInvoiceNumber}
+                      disabled={isGeneratingNumber}
+                      title="Generate invoice number"
+                    >
                       <RefreshCw className={`h-3.5 w-3.5 ${isGeneratingNumber ? "animate-spin" : ""}`} />
                     </Button>
                   ) : (
-                    <Button variant="outline" size="icon" className="h-9 w-9 shrink-0" onClick={() => setIsInvoiceNumberLocked(false)} title="Amend invoice number">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-9 w-9 shrink-0"
+                      onClick={() => setIsInvoiceNumberLocked(false)}
+                      title="Amend invoice number"
+                    >
                       <Pencil className="h-3.5 w-3.5" />
                     </Button>
                   )}
@@ -552,15 +581,29 @@ const InvoiceTab = () => {
           <CardContent className="space-y-3">
             <div>
               <label className="text-xs text-muted-foreground">Customer Name</label>
-              <Input placeholder="e.g. John Doe" value={customerName} onChange={(e) => setCustomerName(e.target.value)} />
+              <Input
+                placeholder="e.g. John Doe"
+                value={customerName}
+                onChange={(e) => setCustomerName(e.target.value)}
+              />
             </div>
             <div>
               <label className="text-xs text-muted-foreground">Contact Number</label>
-              <Input placeholder="e.g. +60 12-345 6789" value={customerPhone} onChange={(e) => setCustomerPhone(e.target.value)} />
+              <Input
+                placeholder="e.g. +60 12-345 6789"
+                value={customerPhone}
+                onChange={(e) => setCustomerPhone(e.target.value)}
+              />
             </div>
             <div>
               <label className="text-xs text-muted-foreground">Address</label>
-              <Textarea placeholder="Customer address" value={customerAddress} onChange={(e) => setCustomerAddress(e.target.value)} className="text-xs" rows={2} />
+              <Textarea
+                placeholder="Customer address"
+                value={customerAddress}
+                onChange={(e) => setCustomerAddress(e.target.value)}
+                className="text-xs"
+                rows={2}
+              />
             </div>
           </CardContent>
         </Card>
@@ -608,9 +651,23 @@ const InvoiceTab = () => {
         <CardContent className="space-y-2">
           {jerseyItems.map((item, i) => (
             <div key={i} className="grid grid-cols-[1fr_100px_80px_100px_36px] gap-2 items-center">
-              <Input placeholder="VNECK CROSS SHORTSLEEVE + NAMESET" value={item.description} onChange={(e) => updateJerseyItem(i, "description", e.target.value)} />
-              <Input type="number" placeholder="Price (RM)" value={item.price || ""} onChange={(e) => updateJerseyItem(i, "price", parseFloat(e.target.value) || 0)} />
-              <Input type="number" placeholder="Qty" value={item.quantity || ""} onChange={(e) => updateJerseyItem(i, "quantity", parseInt(e.target.value) || 0)} />
+              <Input
+                placeholder="VNECK CROSS SHORTSLEEVE + NAMESET"
+                value={item.description}
+                onChange={(e) => updateJerseyItem(i, "description", e.target.value)}
+              />
+              <Input
+                type="number"
+                placeholder="Price (RM)"
+                value={item.price || ""}
+                onChange={(e) => updateJerseyItem(i, "price", parseFloat(e.target.value) || 0)}
+              />
+              <Input
+                type="number"
+                placeholder="Qty"
+                value={item.quantity || ""}
+                onChange={(e) => updateJerseyItem(i, "quantity", parseInt(e.target.value) || 0)}
+              />
               <div className="text-sm font-medium text-right">RM {(item.price * item.quantity).toLocaleString()}</div>
               {jerseyItems.length > 1 && (
                 <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => removeJerseyItem(i)}>
@@ -621,21 +678,52 @@ const InvoiceTab = () => {
           ))}
           <div className="flex items-center justify-between pt-3 border-t">
             <div className="flex items-center gap-2 flex-wrap">
-              <input type="checkbox" checked={shirtDepositEnabled} onChange={(e) => setShirtDepositEnabled(e.target.checked)} className="rounded" />
+              <input
+                type="checkbox"
+                checked={shirtDepositEnabled}
+                onChange={(e) => setShirtDepositEnabled(e.target.checked)}
+                className="rounded"
+              />
               <span className="text-xs">Deposit (on Total Order)</span>
-              <select value={shirtDepositMode} onChange={(e) => setShirtDepositMode(e.target.value as "percent" | "custom")} disabled={!shirtDepositEnabled} className="h-7 text-xs rounded border border-input bg-background px-2">
+              <select
+                value={shirtDepositMode}
+                onChange={(e) => setShirtDepositMode(e.target.value as "percent" | "custom")}
+                disabled={!shirtDepositEnabled}
+                className="h-7 text-xs rounded border border-input bg-background px-2"
+              >
                 <option value="percent">%</option>
                 <option value="custom">RM</option>
               </select>
               {shirtDepositMode === "percent" ? (
                 <>
-                  <Input type="number" value={shirtDepositPercent} onChange={(e) => setShirtDepositPercent(parseFloat(e.target.value) || 0)} className="w-16 h-7 text-xs" disabled={!shirtDepositEnabled} />
+                  <Input
+                    type="number"
+                    value={shirtDepositPercent}
+                    onChange={(e) => setShirtDepositPercent(parseFloat(e.target.value) || 0)}
+                    className="w-16 h-7 text-xs"
+                    disabled={!shirtDepositEnabled}
+                  />
                   <span className="text-xs text-muted-foreground">%</span>
                 </>
               ) : (
-                <Input type="number" value={shirtDepositCustom || ""} onChange={(e) => setShirtDepositCustom(parseFloat(e.target.value) || 0)} className="w-24 h-7 text-xs" disabled={!shirtDepositEnabled} placeholder="Amount" />
+                <Input
+                  type="number"
+                  value={shirtDepositCustom || ""}
+                  onChange={(e) => setShirtDepositCustom(parseFloat(e.target.value) || 0)}
+                  className="w-24 h-7 text-xs"
+                  disabled={!shirtDepositEnabled}
+                  placeholder="Amount"
+                />
               )}
-              {shirtDepositEnabled && <span className="text-xs font-medium ml-2">= RM {(shirtDepositMode === "percent" ? totalAmount * shirtDepositPercent / 100 : shirtDepositCustom).toLocaleString()}</span>}
+              {shirtDepositEnabled && (
+                <span className="text-xs font-medium ml-2">
+                  = RM{" "}
+                  {(shirtDepositMode === "percent"
+                    ? (totalAmount * shirtDepositPercent) / 100
+                    : shirtDepositCustom
+                  ).toLocaleString()}
+                </span>
+              )}
             </div>
             <div className="flex gap-6 text-sm font-semibold">
               <span>Total: {jerseyPcs} PCS</span>
@@ -656,9 +744,23 @@ const InvoiceTab = () => {
         <CardContent className="space-y-2">
           {designItems.map((item, i) => (
             <div key={i} className="grid grid-cols-[1fr_100px_80px_100px_36px] gap-2 items-center">
-              <Input placeholder="LOGO DESIGN / MOCKUP" value={item.description} onChange={(e) => updateDesignItem(i, "description", e.target.value)} />
-              <Input type="number" placeholder="Price (RM)" value={item.price || ""} onChange={(e) => updateDesignItem(i, "price", parseFloat(e.target.value) || 0)} />
-              <Input type="number" placeholder="Qty" value={item.quantity || ""} onChange={(e) => updateDesignItem(i, "quantity", parseInt(e.target.value) || 0)} />
+              <Input
+                placeholder="LOGO DESIGN / MOCKUP"
+                value={item.description}
+                onChange={(e) => updateDesignItem(i, "description", e.target.value)}
+              />
+              <Input
+                type="number"
+                placeholder="Price (RM)"
+                value={item.price || ""}
+                onChange={(e) => updateDesignItem(i, "price", parseFloat(e.target.value) || 0)}
+              />
+              <Input
+                type="number"
+                placeholder="Qty"
+                value={item.quantity || ""}
+                onChange={(e) => updateDesignItem(i, "quantity", parseInt(e.target.value) || 0)}
+              />
               <div className="text-sm font-medium text-right">RM {(item.price * item.quantity).toLocaleString()}</div>
               {designItems.length > 1 && (
                 <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => removeDesignItem(i)}>
@@ -684,10 +786,20 @@ const InvoiceTab = () => {
         <CardContent>
           <div className="flex items-center gap-3">
             <label className="text-xs text-muted-foreground whitespace-nowrap">Lock Deposit Amount (RM)</label>
-            <Input type="number" placeholder="0" value={lockDepositAmount || ""} onChange={(e) => setLockDepositAmount(parseFloat(e.target.value) || 0)} className="w-40" />
-            {lockDepositAmount > 0 && <span className="text-xs font-medium">RM {lockDepositAmount.toLocaleString()}</span>}
+            <Input
+              type="number"
+              placeholder="0"
+              value={lockDepositAmount || ""}
+              onChange={(e) => setLockDepositAmount(parseFloat(e.target.value) || 0)}
+              className="w-40"
+            />
+            {lockDepositAmount > 0 && (
+              <span className="text-xs font-medium">RM {lockDepositAmount.toLocaleString()}</span>
+            )}
           </div>
-          <p className="text-xs text-muted-foreground mt-1">Amount paid by customer to lock the order. Leave 0 or empty to hide from invoice.</p>
+          <p className="text-xs text-muted-foreground mt-1">
+            Amount paid by customer to lock the order. Leave 0 or empty to hide from invoice.
+          </p>
         </CardContent>
       </Card>
 
