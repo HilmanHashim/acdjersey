@@ -399,7 +399,7 @@ const JobsheetTab = () => {
               <div>
                 <label className="text-xs text-muted-foreground">Mockup Images (max 2)</label>
                 <div className="flex items-center gap-3 flex-wrap">
-                  {entry.mockupImages.map((img, imgIdx) => (
+                  {(entry.mockupImages || [null, null]).map((img, imgIdx) => (
                     <div key={imgIdx} className="flex items-center gap-2">
                       <label className="cursor-pointer flex items-center gap-2 px-3 py-2 border rounded-md text-sm text-muted-foreground hover:bg-accent transition-colors">
                         <ImagePlus className="h-4 w-4" />
