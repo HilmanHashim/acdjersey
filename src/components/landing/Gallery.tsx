@@ -31,16 +31,16 @@ const Gallery = () => {
           <h2 className="text-3xl md:text-5xl font-display text-foreground">Recent Projects</h2>
         </div>
 
-        <div className="relative group my-0 py-0 w-full">
+        <div className="relative group my-0 py-0 mx-auto" style={{ maxWidth: 'fit-content' }}>
           {/* Main image */}
-          <div className="relative w-full overflow-hidden rounded-xl border border-border shadow-2xl">
+          <div className="relative h-[80vh] overflow-hidden rounded-xl border border-border shadow-2xl">
             {images.map((src, i) => (
               <img
                 key={i}
                 src={src}
                 alt={`Project ${i + 1}`}
-                className={`w-full h-auto block transition-opacity duration-700 ${
-                  i === current ? "relative opacity-100" : "absolute inset-0 opacity-0"
+                className={`absolute inset-0 w-full h-full object-contain transition-opacity duration-700 ${
+                  i === current ? "opacity-100" : "opacity-0"
                 }`}
               />
             ))}
