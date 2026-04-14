@@ -25,22 +25,22 @@ const Gallery = () => {
 
   return (
     <section className="py-20 bg-card">
-      <div className="container space-y-10">
+      <div className="space-y-10">
         <div className="text-center space-y-3">
           <p className="text-accent uppercase tracking-[0.25em] text-sm font-display">Our Work</p>
           <h2 className="text-3xl md:text-5xl font-display text-foreground">Recent Projects</h2>
         </div>
 
-        <div className="relative group my-0 py-0">
+        <div className="relative group my-0 py-0 w-full">
           {/* Main image */}
-          <div className="relative h-[80vh] w-full overflow-hidden rounded-xl border border-border shadow-2xl">
+          <div className="relative w-full overflow-hidden rounded-xl border border-border shadow-2xl">
             {images.map((src, i) => (
               <img
                 key={i}
                 src={src}
                 alt={`Project ${i + 1}`}
-                className={`absolute inset-0 w-full h-full object-contain transition-opacity duration-700 ${
-                  i === current ? "opacity-100" : "opacity-0"
+                className={`w-full h-auto block transition-opacity duration-700 ${
+                  i === current ? "relative opacity-100" : "absolute inset-0 opacity-0"
                 }`}
               />
             ))}
