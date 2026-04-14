@@ -250,6 +250,15 @@ const JobsheetTab = () => {
     doc.text(entry.material.toUpperCase() || "-", detailX + 24, dy);
     doc.setTextColor(0, 0, 0);
 
+    if (entry.remark) {
+      dy += 6;
+      doc.setFont("helvetica", "bold");
+      doc.text("REMARK:", detailX, dy);
+      doc.setTextColor(30, 100, 200);
+      doc.text(entry.remark.toUpperCase(), detailX + 22, dy);
+      doc.setTextColor(0, 0, 0);
+    }
+
     const tableBody = entry.sizeRows.map((r) => [r.size, r.qty || "", r.nameset]);
 
     autoTable(doc, {
@@ -395,6 +404,10 @@ const JobsheetTab = () => {
                 <div>
                   <label className="text-xs text-muted-foreground">Material</label>
                   <Input placeholder="e.g. DIAMOND 160GSM" value={entry.material} onChange={(e) => updateEntry(idx, { material: e.target.value })} />
+                </div>
+                <div>
+                  <label className="text-xs text-muted-foreground">Remark (optional)</label>
+                  <Input placeholder="e.g. Extra notes" value={entry.remark || ""} onChange={(e) => updateEntry(idx, { remark: e.target.value })} />
                 </div>
               </div>
 
