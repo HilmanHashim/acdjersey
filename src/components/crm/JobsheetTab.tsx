@@ -3,23 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { FileText, Download, ImagePlus } from "lucide-react";
+import { FileText, Download, ImagePlus, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import acdLogo from "@/assets/black-3.png";
-
-const agents = [
-  "ALIFF ACD",
-  "DIDO ACD",
-  "HARITH ACD",
-  "UMAR ACD",
-  "FAIZ ACD",
-  "HILMAN ACD",
-  "IMAN ACD",
-  "JEED ACD",
-  "ADAM ACD",
-];
 
 const sizes = ["24", "34", "XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL", "6XL"];
 
@@ -43,31 +31,59 @@ interface SizeRow {
   nameset: string;
 }
 
+interface JobsheetEntry {
+  category: string;
+  type: string;
+  material: string;
+  mockupImage: string | null;
+  sizeRows: SizeRow[];
+}
+
+const createEmptyEntry = (): JobsheetEntry => ({
+  category: "ADULTS: SHORT SLEEVE",
+  type: "",
+  material: "",
+  mockupImage: null,
+  sizeRows: sizes.map((s) => ({ size: s, qty: 0, nameset: "" })),
+});
+
 const JobsheetTab = () => {
   const [clientName, setClientName] = useState("");
   const [jobName, setJobName] = useState("");
   const [dateIn, setDateIn] = useState(new Date().toISOString().split("T")[0]);
   const [dateOut, setDateOut] = useState("");
-  const [category, setCategory] = useState("ADULTS: SHORT SLEEVE");
-  const [type, setType] = useState("");
-  const [material, setMaterial] = useState("");
-  const [agent, setAgent] = useState("");
-  const [mockupImage, setMockupImage] = useState<string | null>(null);
-  const [sizeRows, setSizeRows] = useState<SizeRow[]>(sizes.map((s) => ({ size: s, qty: 0, nameset: "" })));
+  const [entries, setEntries] = useState<JobsheetEntry[]>([createEmptyEntry()]);
 
-  const totalPcs = sizeRows.reduce((s, r) => s + (r.qty || 0), 0);
-
-  const updateSizeRow = (i: number, field: keyof SizeRow, value: string | number) => {
-    const updated = [...sizeRows];
-    (updated[i] as any)[field] = value;
-    setSizeRows(updated);
+  const updateEntry = (idx: number, updates: Partial<JobsheetEntry>) => {
+    setEntries((prev) => prev.map((e, i) => (i === idx ? { ...e, ...updates } : e)));
   };
 
-  const handleMockupUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const updateSizeRow = (entryIdx: number, rowIdx: number, field: keyof SizeRow, value: string | number) => {
+    setEntries((prev) =>
+      prev.map((e, i) => {
+        if (i !== entryIdx) return e;
+        const updated = [...e.sizeRows];
+        (updated[rowIdx] as any)[field] = value;
+        return { ...e, sizeRows: updated };
+      })
+    );
+  };
+
+  const addEntry = () => setEntries((prev) => [...prev, createEmptyEntry()]);
+
+  const removeEntry = (idx: number) => {
+    if (entries.length <= 1) {
+      toast.error("You need at least one jobsheet");
+      return;
+    }
+    setEntries((prev) => prev.filter((_, i) => i !== idx));
+  };
+
+  const handleMockupUpload = (entryIdx: number, e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = (ev) => setMockupImage(ev.target?.result as string);
+    reader.onload = (ev) => updateEntry(entryIdx, { mockupImage: ev.target?.result as string });
     reader.readAsDataURL(file);
   };
 
@@ -77,17 +93,14 @@ const JobsheetTab = () => {
     return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
   };
 
-  const generatePDF = async () => {
-    if (!clientName || !jobName) {
-      toast.error("Please fill in client name and job name");
-      return;
-    }
+  const grandTotal = entries.reduce((sum, e) => sum + e.sizeRows.reduce((s, r) => s + (r.qty || 0), 0), 0);
 
-    const doc = new jsPDF("p", "mm", "a4");
+  const renderJobsheetPage = async (doc: jsPDF, entry: JobsheetEntry, entryTotal: number) => {
     const pw = doc.internal.pageSize.getWidth();
     const margin = 15;
     let y = 12;
 
+    // Logo + header
     const logoW = 22;
     const logoH = 11;
     try {
@@ -137,14 +150,14 @@ const JobsheetTab = () => {
     doc.setTextColor(0, 0, 0);
 
     y += 10;
-    if (mockupImage) {
+    if (entry.mockupImage) {
       try {
         const mockImg = new Image();
         mockImg.crossOrigin = "anonymous";
         await new Promise<void>((resolve, reject) => {
           mockImg.onload = () => resolve();
           mockImg.onerror = reject;
-          mockImg.src = mockupImage;
+          mockImg.src = entry.mockupImage!;
         });
         const maxW = pw - margin * 2 - 20;
         const maxH = 70;
@@ -174,7 +187,7 @@ const JobsheetTab = () => {
 
     doc.setFont("helvetica", "bold");
     doc.setFontSize(12);
-    doc.text(category, pw / 2, y, { align: "center" });
+    doc.text(entry.category, pw / 2, y, { align: "center" });
     y += 10;
 
     const detailX = margin;
@@ -190,18 +203,17 @@ const JobsheetTab = () => {
     doc.setFont("helvetica", "bold");
     doc.text("TYPE :", detailX, dy);
     doc.setTextColor(30, 100, 200);
-    doc.text(type.toUpperCase() || "-", detailX + 22, dy);
+    doc.text(entry.type.toUpperCase() || "-", detailX + 22, dy);
     doc.setTextColor(0, 0, 0);
 
     dy += 6;
     doc.setFont("helvetica", "bold");
     doc.text("MATERIAL:", detailX, dy);
     doc.setTextColor(30, 100, 200);
-    doc.text(material.toUpperCase() || "-", detailX + 24, dy);
+    doc.text(entry.material.toUpperCase() || "-", detailX + 24, dy);
     doc.setTextColor(0, 0, 0);
 
-
-    const tableBody = sizeRows.map((r) => [r.size, r.qty || "", r.nameset]);
+    const tableBody = entry.sizeRows.map((r) => [r.size, r.qty || "", r.nameset]);
 
     autoTable(doc, {
       startY: detailY - 3,
@@ -217,14 +229,11 @@ const JobsheetTab = () => {
       },
       didParseCell: (data: any) => {
         if (data.section === "head") {
-          if (data.column.index === 0) {
-            data.cell.styles.fillColor = [220, 30, 30];
-          } else if (data.column.index === 1) {
+          if (data.column.index === 0) data.cell.styles.fillColor = [220, 30, 30];
+          else if (data.column.index === 1) {
             data.cell.styles.fillColor = [240, 200, 0];
             data.cell.styles.textColor = [0, 0, 0];
-          } else if (data.column.index === 2) {
-            data.cell.styles.fillColor = [0, 190, 220];
-          }
+          } else if (data.column.index === 2) data.cell.styles.fillColor = [0, 190, 220];
         }
       },
       bodyStyles: { lineColor: [0, 0, 0], lineWidth: 0.3 },
@@ -242,8 +251,24 @@ const JobsheetTab = () => {
     doc.setFontSize(12);
     doc.setTextColor(220, 30, 30);
     doc.text(`TOTAL =`, pw / 2 - 15, y);
-    doc.text(`${totalPcs} PCS`, pw / 2 + 12, y);
+    doc.text(`${entryTotal} PCS`, pw / 2 + 12, y);
     doc.setTextColor(0, 0, 0);
+  };
+
+  const generatePDF = async () => {
+    if (!clientName || !jobName) {
+      toast.error("Please fill in client name and job name");
+      return;
+    }
+
+    const doc = new jsPDF("p", "mm", "a4");
+
+    for (let i = 0; i < entries.length; i++) {
+      if (i > 0) doc.addPage();
+      const entry = entries[i];
+      const entryTotal = entry.sizeRows.reduce((s, r) => s + (r.qty || 0), 0);
+      await renderJobsheetPage(doc, entry, entryTotal);
+    }
 
     doc.save(`Jobsheet_${jobName || "draft"}.pdf`);
     toast.success("Jobsheet PDF generated!");
@@ -255,17 +280,23 @@ const JobsheetTab = () => {
         <h2 className="text-lg font-display flex items-center gap-2">
           <FileText className="h-5 w-5" /> Sublimation Jobsheet
         </h2>
-        <Button variant="hero" onClick={generatePDF}>
-          <Download className="h-4 w-4 mr-1" /> Generate PDF
-        </Button>
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-muted-foreground font-medium">
+            {entries.length} sheet{entries.length > 1 ? "s" : ""} · {grandTotal} PCS total
+          </span>
+          <Button variant="hero" onClick={generatePDF}>
+            <Download className="h-4 w-4 mr-1" /> Generate PDF
+          </Button>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm">Job Details</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
+      {/* Shared job details */}
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm">Job Details (shared across all sheets)</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
               <label className="text-xs text-muted-foreground">Client Name</label>
               <Input placeholder="e.g. ALYPH ACD" value={clientName} onChange={(e) => setClientName(e.target.value)} />
@@ -274,99 +305,115 @@ const JobsheetTab = () => {
               <label className="text-xs text-muted-foreground">Job Name</label>
               <Input placeholder="e.g. ORCA" value={jobName} onChange={(e) => setJobName(e.target.value)} />
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="text-xs text-muted-foreground">Date In</label>
-                <Input type="date" value={dateIn} onChange={(e) => setDateIn(e.target.value)} />
-              </div>
-              <div>
-                <label className="text-xs text-muted-foreground">Date Out</label>
-                <Input type="date" value={dateOut} onChange={(e) => setDateOut(e.target.value)} />
-              </div>
-            </div>
-            <div>
-              <label className="text-xs text-muted-foreground">Category</label>
-              <Select value={category} onValueChange={setCategory}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map((c) => (
-                    <SelectItem key={c} value={c}>
-                      {c}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm">Other Details</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div>
-              <label className="text-xs text-muted-foreground">Type</label>
-              <Input placeholder="e.g. V-NECK CROSS" value={type} onChange={(e) => setType(e.target.value)} />
-            </div>
-            <div>
-              <label className="text-xs text-muted-foreground">Material</label>
-              <Input placeholder="e.g. DIAMOND 160GSM" value={material} onChange={(e) => setMaterial(e.target.value)} />
-            </div>
-            <div>
-              <label className="text-xs text-muted-foreground">Mockup Image</label>
-              <div className="flex items-center gap-2">
-                <label className="cursor-pointer flex items-center gap-2 px-3 py-2 border rounded-md text-sm text-muted-foreground hover:bg-accent transition-colors">
-                  <ImagePlus className="h-4 w-4" />
-                  {mockupImage ? "Change Image" : "Upload Mockup"}
-                  <input type="file" accept="image/*" className="hidden" onChange={handleMockupUpload} />
-                </label>
-                {mockupImage && (
-                  <img src={mockupImage} alt="Mockup preview" className="h-12 w-12 object-cover rounded border" />
-                )}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm">Size & Nameset</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-[60px_80px_1fr] gap-2 mb-2 text-xs font-semibold text-muted-foreground px-1">
-            <span>SIZE</span>
-            <span>QTY</span>
-            <span>NAMESET</span>
           </div>
-          <div className="space-y-1">
-            {sizeRows.map((row, i) => (
-              <div key={row.size} className="grid grid-cols-[60px_80px_1fr] gap-2 items-center">
-                <span className="text-sm font-medium pl-1">{row.size}</span>
-                <Input
-                  type="number"
-                  min={0}
-                  value={row.qty || ""}
-                  onChange={(e) => updateSizeRow(i, "qty", parseInt(e.target.value) || 0)}
-                  className="h-8 text-sm"
-                />
-                <Input
-                  placeholder="e.g. ALYPH(77)"
-                  value={row.nameset}
-                  onChange={(e) => updateSizeRow(i, "nameset", e.target.value)}
-                  className="h-8 text-sm"
-                />
-              </div>
-            ))}
-          </div>
-          <div className="flex justify-end pt-3 border-t mt-3 text-sm font-semibold">
-            <span>Total: {totalPcs} PCS</span>
+          <div className="grid grid-cols-2 gap-3 max-w-sm">
+            <div>
+              <label className="text-xs text-muted-foreground">Date In</label>
+              <Input type="date" value={dateIn} onChange={(e) => setDateIn(e.target.value)} />
+            </div>
+            <div>
+              <label className="text-xs text-muted-foreground">Date Out</label>
+              <Input type="date" value={dateOut} onChange={(e) => setDateOut(e.target.value)} />
+            </div>
           </div>
         </CardContent>
       </Card>
+
+      {/* Individual jobsheet entries */}
+      {entries.map((entry, idx) => {
+        const entryTotal = entry.sizeRows.reduce((s, r) => s + (r.qty || 0), 0);
+        return (
+          <Card key={idx} className="border-2">
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm">
+                  Sheet {idx + 1}: {entry.category}
+                </CardTitle>
+                {entries.length > 1 && (
+                  <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => removeEntry(idx)}>
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div>
+                  <label className="text-xs text-muted-foreground">Category</label>
+                  <Select value={entry.category} onValueChange={(v) => updateEntry(idx, { category: v })}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map((c) => (
+                        <SelectItem key={c} value={c}>{c}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <label className="text-xs text-muted-foreground">Type</label>
+                  <Input placeholder="e.g. V-NECK CROSS" value={entry.type} onChange={(e) => updateEntry(idx, { type: e.target.value })} />
+                </div>
+                <div>
+                  <label className="text-xs text-muted-foreground">Material</label>
+                  <Input placeholder="e.g. DIAMOND 160GSM" value={entry.material} onChange={(e) => updateEntry(idx, { material: e.target.value })} />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs text-muted-foreground">Mockup Image</label>
+                <div className="flex items-center gap-2">
+                  <label className="cursor-pointer flex items-center gap-2 px-3 py-2 border rounded-md text-sm text-muted-foreground hover:bg-accent transition-colors">
+                    <ImagePlus className="h-4 w-4" />
+                    {entry.mockupImage ? "Change Image" : "Upload Mockup"}
+                    <input type="file" accept="image/*" className="hidden" onChange={(e) => handleMockupUpload(idx, e)} />
+                  </label>
+                  {entry.mockupImage && (
+                    <img src={entry.mockupImage} alt="Mockup preview" className="h-12 w-12 object-cover rounded border" />
+                  )}
+                </div>
+              </div>
+
+              {/* Size table */}
+              <div>
+                <div className="grid grid-cols-[60px_80px_1fr] gap-2 mb-2 text-xs font-semibold text-muted-foreground px-1">
+                  <span>SIZE</span>
+                  <span>QTY</span>
+                  <span>NAMESET</span>
+                </div>
+                <div className="space-y-1">
+                  {entry.sizeRows.map((row, i) => (
+                    <div key={row.size} className="grid grid-cols-[60px_80px_1fr] gap-2 items-center">
+                      <span className="text-sm font-medium pl-1">{row.size}</span>
+                      <Input
+                        type="number"
+                        min={0}
+                        value={row.qty || ""}
+                        onChange={(e) => updateSizeRow(idx, i, "qty", parseInt(e.target.value) || 0)}
+                        className="h-8 text-sm"
+                      />
+                      <Input
+                        placeholder="e.g. ALYPH(77)"
+                        value={row.nameset}
+                        onChange={(e) => updateSizeRow(idx, i, "nameset", e.target.value)}
+                        className="h-8 text-sm"
+                      />
+                    </div>
+                  ))}
+                </div>
+                <div className="flex justify-end pt-3 border-t mt-3 text-sm font-semibold">
+                  <span>Subtotal: {entryTotal} PCS</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        );
+      })}
+
+      <Button variant="outline" className="w-full" onClick={addEntry}>
+        <Plus className="h-4 w-4 mr-1" /> Add Another Sheet
+      </Button>
     </div>
   );
 };
