@@ -170,7 +170,7 @@ const JobsheetTab = () => {
     doc.setTextColor(0, 0, 0);
 
     y += 10;
-    const validMockups = entry.mockupImages.filter((m) => m !== null) as string[];
+    const validMockups = (entry.mockupImages || []).filter((m) => m !== null) as string[];
     if (validMockups.length > 0) {
       const mockImgCount = validMockups.length;
       const maxTotalW = pw - margin * 2 - 20;
