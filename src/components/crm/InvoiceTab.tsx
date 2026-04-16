@@ -257,7 +257,6 @@ const InvoiceTab = () => {
 
     // Customer details on the right side
     let custY = y - splitTitle.length * 5 + 5; // align with title start
-    let custY = y - splitTitle.length * 5 + 5; // align with title start
     const custMaxW = pw - custX - margin; // constrain to right column
     if (customerName || customerPhone || customerAddress) {
       doc.setFont("kollektif", "bold");
