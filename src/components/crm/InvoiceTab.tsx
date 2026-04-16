@@ -159,8 +159,6 @@ const InvoiceTab = () => {
     const pw = doc.internal.pageSize.getWidth();
     const ph = doc.internal.pageSize.getHeight();
     const margin = 15;
-    const footerHeight = 30;
-    const headerHeight = 18;
 
     // Preload logo
     let logoImg: HTMLImageElement | null = null;
@@ -175,135 +173,176 @@ const InvoiceTab = () => {
       logoImg = img;
     } catch {}
 
-    // --- Repeating footer on every page ---
-    const drawFooter = (pageDoc: jsPDF) => {
-      const fy = ph - footerHeight;
-      pageDoc.setDrawColor(200, 200, 200);
-      pageDoc.line(margin, fy, pw - margin, fy);
-
-      const leftX = margin + 2;
-      let footY = fy + 6;
-
-      // Contact info
-      pageDoc.setFont("kollektif", "normal");
-      pageDoc.setFontSize(7);
-      pageDoc.setTextColor(80, 80, 80);
-      pageDoc.text(`${phone}  |  ${emailAddr}`, leftX, footY);
-      footY += 4;
-      pageDoc.text(`Bank: ${bankName}  |  Acc: ${accountNumber}`, leftX, footY);
-
-      // Page number
-      const totalPages = pageDoc.getNumberOfPages();
-      const currentPage = pageDoc.getCurrentPageInfo().pageNumber;
-      pageDoc.setFontSize(7);
-      pageDoc.text(`Page ${currentPage} of ${totalPages}`, pw - margin, fy + 6, { align: "right" });
-      pageDoc.setTextColor(0, 0, 0);
-    };
-
-    // --- Repeating header on every page ---
-    const drawHeader = (pageDoc: jsPDF, isFirstPage: boolean) => {
-      if (isFirstPage) return; // First page has full header already
-      const hy = 10;
+    // ===== REUSABLE: Draw invoice header (top of every page) =====
+    const drawPageHeader = (pageDoc: jsPDF): number => {
+      let y = 20;
       if (logoImg) {
-        pageDoc.addImage(logoImg, "PNG", margin, hy, 18, 9);
+        pageDoc.addImage(logoImg, "PNG", pw - margin - 28, y - 2, 28, 14);
       }
       pageDoc.setFont("kollektif", "bold");
+      pageDoc.setFontSize(28);
+      pageDoc.text("INVOICE", margin, y + 8);
+
+      y += 20;
       pageDoc.setFontSize(10);
-      pageDoc.setTextColor(120, 120, 120);
-      pageDoc.text(`INVOICE  ${currentInvoiceNumber}`, margin + 22, hy + 6);
-      pageDoc.text(title.toUpperCase(), pw - margin, hy + 6, { align: "right" });
-      pageDoc.setTextColor(0, 0, 0);
-      pageDoc.setDrawColor(200, 200, 200);
-      pageDoc.line(margin, hy + 10, pw - margin, hy + 10);
+      pageDoc.setFont("kollektif", "normal");
+      pageDoc.text("Date:", margin, y);
+      y += 5;
+      pageDoc.text(formatDate(invoiceDate), margin, y);
+      y += 3;
+      pageDoc.setDrawColor(0);
+      pageDoc.line(margin, y, margin + 60, y);
+
+      y += 6;
+      pageDoc.text("No. Invoice :", margin, y);
+      y += 5;
+      pageDoc.text(currentInvoiceNumber, margin, y);
+      y += 3;
+      pageDoc.line(margin, y, margin + 60, y);
+
+      y += 8;
+      pageDoc.setFont("kollektif", "bold");
+      pageDoc.setFontSize(11);
+      const custX = pw - margin - 55;
+      const maxTitleW = custX - margin - 5;
+      const titleText = `TITLE :  ${title.toUpperCase()}`;
+      const splitTitle = pageDoc.splitTextToSize(titleText, maxTitleW);
+      pageDoc.text(splitTitle, margin, y);
+      const titleEndY = y + splitTitle.length * 5;
+
+      // Customer details on the right side
+      const custMaxW = 55;
+      let custY = y;
+      if (customerName || customerPhone || customerAddress) {
+        pageDoc.setFont("kollektif", "bold");
+        pageDoc.setFontSize(10);
+        pageDoc.text("CUSTOMER DETAILS:", custX, custY);
+        custY += 6;
+        pageDoc.setFont("kollektif", "normal");
+        if (customerName) {
+          const splitName = pageDoc.splitTextToSize(customerName.toUpperCase(), custMaxW);
+          pageDoc.text(splitName, custX, custY);
+          custY += splitName.length * 5;
+        }
+        if (customerPhone) {
+          pageDoc.text(customerPhone, custX, custY);
+          custY += 5;
+        }
+        if (customerAddress) {
+          const splitAddr = pageDoc.splitTextToSize(customerAddress.toUpperCase(), custMaxW);
+          pageDoc.text(splitAddr, custX, custY);
+          custY += splitAddr.length * 5;
+        }
+      }
+
+      y = titleEndY;
+      pageDoc.setFont("kollektif", "bold");
+      pageDoc.setFontSize(11);
+      if (material) {
+        const splitMat = pageDoc.splitTextToSize(`MATERIAL: ${material.toUpperCase()}`, custX - margin - 5);
+        pageDoc.text(splitMat, margin, y);
+        y += splitMat.length * 5 + 1;
+      }
+      if (agent) {
+        pageDoc.text(`SA : ${agent.toUpperCase()}`, margin, y);
+        y += 6;
+      }
+      y = Math.max(y, custY);
+      return y;
     };
 
-    // ===== PAGE 1: Full header =====
-    let y = 20;
-    if (logoImg) {
-      doc.addImage(logoImg, "PNG", pw - margin - 28, y - 2, 28, 14);
-    }
+    // ===== REUSABLE: Draw terms, payment & contact (bottom of every page) =====
+    // Returns the Y position where this block starts (draws upward from bottom)
+    const bottomBlockHeight = 75; // approximate height of terms+payment+contact block
 
-    doc.setFont("kollektif", "bold");
-    doc.setFontSize(28);
-    doc.text("INVOICE", margin, y + 8);
+    const drawPageBottom = (pageDoc: jsPDF) => {
+      let y = ph - margin - bottomBlockHeight;
 
-    y += 20;
-    doc.setFontSize(10);
-    doc.setFont("kollektif", "normal");
-    doc.text("Date:", margin, y);
-    y += 5;
-    doc.text(formatDate(invoiceDate), margin, y);
-    y += 3;
-    doc.setDrawColor(0);
-    doc.line(margin, y, margin + 60, y);
-
-    y += 6;
-    doc.text("No. Invoice :", margin, y);
-    y += 5;
-    doc.text(currentInvoiceNumber, margin, y);
-    y += 3;
-    doc.line(margin, y, margin + 60, y);
-
-    y += 8;
-    doc.setFont("kollektif", "bold");
-    doc.setFontSize(11);
-    const tableRightEdge = pw - margin;
-    const custX = tableRightEdge - 55;
-    // Truncate title to fit within left half of page
-    const maxTitleW = custX - margin - 5;
-    const titleText = `TITLE :  ${title.toUpperCase()}`;
-    const splitTitle = doc.splitTextToSize(titleText, maxTitleW);
-    doc.text(splitTitle, margin, y);
-
-    // Customer details on the right side
-    let custY = y - splitTitle.length * 5 + 5; // align with title start
-    const custMaxW = pw - custX - margin; // constrain to right column
-    if (customerName || customerPhone || customerAddress) {
-      doc.setFont("kollektif", "bold");
-      doc.setFontSize(10);
-      doc.text("CUSTOMER DETAILS:", custX, custY);
-      custY += 6;
-      doc.setFont("kollektif", "normal");
-      if (customerName) {
-        const splitName = doc.splitTextToSize(customerName.toUpperCase(), custMaxW);
-        doc.text(splitName, custX, custY);
-        custY += splitName.length * 5;
-      }
-      if (customerPhone) {
-        doc.text(customerPhone, custX, custY);
-        custY += 5;
-      }
-      if (customerAddress) {
-        const splitAddr = doc.splitTextToSize(customerAddress.toUpperCase(), custMaxW);
-        doc.text(splitAddr, custX, custY);
-        custY += splitAddr.length * 5;
-      }
-    }
-
-    doc.setFont("kollektif", "bold");
-    doc.setFontSize(11);
-    if (material) {
-      const splitMat = doc.splitTextToSize(`MATERIAL: ${material.toUpperCase()}`, maxTitleW);
-      doc.text(splitMat, margin, y);
-      y += splitMat.length * 5 + 1;
-    }
-    if (agent) {
-      doc.text(`SA : ${agent.toUpperCase()}`, margin, y);
+      // Terms
+      pageDoc.setFont("kollektif", "bold");
+      pageDoc.setFontSize(10);
+      pageDoc.setTextColor(0, 0, 0);
+      pageDoc.text(`VALIDITY : ${validity} days`, margin, y);
       y += 6;
-    }
-    y = Math.max(y, custY);
+      pageDoc.text(`PAYMENT TERM: ${paymentTerm} days`, margin, y);
+      y += 6;
+      pageDoc.text(`DELIVERY TERM : ${deliveryTerm} days`, margin, y);
 
-    // Safety: if header content already exceeds page, add new page
-    const maxContentY = ph - footerHeight - 5;
-    if (y > maxContentY) {
-      doc.addPage();
-      y = headerHeight + 10;
-    }
+      // Notes
+      y += 8;
+      pageDoc.setFont("kollektif", "normal");
+      pageDoc.setFontSize(8);
+      const splitNotes = pageDoc.splitTextToSize(`Note : ${notes}`, pw / 2 - 10);
+      pageDoc.text(splitNotes, margin, y);
+      y += splitNotes.length * 4 + 4;
+      pageDoc.setFontSize(9);
+      pageDoc.text(depositNote, margin + 2, y);
 
-    // ===== LINE ITEMS TABLES (auto-paginate via autoTable) =====
-    const tableMargin = { left: margin + 33, right: margin, top: headerHeight + 10, bottom: footerHeight + 5 };
+      // Manager + payment section (right side)
+      const rightX = pw - margin - 65;
+      let ry = y - 20;
+      pageDoc.setFont("kollektif", "bold");
+      pageDoc.setFontSize(11);
+      pageDoc.text(managerName, rightX, ry);
+      ry += 6;
+      pageDoc.text(managerTitle, rightX, ry);
+      ry += 10;
+      pageDoc.setFontSize(9);
+      pageDoc.setFont("kollektif", "normal");
+      pageDoc.text("Payment Method:", rightX, ry);
+      ry += 6;
+      pageDoc.text("Bank Name: ", rightX, ry);
+      pageDoc.setFont("kollektif", "bold");
+      pageDoc.text(bankName, rightX + 22, ry);
+      ry += 6;
+      pageDoc.setFont("kollektif", "normal");
+      pageDoc.text("Account Number: ", rightX, ry);
+      pageDoc.setFont("kollektif", "bold");
+      pageDoc.text(accountNumber, rightX + 30, ry);
+
+      // Thank you + contact
+      y += 10;
+      pageDoc.setFont("kollektif", "bold");
+      pageDoc.setFontSize(20);
+      pageDoc.setTextColor(0, 0, 0);
+      pageDoc.text("THANK YOU!", margin, y + 8);
+      pageDoc.setTextColor(0);
+      pageDoc.setFontSize(8);
+      pageDoc.setFont("kollektif", "normal");
+      pageDoc.setDrawColor(0, 0, 0);
+      pageDoc.setLineWidth(0.4);
+      pageDoc.roundedRect(margin + 5.5, y + 12.5, 2.5, 4, 0.5, 0.5, "S");
+      pageDoc.setFontSize(8);
+      pageDoc.text(phone, margin + 10, y + 16);
+      pageDoc.rect(margin + 5.5, y + 18, 3, 2, "S");
+      pageDoc.line(margin + 5.5, y + 18, margin + 7, y + 19);
+      pageDoc.line(margin + 8.5, y + 18, margin + 7, y + 19);
+      pageDoc.text(emailAddr, margin + 10, y + 20.5);
+    };
+
+    // ===== Draw page 1 header =====
+    let y = drawPageHeader(doc);
+
+    // Available space for line items = between header end and bottom block start
+    const tableBottomLimit = ph - margin - bottomBlockHeight - 5;
+
+    // ===== LINE ITEMS TABLES =====
+    // autoTable handles pagination; we set margins so it avoids header/bottom areas
+    const headerEndY = y; // save for autoTable top margin on subsequent pages
+    const tableMargin = {
+      left: margin + 33,
+      right: margin,
+      top: headerEndY, // will be overridden by startY on first table
+      bottom: margin + bottomBlockHeight + 5,
+    };
 
     const renderTable = (label: string, tableItems: LineItem[]) => {
+      // Check if label + at least 1 row fits, if not go to next page
+      if (y + 20 > tableBottomLimit) {
+        doc.addPage();
+        y = drawPageHeader(doc);
+      }
+
       y += 4;
       doc.setFont("kollektif", "bold");
       doc.setFontSize(10);
@@ -340,6 +379,13 @@ const InvoiceTab = () => {
           2: { cellWidth: 30 },
           3: { cellWidth: 30 },
         },
+        didDrawPage: (data: any) => {
+          // On every new page autoTable creates, draw header and bottom
+          if (data.pageNumber > 1) {
+            // Header was drawn by autoTable's top margin, but we need our custom header
+            drawPageHeader(doc);
+          }
+        },
       });
 
       y = (doc as any).lastAutoTable.finalY + 6;
@@ -352,11 +398,28 @@ const InvoiceTab = () => {
       renderTable("Add On Items", designItems.filter((it) => it.description.trim() || it.price > 0 || it.quantity > 0));
     }
 
-    // ===== SUMMARY + TERMS (on last page, check if fits) =====
-    const summaryHeight = 120;
-    if (y + summaryHeight > ph - footerHeight - 5) {
+    // ===== SUMMARY BOXES (last page only, above the bottom block) =====
+    // Calculate how much space the summary needs
+    const orderDescLines: string[] = [];
+    if (hasJerseyItems) {
+      jerseyItems.filter((it) => it.description.trim() || it.price > 0 || it.quantity > 0).forEach((it) => {
+        orderDescLines.push(`${it.quantity} PCS ${it.description.toUpperCase()}`);
+      });
+    }
+    if (hasDesignItems) {
+      designItems.filter((it) => it.description.trim() || it.price > 0 || it.quantity > 0).forEach((it) => {
+        orderDescLines.push(`${it.quantity} PCS ${it.description.toUpperCase()}`);
+      });
+    }
+
+    const rowH = 8;
+    const row1H = Math.max(rowH, orderDescLines.length * 4 + 4);
+    const summaryNeeded = row1H + 2 + (lockDepositAmount > 0 ? rowH + 2 : 0) + rowH + 2 + rowH + 10;
+
+    // Check if summary fits between table end and bottom block
+    if (y + summaryNeeded > tableBottomLimit) {
       doc.addPage();
-      y = headerHeight + 10;
+      y = drawPageHeader(doc);
     }
 
     y += 4;
@@ -369,27 +432,12 @@ const InvoiceTab = () => {
     const yellowX = summaryRightEdge - yellowW;
     const cyanX = yellowX - cyanW - 2;
     const labelRightX = cyanX - 4;
-    const rowH = 8;
-
-    const orderDescLines: string[] = [];
-    if (hasJerseyItems) {
-      jerseyItems.filter((it) => it.description.trim() || it.price > 0 || it.quantity > 0).forEach((it) => {
-        orderDescLines.push(`${it.quantity} PCS ${it.description.toUpperCase()}`);
-      });
-    }
-    if (hasDesignItems) {
-      designItems.filter((it) => it.description.trim() || it.price > 0 || it.quantity > 0).forEach((it) => {
-        orderDescLines.push(`${it.quantity} PCS ${it.description.toUpperCase()}`);
-      });
-    }
-    const row1H = Math.max(rowH, orderDescLines.length * 4 + 4);
 
     // Row 1: TOTAL ORDER
     doc.setFont("kollektif", "bold");
     doc.setFontSize(7);
     doc.text("TOTAL", labelRightX, y + row1H / 2 - 1, { align: "right" });
     doc.text("ORDER", labelRightX, y + row1H / 2 + 3, { align: "right" });
-
     doc.setFillColor(0, 220, 220);
     doc.rect(cyanX, y, cyanW, row1H, "F");
     doc.setTextColor(0);
@@ -400,13 +448,11 @@ const InvoiceTab = () => {
       doc.text(truncated, cyanX + 1.5, descY);
       descY += 4;
     });
-
     doc.setFillColor(255, 213, 0);
     doc.rect(yellowX, y, yellowW, row1H, "F");
     doc.setTextColor(0);
     doc.setFontSize(8);
     doc.text(`RM ${totalAmount.toLocaleString()}`, yellowX + yellowW / 2, y + row1H / 2 + 1.5, { align: "center" });
-
     y += row1H + 2;
 
     // Row 2: LOCK DEPOSIT
@@ -458,73 +504,11 @@ const InvoiceTab = () => {
     doc.text(`RM ${balance.toLocaleString()}`, yellowX + yellowW / 2, y + rowH / 2 + 1, { align: "center" });
     doc.setTextColor(0);
 
-    // Terms
-    y += 20;
-    doc.setFont("kollektif", "bold");
-    doc.setFontSize(10);
-    doc.text(`VALIDITY : ${validity} days`, margin, y);
-    y += 6;
-    doc.text(`PAYMENT TERM: ${paymentTerm} days`, margin, y);
-    y += 6;
-    doc.text(`DELIVERY TERM : ${deliveryTerm} days`, margin, y);
-
-    // Notes
-    y += 8;
-    doc.setFont("kollektif", "normal");
-    doc.setFontSize(8);
-    const splitNotes = doc.splitTextToSize(`Note : ${notes}`, pw / 2 - 10);
-    doc.text(splitNotes, margin, y);
-    y += splitNotes.length * 4 + 4;
-    doc.setFontSize(9);
-    doc.text(depositNote, margin + 2, y);
-
-    // Manager + payment section (right side)
-    const rightX = pw - margin - 65;
-    let ry = y - 20;
-    doc.setFont("kollektif", "bold");
-    doc.setFontSize(11);
-    doc.text(managerName, rightX, ry);
-    ry += 6;
-    doc.text(managerTitle, rightX, ry);
-    ry += 10;
-    doc.setFontSize(9);
-    doc.setFont("kollektif", "normal");
-    doc.text("Payment Method:", rightX, ry);
-    ry += 6;
-    doc.text("Bank Name: ", rightX, ry);
-    doc.setFont("kollektif", "bold");
-    doc.text(bankName, rightX + 22, ry);
-    ry += 6;
-    doc.setFont("kollektif", "normal");
-    doc.text("Account Number: ", rightX, ry);
-    doc.setFont("kollektif", "bold");
-    doc.text(accountNumber, rightX + 30, ry);
-
-    // Thank you
-    y += 10;
-    doc.setFont("kollektif", "bold");
-    doc.setFontSize(20);
-    doc.setTextColor(0, 0, 0);
-    doc.text("THANK YOU!", margin, y + 8);
-    doc.setTextColor(0);
-    doc.setFontSize(8);
-    doc.setFont("kollektif", "normal");
-    doc.setDrawColor(0, 0, 0);
-    doc.setLineWidth(0.4);
-    doc.roundedRect(margin + 5.5, y + 12.5, 2.5, 4, 0.5, 0.5, "S");
-    doc.setFontSize(8);
-    doc.text(phone, margin + 10, y + 16);
-    doc.rect(margin + 5.5, y + 18, 3, 2, "S");
-    doc.line(margin + 5.5, y + 18, margin + 7, y + 19);
-    doc.line(margin + 8.5, y + 18, margin + 7, y + 19);
-    doc.text(emailAddr, margin + 10, y + 20.5);
-
-    // ===== Draw headers and footers on ALL pages =====
+    // ===== Draw bottom block (terms, payment, contact) on ALL pages =====
     const totalPages = doc.getNumberOfPages();
     for (let p = 1; p <= totalPages; p++) {
       doc.setPage(p);
-      drawHeader(doc, p === 1);
-      drawFooter(doc);
+      drawPageBottom(doc);
     }
 
     const safeTitle = title ? `_${title.replace(/[^a-zA-Z0-9]/g, "_")}` : "";
