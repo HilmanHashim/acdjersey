@@ -31,6 +31,9 @@ const CRM = () => {
   const [newPassword, setNewPassword] = useState("");
 
   useEffect(() => {
+    // Set custom page title for CRM
+    document.title = "ACD CRM - Customer Relationship Management";
+    
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null);
       setLoading(false);
@@ -43,7 +46,11 @@ const CRM = () => {
       setUser(session?.user ?? null);
       setLoading(false);
     });
-    return () => subscription.unsubscribe();
+    return () => {
+      subscription.unsubscribe();
+      // Reset title when leaving CRM
+      document.title = "ACD Jersey HQ – Premium Sublimation Apparel";
+    };
   }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
