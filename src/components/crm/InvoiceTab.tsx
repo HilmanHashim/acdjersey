@@ -173,200 +173,176 @@ const InvoiceTab = () => {
       logoImg = img;
     } catch {}
 
-    // ===== REUSABLE: Draw invoice header (top of every page) =====
+    // ===== REUSABLE: Draw compact invoice header =====
     const drawPageHeader = (pageDoc: jsPDF): number => {
-      let y = 20;
+      let y = 14;
       if (logoImg) {
-        pageDoc.addImage(logoImg, "PNG", pw - margin - 28, y - 2, 28, 14);
+        pageDoc.addImage(logoImg, "PNG", pw - margin - 22, y - 2, 22, 11);
       }
       pageDoc.setFont("kollektif", "bold");
-      pageDoc.setFontSize(28);
-      pageDoc.text("INVOICE", margin, y + 8);
+      pageDoc.setFontSize(22);
+      pageDoc.text("INVOICE", margin, y + 6);
 
-      y += 20;
-      pageDoc.setFontSize(10);
+      y += 14;
+      pageDoc.setFontSize(8);
       pageDoc.setFont("kollektif", "normal");
-      pageDoc.text("Date:", margin, y);
-      y += 5;
-      pageDoc.text(formatDate(invoiceDate), margin, y);
+      pageDoc.text(`Date: ${formatDate(invoiceDate)}`, margin, y);
+      pageDoc.text(`No. Invoice : ${currentInvoiceNumber}`, margin + 45, y);
       y += 3;
       pageDoc.setDrawColor(0);
-      pageDoc.line(margin, y, margin + 60, y);
+      pageDoc.line(margin, y, margin + 90, y);
 
-      y += 6;
-      pageDoc.text("No. Invoice :", margin, y);
       y += 5;
-      pageDoc.text(currentInvoiceNumber, margin, y);
-      y += 3;
-      pageDoc.line(margin, y, margin + 60, y);
-
-      y += 8;
       pageDoc.setFont("kollektif", "bold");
-      pageDoc.setFontSize(11);
+      pageDoc.setFontSize(9);
       const custX = pw - margin - 55;
       const maxTitleW = custX - margin - 5;
       const titleText = `TITLE :  ${title.toUpperCase()}`;
       const splitTitle = pageDoc.splitTextToSize(titleText, maxTitleW);
       pageDoc.text(splitTitle, margin, y);
-      const titleEndY = y + splitTitle.length * 5;
+      const titleEndY = y + splitTitle.length * 4;
 
       // Customer details on the right side
       const custMaxW = 55;
       let custY = y;
       if (customerName || customerPhone || customerAddress) {
         pageDoc.setFont("kollektif", "bold");
-        pageDoc.setFontSize(10);
+        pageDoc.setFontSize(8);
         pageDoc.text("CUSTOMER DETAILS:", custX, custY);
-        custY += 6;
+        custY += 4;
         pageDoc.setFont("kollektif", "normal");
+        pageDoc.setFontSize(7.5);
         if (customerName) {
           const splitName = pageDoc.splitTextToSize(customerName.toUpperCase(), custMaxW);
           pageDoc.text(splitName, custX, custY);
-          custY += splitName.length * 5;
+          custY += splitName.length * 3.5;
         }
         if (customerPhone) {
           pageDoc.text(customerPhone, custX, custY);
-          custY += 5;
+          custY += 3.5;
         }
         if (customerAddress) {
           const splitAddr = pageDoc.splitTextToSize(customerAddress.toUpperCase(), custMaxW);
           pageDoc.text(splitAddr, custX, custY);
-          custY += splitAddr.length * 5;
+          custY += splitAddr.length * 3.5;
         }
       }
 
       y = titleEndY;
       pageDoc.setFont("kollektif", "bold");
-      pageDoc.setFontSize(11);
+      pageDoc.setFontSize(9);
       if (material) {
-        const splitMat = pageDoc.splitTextToSize(`MATERIAL: ${material.toUpperCase()}`, custX - margin - 5);
+        const splitMat = pageDoc.splitTextToSize(`MATERIAL: ${material.toUpperCase()}`, maxTitleW);
         pageDoc.text(splitMat, margin, y);
-        y += splitMat.length * 5 + 1;
+        y += splitMat.length * 4 + 1;
       }
       if (agent) {
         pageDoc.text(`SA : ${agent.toUpperCase()}`, margin, y);
-        y += 6;
+        y += 5;
       }
       y = Math.max(y, custY);
       return y;
     };
 
-    // ===== REUSABLE: Draw terms, payment & contact (bottom of every page) =====
-    // Returns the Y position where this block starts (draws upward from bottom)
-    const bottomBlockHeight = 75; // approximate height of terms+payment+contact block
+    // ===== REUSABLE: Draw compact bottom block =====
+    const bottomBlockHeight = 58;
 
     const drawPageBottom = (pageDoc: jsPDF) => {
       let y = ph - margin - bottomBlockHeight;
 
-      // Terms
       pageDoc.setFont("kollektif", "bold");
-      pageDoc.setFontSize(10);
-      pageDoc.setTextColor(0, 0, 0);
-      pageDoc.text(`VALIDITY : ${validity} days`, margin, y);
-      y += 6;
-      pageDoc.text(`PAYMENT TERM: ${paymentTerm} days`, margin, y);
-      y += 6;
-      pageDoc.text(`DELIVERY TERM : ${deliveryTerm} days`, margin, y);
-
-      // Notes
-      y += 8;
-      pageDoc.setFont("kollektif", "normal");
       pageDoc.setFontSize(8);
+      pageDoc.setTextColor(0, 0, 0);
+      pageDoc.text(`VALIDITY : ${validity} days    |    PAYMENT TERM: ${paymentTerm} days    |    DELIVERY TERM : ${deliveryTerm} days`, margin, y);
+
+      y += 5;
+      pageDoc.setFont("kollektif", "normal");
+      pageDoc.setFontSize(7);
       const splitNotes = pageDoc.splitTextToSize(`Note : ${notes}`, pw / 2 - 10);
       pageDoc.text(splitNotes, margin, y);
-      y += splitNotes.length * 4 + 4;
-      pageDoc.setFontSize(9);
+      y += splitNotes.length * 3 + 2;
+      pageDoc.setFontSize(7.5);
       pageDoc.text(depositNote, margin + 2, y);
 
       // Manager + payment section (right side)
       const rightX = pw - margin - 65;
-      let ry = y - 20;
+      let ry = y - 12;
       pageDoc.setFont("kollektif", "bold");
-      pageDoc.setFontSize(11);
-      pageDoc.text(managerName, rightX, ry);
-      ry += 6;
-      pageDoc.text(managerTitle, rightX, ry);
-      ry += 10;
       pageDoc.setFontSize(9);
+      pageDoc.text(managerName, rightX, ry);
+      ry += 4;
+      pageDoc.text(managerTitle, rightX, ry);
+      ry += 7;
+      pageDoc.setFontSize(7.5);
       pageDoc.setFont("kollektif", "normal");
       pageDoc.text("Payment Method:", rightX, ry);
-      ry += 6;
+      ry += 4;
       pageDoc.text("Bank Name: ", rightX, ry);
       pageDoc.setFont("kollektif", "bold");
-      pageDoc.text(bankName, rightX + 22, ry);
-      ry += 6;
+      pageDoc.text(bankName, rightX + 20, ry);
+      ry += 4;
       pageDoc.setFont("kollektif", "normal");
       pageDoc.text("Account Number: ", rightX, ry);
       pageDoc.setFont("kollektif", "bold");
-      pageDoc.text(accountNumber, rightX + 30, ry);
+      pageDoc.text(accountNumber, rightX + 28, ry);
 
       // Thank you + contact
-      y += 10;
+      y += 6;
       pageDoc.setFont("kollektif", "bold");
-      pageDoc.setFontSize(20);
+      pageDoc.setFontSize(16);
       pageDoc.setTextColor(0, 0, 0);
-      pageDoc.text("THANK YOU!", margin, y + 8);
+      pageDoc.text("THANK YOU!", margin, y + 6);
       pageDoc.setTextColor(0);
-      pageDoc.setFontSize(8);
+      pageDoc.setFontSize(7);
       pageDoc.setFont("kollektif", "normal");
       pageDoc.setDrawColor(0, 0, 0);
-      pageDoc.setLineWidth(0.4);
-      pageDoc.roundedRect(margin + 5.5, y + 12.5, 2.5, 4, 0.5, 0.5, "S");
-      pageDoc.setFontSize(8);
-      pageDoc.text(phone, margin + 10, y + 16);
-      pageDoc.rect(margin + 5.5, y + 18, 3, 2, "S");
-      pageDoc.line(margin + 5.5, y + 18, margin + 7, y + 19);
-      pageDoc.line(margin + 8.5, y + 18, margin + 7, y + 19);
-      pageDoc.text(emailAddr, margin + 10, y + 20.5);
+      pageDoc.setLineWidth(0.3);
+      pageDoc.roundedRect(margin + 5.5, y + 9.5, 2, 3.5, 0.4, 0.4, "S");
+      pageDoc.text(phone, margin + 9, y + 12.5);
+      pageDoc.rect(margin + 5.5, y + 14.5, 2.5, 1.8, "S");
+      pageDoc.line(margin + 5.5, y + 14.5, margin + 6.75, y + 15.4);
+      pageDoc.line(margin + 8, y + 14.5, margin + 6.75, y + 15.4);
+      pageDoc.text(emailAddr, margin + 9, y + 16.5);
     };
 
     // ===== Draw page 1 header =====
     let y = drawPageHeader(doc);
 
-    // Available space for line items = between header end and bottom block start
     const tableBottomLimit = ph - margin - bottomBlockHeight - 5;
 
     // ===== LINE ITEMS TABLES =====
-    // autoTable handles pagination; we set margins so it avoids header/bottom areas
-    const headerEndY = y; // save for autoTable top margin on subsequent pages
+    const headerEndY = y;
     const tableMargin = {
       left: margin + 33,
       right: margin,
-      top: headerEndY, // will be overridden by startY on first table
+      top: headerEndY,
       bottom: margin + bottomBlockHeight + 5,
     };
 
-    // Calculate total combined rows for dynamic sizing
     const jerseyFiltered = jerseyItems.filter((it) => it.description.trim() || it.price > 0 || it.quantity > 0);
     const designFiltered = designItems.filter((it) => it.description.trim() || it.price > 0 || it.quantity > 0);
     const totalRows = (hasJerseyItems ? jerseyFiltered.length : 0) + (hasDesignItems ? designFiltered.length : 0);
 
-    // Estimate row height per size tier and pick the best fit
-    // We want tables + summary to fit on page 1 if possible
-    const summaryEstimate = 50; // approx height for summary boxes
-    const availableSpace = tableBottomLimit - y - summaryEstimate - 10;
-    const labelOverhead = (hasJerseyItems ? 10 : 0) + (hasDesignItems ? 10 : 0); // label + gap per table
-    const headerRowCount = (hasJerseyItems ? 1 : 0) + (hasDesignItems ? 1 : 0); // table headers
+    // Estimate if everything fits at normal size; only shrink table slightly if needed
+    const summaryEstimate = 45;
+    const availableSpace = tableBottomLimit - y - summaryEstimate - 8;
+    const labelOverhead = (hasJerseyItems ? 9 : 0) + (hasDesignItems ? 9 : 0);
+    const headerRowCount = (hasJerseyItems ? 1 : 0) + (hasDesignItems ? 1 : 0);
     const totalTableRows = totalRows + headerRowCount;
     const spacePerRow = totalTableRows > 0 ? (availableSpace - labelOverhead) / totalTableRows : 999;
 
-    // Choose sizing tier based on available space per row
+    // Keep table readable — only mild reduction, never below 8px font
     let tableFontSize = 9;
     let tableCellPadding = 4;
-    let labelFontSize = 10;
-    if (spacePerRow < 5) {
-      // Won't fit even compact — will overflow to next page naturally
-      tableFontSize = 6.5;
-      tableCellPadding = 1.5;
-      labelFontSize = 8;
-    } else if (spacePerRow < 7) {
-      tableFontSize = 7;
+    let labelFontSize = 9;
+    if (spacePerRow < 7) {
+      tableFontSize = 8;
       tableCellPadding = 2;
       labelFontSize = 8;
     } else if (spacePerRow < 9) {
-      tableFontSize = 7.5;
-      tableCellPadding = 2.5;
-      labelFontSize = 9;
+      tableFontSize = 8.5;
+      tableCellPadding = 3;
+      labelFontSize = 8.5;
     }
 
     const renderTable = (label: string, tableItems: LineItem[]) => {
