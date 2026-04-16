@@ -180,11 +180,11 @@ const InvoiceTab = () => {
         pageDoc.addImage(logoImg, "PNG", pw - margin - 22, y - 2, 22, 11);
       }
       pageDoc.setFont("kollektif", "bold");
-      pageDoc.setFontSize(22);
+      pageDoc.setFontSize(24);
       pageDoc.text("INVOICE", margin, y + 6);
 
       y += 14;
-      pageDoc.setFontSize(8);
+      pageDoc.setFontSize(10);
       pageDoc.setFont("kollektif", "normal");
       pageDoc.text(`Date: ${formatDate(invoiceDate)}`, margin, y);
       pageDoc.text(`No. Invoice : ${currentInvoiceNumber}`, margin + 45, y);
@@ -194,51 +194,51 @@ const InvoiceTab = () => {
 
       y += 5;
       pageDoc.setFont("kollektif", "bold");
-      pageDoc.setFontSize(9);
+      pageDoc.setFontSize(11);
       const custX = pw - margin - 55;
       const maxTitleW = custX - margin - 5;
       const titleText = `TITLE :  ${title.toUpperCase()}`;
       const splitTitle = pageDoc.splitTextToSize(titleText, maxTitleW);
       pageDoc.text(splitTitle, margin, y);
-      const titleEndY = y + splitTitle.length * 4;
+      const titleEndY = y + splitTitle.length * 5;
 
       // Customer details on the right side
       const custMaxW = 55;
       let custY = y;
       if (customerName || customerPhone || customerAddress) {
         pageDoc.setFont("kollektif", "bold");
-        pageDoc.setFontSize(8);
+        pageDoc.setFontSize(10);
         pageDoc.text("CUSTOMER DETAILS:", custX, custY);
-        custY += 4;
+        custY += 5;
         pageDoc.setFont("kollektif", "normal");
-        pageDoc.setFontSize(7.5);
+        pageDoc.setFontSize(9.5);
         if (customerName) {
           const splitName = pageDoc.splitTextToSize(customerName.toUpperCase(), custMaxW);
           pageDoc.text(splitName, custX, custY);
-          custY += splitName.length * 3.5;
+          custY += splitName.length * 4.5;
         }
         if (customerPhone) {
           pageDoc.text(customerPhone, custX, custY);
-          custY += 3.5;
+          custY += 4.5;
         }
         if (customerAddress) {
           const splitAddr = pageDoc.splitTextToSize(customerAddress.toUpperCase(), custMaxW);
           pageDoc.text(splitAddr, custX, custY);
-          custY += splitAddr.length * 3.5;
+          custY += splitAddr.length * 4.5;
         }
       }
 
       y = titleEndY;
       pageDoc.setFont("kollektif", "bold");
-      pageDoc.setFontSize(9);
+      pageDoc.setFontSize(11);
       if (material) {
         const splitMat = pageDoc.splitTextToSize(`MATERIAL: ${material.toUpperCase()}`, maxTitleW);
         pageDoc.text(splitMat, margin, y);
-        y += splitMat.length * 4 + 1;
+        y += splitMat.length * 5 + 1;
       }
       if (agent) {
         pageDoc.text(`SA : ${agent.toUpperCase()}`, margin, y);
-        y += 5;
+        y += 6;
       }
       y = Math.max(y, custY);
       return y;
@@ -248,53 +248,53 @@ const InvoiceTab = () => {
     const bottomBlockHeight = 62;
 
     const drawPageBottom = (pageDoc: jsPDF) => {
-      let y = ph - bottomBlockHeight;
+      let y = ph - bottomBlockHeight + 5; // moved 5mm lower
 
       // Terms
       pageDoc.setFont("kollektif", "bold");
-      pageDoc.setFontSize(8);
+      pageDoc.setFontSize(10);
       pageDoc.setTextColor(0, 0, 0);
       pageDoc.text(`VALIDITY : ${validity} days    |    PAYMENT TERM: ${paymentTerm} days    |    DELIVERY TERM : ${deliveryTerm} days`, margin, y);
 
-      y += 5;
+      y += 6;
       pageDoc.setFont("kollektif", "normal");
-      pageDoc.setFontSize(7);
+      pageDoc.setFontSize(9);
       const splitNotes = pageDoc.splitTextToSize(`Note : ${notes}`, pw / 2 - 10);
       pageDoc.text(splitNotes, margin, y);
-      y += splitNotes.length * 3 + 2;
-      pageDoc.setFontSize(7.5);
+      y += splitNotes.length * 4 + 3;
+      pageDoc.setFontSize(9.5);
       pageDoc.text(depositNote, margin + 2, y);
 
       // Manager + payment section (right side)
       const rightX = pw - margin - 65;
-      let ry = y - 12;
+      let ry = y - 14;
       pageDoc.setFont("kollektif", "bold");
-      pageDoc.setFontSize(9);
+      pageDoc.setFontSize(11);
       pageDoc.text(managerName, rightX, ry);
-      ry += 4;
+      ry += 5;
       pageDoc.text(managerTitle, rightX, ry);
-      ry += 7;
-      pageDoc.setFontSize(7.5);
+      ry += 8;
+      pageDoc.setFontSize(9.5);
       pageDoc.setFont("kollektif", "normal");
       pageDoc.text("Payment Method:", rightX, ry);
-      ry += 4;
+      ry += 5;
       pageDoc.text("Bank Name: ", rightX, ry);
       pageDoc.setFont("kollektif", "bold");
-      pageDoc.text(bankName, rightX + 20, ry);
-      ry += 4;
+      pageDoc.text(bankName, rightX + 22, ry);
+      ry += 5;
       pageDoc.setFont("kollektif", "normal");
       pageDoc.text("Account Number: ", rightX, ry);
       pageDoc.setFont("kollektif", "bold");
-      pageDoc.text(accountNumber, rightX + 28, ry);
+      pageDoc.text(accountNumber, rightX + 30, ry);
 
       // Thank you + contact
-      y += 6;
+      y += 7;
       pageDoc.setFont("kollektif", "bold");
-      pageDoc.setFontSize(16);
+      pageDoc.setFontSize(18);
       pageDoc.setTextColor(0, 0, 0);
       pageDoc.text("THANK YOU!", margin, y + 6);
       pageDoc.setTextColor(0);
-      pageDoc.setFontSize(7);
+      pageDoc.setFontSize(9);
       pageDoc.setFont("kollektif", "normal");
       pageDoc.setDrawColor(0, 0, 0);
       pageDoc.setLineWidth(0.3);
