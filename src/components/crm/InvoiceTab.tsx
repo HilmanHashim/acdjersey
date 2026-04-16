@@ -247,8 +247,14 @@ const InvoiceTab = () => {
     y += 8;
     doc.setFont("kollektif", "bold");
     doc.setFontSize(11);
+    const tableRightEdge = pw - margin;
+    const custX = tableRightEdge - 55;
     // Truncate title to fit within left half of page
     const maxTitleW = custX - margin - 5;
+    const titleText = `TITLE :  ${title.toUpperCase()}`;
+    const splitTitle = doc.splitTextToSize(titleText, maxTitleW);
+    doc.text(splitTitle, margin, y);
+    y += splitTitle.length * 5;
     const titleText = `TITLE :  ${title.toUpperCase()}`;
     const splitTitle = doc.splitTextToSize(titleText, maxTitleW);
     doc.text(splitTitle, margin, y);
