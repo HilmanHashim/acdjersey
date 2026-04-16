@@ -336,8 +336,32 @@ const InvoiceTab = () => {
       bottom: margin + bottomBlockHeight + 5,
     };
 
+    // Calculate total combined rows for dynamic sizing
+    const jerseyFiltered = jerseyItems.filter((it) => it.description.trim() || it.price > 0 || it.quantity > 0);
+    const designFiltered = designItems.filter((it) => it.description.trim() || it.price > 0 || it.quantity > 0);
+    const totalRows = (hasJerseyItems ? jerseyFiltered.length : 0) + (hasDesignItems ? designFiltered.length : 0);
+
+    // Dynamic sizing based on row count
+    let tableFontSize = 9;
+    let tableCellPadding = 4;
+    let labelFontSize = 10;
+    if (totalRows > 12) {
+      tableFontSize = 6.5;
+      tableCellPadding = 1.5;
+      labelFontSize = 8;
+    } else if (totalRows > 8) {
+      tableFontSize = 7.5;
+      tableCellPadding = 2.5;
+      labelFontSize = 9;
+    }
+
+    // If combined rows > 8, move tables to next page
+    if (totalRows > 8) {
+      doc.addPage();
+      y = drawPageHeader(doc);
+    }
+
     const renderTable = (label: string, tableItems: LineItem[]) => {
-      // Check if label + at least 1 row fits, if not go to next page
       if (y + 20 > tableBottomLimit) {
         doc.addPage();
         y = drawPageHeader(doc);
@@ -345,10 +369,10 @@ const InvoiceTab = () => {
 
       y += 4;
       doc.setFont("kollektif", "bold");
-      doc.setFontSize(10);
+      doc.setFontSize(labelFontSize);
       doc.setTextColor(0, 0, 0);
       doc.text(label.toUpperCase(), margin, y);
-      y += 6;
+      y += 5;
 
       const tableData = tableItems.map((it) => [
         it.description.toUpperCase(),
@@ -362,7 +386,7 @@ const InvoiceTab = () => {
         head: [["Item Description", "Price", "Quantity", "TOTAL"]],
         body: tableData,
         theme: "grid",
-        styles: { fontSize: 9, cellPadding: 4, halign: "center", valign: "middle" },
+        styles: { fontSize: tableFontSize, cellPadding: tableCellPadding, halign: "center", valign: "middle" },
         headStyles: {
           fillColor: [60, 60, 60],
           textColor: [255, 255, 255],
@@ -380,22 +404,20 @@ const InvoiceTab = () => {
           3: { cellWidth: 30 },
         },
         didDrawPage: (data: any) => {
-          // On every new page autoTable creates, draw header and bottom
           if (data.pageNumber > 1) {
-            // Header was drawn by autoTable's top margin, but we need our custom header
             drawPageHeader(doc);
           }
         },
       });
 
-      y = (doc as any).lastAutoTable.finalY + 6;
+      y = (doc as any).lastAutoTable.finalY + 4;
     };
 
     if (hasJerseyItems) {
-      renderTable("Jersey", jerseyItems.filter((it) => it.description.trim() || it.price > 0 || it.quantity > 0));
+      renderTable("Jersey", jerseyFiltered);
     }
     if (hasDesignItems) {
-      renderTable("Add On Items", designItems.filter((it) => it.description.trim() || it.price > 0 || it.quantity > 0));
+      renderTable("Add On Items", designFiltered);
     }
 
     // ===== SUMMARY BOXES (last page only, above the bottom block) =====
