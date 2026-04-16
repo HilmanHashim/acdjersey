@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileText, Download, ImagePlus, Plus, Trash2 } from "lucide-react";
@@ -235,27 +236,36 @@ const JobsheetTab = () => {
     doc.setFontSize(11);
     doc.text("Other Detail:", detailX, detailY);
 
+    const maxDetailWidth = tableStartX - detailX - 5; // max width before hitting table
+
     let dy = detailY + 10;
     doc.setFontSize(10);
     doc.setFont("helvetica", "bold");
     doc.text("TYPE :", detailX, dy);
     doc.setTextColor(30, 100, 200);
-    doc.text(entry.type.toUpperCase() || "-", detailX + 22, dy);
+    const typeLines = doc.splitTextToSize(entry.type.toUpperCase() || "-", maxDetailWidth - 22);
+    doc.text(typeLines, detailX + 22, dy);
+    dy += typeLines.length * 5;
     doc.setTextColor(0, 0, 0);
 
-    dy += 6;
+    dy += 2;
     doc.setFont("helvetica", "bold");
     doc.text("MATERIAL:", detailX, dy);
     doc.setTextColor(30, 100, 200);
-    doc.text(entry.material.toUpperCase() || "-", detailX + 24, dy);
+    const matLines = doc.splitTextToSize(entry.material.toUpperCase() || "-", maxDetailWidth - 24);
+    doc.text(matLines, detailX + 24, dy);
+    dy += matLines.length * 5;
     doc.setTextColor(0, 0, 0);
 
     if (entry.remark) {
-      dy += 6;
+      dy += 2;
       doc.setFont("helvetica", "bold");
       doc.text("REMARK:", detailX, dy);
       doc.setTextColor(30, 100, 200);
-      doc.text(entry.remark.toUpperCase(), detailX + 22, dy);
+      const remarkText = entry.remark.toUpperCase().replace(/\n/g, "\n");
+      const remarkLines = doc.splitTextToSize(remarkText, maxDetailWidth - 22);
+      doc.text(remarkLines, detailX + 22, dy);
+      dy += remarkLines.length * 5;
       doc.setTextColor(0, 0, 0);
     }
 
@@ -405,9 +415,9 @@ const JobsheetTab = () => {
                   <label className="text-xs text-muted-foreground">Material</label>
                   <Input placeholder="e.g. DIAMOND 160GSM" value={entry.material} onChange={(e) => updateEntry(idx, { material: e.target.value })} />
                 </div>
-                <div>
-                  <label className="text-xs text-muted-foreground">Remark (optional)</label>
-                  <Input placeholder="e.g. Extra notes" value={entry.remark || ""} onChange={(e) => updateEntry(idx, { remark: e.target.value })} />
+                <div className="md:col-span-3">
+                  <label className="text-xs text-muted-foreground">Remark (optional, press Enter for new line)</label>
+                  <Textarea placeholder="e.g. Extra notes" value={entry.remark || ""} onChange={(e) => updateEntry(idx, { remark: e.target.value })} className="min-h-[60px]" />
                 </div>
               </div>
 
