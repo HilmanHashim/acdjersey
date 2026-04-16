@@ -254,14 +254,9 @@ const InvoiceTab = () => {
     const titleText = `TITLE :  ${title.toUpperCase()}`;
     const splitTitle = doc.splitTextToSize(titleText, maxTitleW);
     doc.text(splitTitle, margin, y);
-    y += splitTitle.length * 5;
-    const titleText = `TITLE :  ${title.toUpperCase()}`;
-    const splitTitle = doc.splitTextToSize(titleText, maxTitleW);
-    doc.text(splitTitle, margin, y);
-    y += splitTitle.length * 5;
 
     // Customer details on the right side
-    const tableRightEdge = pw - margin;
+    let custY = y - splitTitle.length * 5 + 5; // align with title start
     let custY = y - splitTitle.length * 5 + 5; // align with title start
     const custMaxW = pw - custX - margin; // constrain to right column
     if (customerName || customerPhone || customerAddress) {
