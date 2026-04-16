@@ -247,12 +247,17 @@ const InvoiceTab = () => {
     y += 8;
     doc.setFont("kollektif", "bold");
     doc.setFontSize(11);
-    doc.text(`TITLE :  ${title.toUpperCase()}`, margin, y);
-
-    // Customer details on the right side
     const tableRightEdge = pw - margin;
     const custX = tableRightEdge - 55;
-    let custY = y;
+    // Truncate title to fit within left half of page
+    const maxTitleW = custX - margin - 5;
+    const titleText = `TITLE :  ${title.toUpperCase()}`;
+    const splitTitle = doc.splitTextToSize(titleText, maxTitleW);
+    doc.text(splitTitle, margin, y);
+
+    // Customer details on the right side
+    let custY = y - splitTitle.length * 5 + 5; // align with title start
+    const custMaxW = pw - custX - margin; // constrain to right column
     if (customerName || customerPhone || customerAddress) {
       doc.setFont("kollektif", "bold");
       doc.setFontSize(10);
@@ -260,32 +265,40 @@ const InvoiceTab = () => {
       custY += 6;
       doc.setFont("kollektif", "normal");
       if (customerName) {
-        doc.text(customerName.toUpperCase(), custX, custY);
-        custY += 5;
+        const splitName = doc.splitTextToSize(customerName.toUpperCase(), custMaxW);
+        doc.text(splitName, custX, custY);
+        custY += splitName.length * 5;
       }
       if (customerPhone) {
         doc.text(customerPhone, custX, custY);
         custY += 5;
       }
       if (customerAddress) {
-        const splitAddr = doc.splitTextToSize(customerAddress.toUpperCase(), pw / 2 - 25);
+        const splitAddr = doc.splitTextToSize(customerAddress.toUpperCase(), custMaxW);
         doc.text(splitAddr, custX, custY);
         custY += splitAddr.length * 5;
       }
     }
 
-    y += 6;
     doc.setFont("kollektif", "bold");
     doc.setFontSize(11);
     if (material) {
-      doc.text(`MATERIAL: ${material.toUpperCase()}`, margin, y);
-      y += 6;
+      const splitMat = doc.splitTextToSize(`MATERIAL: ${material.toUpperCase()}`, maxTitleW);
+      doc.text(splitMat, margin, y);
+      y += splitMat.length * 5 + 1;
     }
     if (agent) {
       doc.text(`SA : ${agent.toUpperCase()}`, margin, y);
       y += 6;
     }
     y = Math.max(y, custY);
+
+    // Safety: if header content already exceeds page, add new page
+    const maxContentY = ph - footerHeight - 5;
+    if (y > maxContentY) {
+      doc.addPage();
+      y = headerHeight + 10;
+    }
 
     // ===== LINE ITEMS TABLES (auto-paginate via autoTable) =====
     const tableMargin = { left: margin + 33, right: margin, top: headerHeight + 10, bottom: footerHeight + 5 };
