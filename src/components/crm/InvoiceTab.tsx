@@ -298,6 +298,14 @@ const InvoiceTab = () => {
       );
     }
 
+    // Check if remaining content fits on current page, if not add new page
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const remainingContentHeight = 140; // approximate height needed for summary + terms + footer
+    if (y + remainingContentHeight > pageHeight - 10) {
+      doc.addPage();
+      y = 20;
+    }
+
     y += 4;
 
     // Summary section - compact boxes, right-aligned like reference
