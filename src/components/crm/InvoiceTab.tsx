@@ -341,24 +341,32 @@ const InvoiceTab = () => {
     const designFiltered = designItems.filter((it) => it.description.trim() || it.price > 0 || it.quantity > 0);
     const totalRows = (hasJerseyItems ? jerseyFiltered.length : 0) + (hasDesignItems ? designFiltered.length : 0);
 
-    // Dynamic sizing based on row count
+    // Estimate row height per size tier and pick the best fit
+    // We want tables + summary to fit on page 1 if possible
+    const summaryEstimate = 50; // approx height for summary boxes
+    const availableSpace = tableBottomLimit - y - summaryEstimate - 10;
+    const labelOverhead = (hasJerseyItems ? 10 : 0) + (hasDesignItems ? 10 : 0); // label + gap per table
+    const headerRowCount = (hasJerseyItems ? 1 : 0) + (hasDesignItems ? 1 : 0); // table headers
+    const totalTableRows = totalRows + headerRowCount;
+    const spacePerRow = totalTableRows > 0 ? (availableSpace - labelOverhead) / totalTableRows : 999;
+
+    // Choose sizing tier based on available space per row
     let tableFontSize = 9;
     let tableCellPadding = 4;
     let labelFontSize = 10;
-    if (totalRows > 12) {
+    if (spacePerRow < 5) {
+      // Won't fit even compact — will overflow to next page naturally
       tableFontSize = 6.5;
       tableCellPadding = 1.5;
       labelFontSize = 8;
-    } else if (totalRows > 8) {
+    } else if (spacePerRow < 7) {
+      tableFontSize = 7;
+      tableCellPadding = 2;
+      labelFontSize = 8;
+    } else if (spacePerRow < 9) {
       tableFontSize = 7.5;
       tableCellPadding = 2.5;
       labelFontSize = 9;
-    }
-
-    // If combined rows > 8, move tables to next page
-    if (totalRows > 8) {
-      doc.addPage();
-      y = drawPageHeader(doc);
     }
 
     const renderTable = (label: string, tableItems: LineItem[]) => {
