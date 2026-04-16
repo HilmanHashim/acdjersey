@@ -157,10 +157,13 @@ const InvoiceTab = () => {
 
     const doc = new jsPDF("p", "mm", "a4");
     const pw = doc.internal.pageSize.getWidth();
+    const ph = doc.internal.pageSize.getHeight();
     const margin = 15;
-    let y = 20;
+    const footerHeight = 30;
+    const headerHeight = 18;
 
-    // Load logo
+    // Preload logo
+    let logoImg: HTMLImageElement | null = null;
     try {
       const img = new Image();
       img.crossOrigin = "anonymous";
@@ -169,12 +172,57 @@ const InvoiceTab = () => {
         img.onerror = reject;
         img.src = acdLogo;
       });
-      doc.addImage(img, "PNG", pw - margin - 28, y - 2, 28, 14);
-    } catch {
-      // Logo failed, continue without
+      logoImg = img;
+    } catch {}
+
+    // --- Repeating footer on every page ---
+    const drawFooter = (pageDoc: jsPDF) => {
+      const fy = ph - footerHeight;
+      pageDoc.setDrawColor(200, 200, 200);
+      pageDoc.line(margin, fy, pw - margin, fy);
+
+      const leftX = margin + 2;
+      let footY = fy + 6;
+
+      // Contact info
+      pageDoc.setFont("kollektif", "normal");
+      pageDoc.setFontSize(7);
+      pageDoc.setTextColor(80, 80, 80);
+      pageDoc.text(`${phone}  |  ${emailAddr}`, leftX, footY);
+      footY += 4;
+      pageDoc.text(`Bank: ${bankName}  |  Acc: ${accountNumber}`, leftX, footY);
+
+      // Page number
+      const totalPages = pageDoc.getNumberOfPages();
+      const currentPage = pageDoc.getCurrentPageInfo().pageNumber;
+      pageDoc.setFontSize(7);
+      pageDoc.text(`Page ${currentPage} of ${totalPages}`, pw - margin, fy + 6, { align: "right" });
+      pageDoc.setTextColor(0, 0, 0);
+    };
+
+    // --- Repeating header on every page ---
+    const drawHeader = (pageDoc: jsPDF, isFirstPage: boolean) => {
+      if (isFirstPage) return; // First page has full header already
+      const hy = 10;
+      if (logoImg) {
+        pageDoc.addImage(logoImg, "PNG", margin, hy, 18, 9);
+      }
+      pageDoc.setFont("kollektif", "bold");
+      pageDoc.setFontSize(10);
+      pageDoc.setTextColor(120, 120, 120);
+      pageDoc.text(`INVOICE  ${currentInvoiceNumber}`, margin + 22, hy + 6);
+      pageDoc.text(title.toUpperCase(), pw - margin, hy + 6, { align: "right" });
+      pageDoc.setTextColor(0, 0, 0);
+      pageDoc.setDrawColor(200, 200, 200);
+      pageDoc.line(margin, hy + 10, pw - margin, hy + 10);
+    };
+
+    // ===== PAGE 1: Full header =====
+    let y = 20;
+    if (logoImg) {
+      doc.addImage(logoImg, "PNG", pw - margin - 28, y - 2, 28, 14);
     }
 
-    // Header
     doc.setFont("kollektif", "bold");
     doc.setFontSize(28);
     doc.text("INVOICE", margin, y + 8);
@@ -237,14 +285,16 @@ const InvoiceTab = () => {
       doc.text(`SA : ${agent.toUpperCase()}`, margin, y);
       y += 6;
     }
-    // Ensure y is at least past customer details block
     y = Math.max(y, custY);
 
-    // Helper to render a table section
+    // ===== LINE ITEMS TABLES (auto-paginate via autoTable) =====
+    const tableMargin = { left: margin + 33, right: margin, top: headerHeight + 10, bottom: footerHeight + 5 };
+
     const renderTable = (label: string, tableItems: LineItem[]) => {
       y += 4;
       doc.setFont("kollektif", "bold");
       doc.setFontSize(10);
+      doc.setTextColor(0, 0, 0);
       doc.text(label.toUpperCase(), margin, y);
       y += 6;
 
@@ -270,7 +320,7 @@ const InvoiceTab = () => {
         },
         bodyStyles: { lineColor: [180, 180, 180], lineWidth: 0.3 },
         alternateRowStyles: { fillColor: [240, 240, 240] },
-        margin: { left: margin + 33, right: margin },
+        margin: tableMargin,
         columnStyles: {
           0: { cellWidth: 55 },
           1: { cellWidth: 30 },
@@ -282,33 +332,21 @@ const InvoiceTab = () => {
       y = (doc as any).lastAutoTable.finalY + 6;
     };
 
-    // Render jersey table
     if (hasJerseyItems) {
-      renderTable(
-        "Jersey",
-        jerseyItems.filter((it) => it.description.trim() || it.price > 0 || it.quantity > 0),
-      );
+      renderTable("Jersey", jerseyItems.filter((it) => it.description.trim() || it.price > 0 || it.quantity > 0));
     }
-
-    // Render add on items table (only if filled)
     if (hasDesignItems) {
-      renderTable(
-        "Add On Items",
-        designItems.filter((it) => it.description.trim() || it.price > 0 || it.quantity > 0),
-      );
+      renderTable("Add On Items", designItems.filter((it) => it.description.trim() || it.price > 0 || it.quantity > 0));
     }
 
-    // Check if remaining content fits on current page, if not add new page
-    const pageHeight = doc.internal.pageSize.getHeight();
-    const remainingContentHeight = 140; // approximate height needed for summary + terms + footer
-    if (y + remainingContentHeight > pageHeight - 10) {
+    // ===== SUMMARY + TERMS (on last page, check if fits) =====
+    const summaryHeight = 120;
+    if (y + summaryHeight > ph - footerHeight - 5) {
       doc.addPage();
-      y = 20;
+      y = headerHeight + 10;
     }
 
     y += 4;
-
-    // Summary section - compact boxes, right-aligned like reference
     doc.setFont("kollektif", "bold");
     doc.setFontSize(9);
 
@@ -320,25 +358,20 @@ const InvoiceTab = () => {
     const labelRightX = cyanX - 4;
     const rowH = 8;
 
-    // Build description lines for all items
     const orderDescLines: string[] = [];
     if (hasJerseyItems) {
-      jerseyItems
-        .filter((it) => it.description.trim() || it.price > 0 || it.quantity > 0)
-        .forEach((it) => {
-          orderDescLines.push(`${it.quantity} PCS ${it.description.toUpperCase()}`);
-        });
+      jerseyItems.filter((it) => it.description.trim() || it.price > 0 || it.quantity > 0).forEach((it) => {
+        orderDescLines.push(`${it.quantity} PCS ${it.description.toUpperCase()}`);
+      });
     }
     if (hasDesignItems) {
-      designItems
-        .filter((it) => it.description.trim() || it.price > 0 || it.quantity > 0)
-        .forEach((it) => {
-          orderDescLines.push(`${it.quantity} PCS ${it.description.toUpperCase()}`);
-        });
+      designItems.filter((it) => it.description.trim() || it.price > 0 || it.quantity > 0).forEach((it) => {
+        orderDescLines.push(`${it.quantity} PCS ${it.description.toUpperCase()}`);
+      });
     }
     const row1H = Math.max(rowH, orderDescLines.length * 4 + 4);
 
-    // Row 1: TOTAL ORDER (jersey + add on)
+    // Row 1: TOTAL ORDER
     doc.setFont("kollektif", "bold");
     doc.setFontSize(7);
     doc.text("TOTAL", labelRightX, y + row1H / 2 - 1, { align: "right" });
@@ -363,49 +396,39 @@ const InvoiceTab = () => {
 
     y += row1H + 2;
 
-    // Row 2: LOCK DEPOSIT (only if filled)
+    // Row 2: LOCK DEPOSIT
     if (lockDepositAmount > 0) {
       doc.setFont("kollektif", "bold");
       doc.setFontSize(7);
       doc.text("LOCK DEPOSIT", labelRightX, y + rowH / 2 + 1, { align: "right" });
-
       doc.setFillColor(0, 220, 220);
       doc.rect(cyanX, y, cyanW, rowH, "F");
       doc.setTextColor(0);
       doc.setFontSize(7);
       doc.text("PAID", cyanX + cyanW / 2, y + rowH / 2 + 1, { align: "center" });
-
       doc.setFillColor(255, 213, 0);
       doc.rect(yellowX, y, yellowW, rowH, "F");
       doc.setTextColor(0);
       doc.setFontSize(8);
-      doc.text(`RM ${lockDepositAmount.toLocaleString()}`, yellowX + yellowW / 2, y + rowH / 2 + 1, {
-        align: "center",
-      });
-
+      doc.text(`RM ${lockDepositAmount.toLocaleString()}`, yellowX + yellowW / 2, y + rowH / 2 + 1, { align: "center" });
       y += rowH + 2;
     }
 
-    // Row 3: Deposit (on total order = jersey + add on)
+    // Row 3: Deposit
     const shirtDepositAmount = shirtDepositEnabled
-      ? shirtDepositMode === "percent"
-        ? (totalAmount * shirtDepositPercent) / 100
-        : shirtDepositCustom
+      ? shirtDepositMode === "percent" ? (totalAmount * shirtDepositPercent) / 100 : shirtDepositCustom
       : 0;
     const shirtDepositLabel = shirtDepositMode === "percent" ? `${shirtDepositPercent}%` : "DEPOSIT";
     doc.setFont("kollektif", "bold");
     doc.setFontSize(7);
     doc.text(shirtDepositLabel, labelRightX, y + rowH / 2 + 1, { align: "right" });
-
     doc.setFillColor(0, 220, 220);
     doc.rect(cyanX, y, cyanW, rowH, "F");
-
     doc.setFillColor(255, 213, 0);
     doc.rect(yellowX, y, yellowW, rowH, "F");
     doc.setTextColor(0);
     doc.setFontSize(8);
     doc.text(`RM ${shirtDepositAmount.toLocaleString()}`, yellowX + yellowW / 2, y + rowH / 2 + 1, { align: "center" });
-
     y += rowH + 2;
 
     // Row 4: BALANCE
@@ -413,20 +436,17 @@ const InvoiceTab = () => {
     doc.setFont("kollektif", "bold");
     doc.setFontSize(7);
     doc.text("BALANCE", labelRightX, y + rowH / 2 + 1, { align: "right" });
-
     doc.setFillColor(0, 220, 220);
     doc.rect(cyanX, y, cyanW, rowH, "F");
-
     doc.setFillColor(255, 213, 0);
     doc.rect(yellowX, y, yellowW, rowH, "F");
     doc.setTextColor(0);
     doc.setFontSize(8);
     doc.text(`RM ${balance.toLocaleString()}`, yellowX + yellowW / 2, y + rowH / 2 + 1, { align: "center" });
-
     doc.setTextColor(0);
 
     // Terms
-    y += 40;
+    y += 20;
     doc.setFont("kollektif", "bold");
     doc.setFontSize(10);
     doc.text(`VALIDITY : ${validity} days`, margin, y);
@@ -442,7 +462,6 @@ const InvoiceTab = () => {
     const splitNotes = doc.splitTextToSize(`Note : ${notes}`, pw / 2 - 10);
     doc.text(splitNotes, margin, y);
     y += splitNotes.length * 4 + 4;
-
     doc.setFontSize(9);
     doc.text(depositNote, margin + 2, y);
 
@@ -454,7 +473,6 @@ const InvoiceTab = () => {
     doc.text(managerName, rightX, ry);
     ry += 6;
     doc.text(managerTitle, rightX, ry);
-
     ry += 10;
     doc.setFontSize(9);
     doc.setFont("kollektif", "normal");
@@ -469,7 +487,7 @@ const InvoiceTab = () => {
     doc.setFont("kollektif", "bold");
     doc.text(accountNumber, rightX + 30, ry);
 
-    // Thank you + contact
+    // Thank you
     y += 10;
     doc.setFont("kollektif", "bold");
     doc.setFontSize(20);
@@ -478,19 +496,23 @@ const InvoiceTab = () => {
     doc.setTextColor(0);
     doc.setFontSize(8);
     doc.setFont("kollektif", "normal");
-
-    // Phone icon - small phone rectangle
     doc.setDrawColor(0, 0, 0);
     doc.setLineWidth(0.4);
     doc.roundedRect(margin + 5.5, y + 12.5, 2.5, 4, 0.5, 0.5, "S");
     doc.setFontSize(8);
     doc.text(phone, margin + 10, y + 16);
-
-    // Email icon - small envelope
     doc.rect(margin + 5.5, y + 18, 3, 2, "S");
     doc.line(margin + 5.5, y + 18, margin + 7, y + 19);
     doc.line(margin + 8.5, y + 18, margin + 7, y + 19);
     doc.text(emailAddr, margin + 10, y + 20.5);
+
+    // ===== Draw headers and footers on ALL pages =====
+    const totalPages = doc.getNumberOfPages();
+    for (let p = 1; p <= totalPages; p++) {
+      doc.setPage(p);
+      drawHeader(doc, p === 1);
+      drawFooter(doc);
+    }
 
     const safeTitle = title ? `_${title.replace(/[^a-zA-Z0-9]/g, "_")}` : "";
     doc.save(`Invoice_${currentInvoiceNumber.replace(/\//g, "-")}${safeTitle}.pdf`);
