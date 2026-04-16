@@ -244,55 +244,66 @@ const InvoiceTab = () => {
       return y;
     };
 
-    // ===== REUSABLE: Draw compact bottom block anchored to page bottom =====
-    const bottomBlockHeight = 42;
+    // ===== REUSABLE: Draw bottom block anchored to page bottom =====
+    const bottomBlockHeight = 62;
 
     const drawPageBottom = (pageDoc: jsPDF) => {
-      // Anchor everything from the very bottom of the page
-      const bottomY = ph - 8; // lowest text baseline
+      let y = ph - bottomBlockHeight;
 
-      // Row 1 (bottom): THANK YOU + contact info
+      // Terms
       pageDoc.setFont("kollektif", "bold");
-      pageDoc.setFontSize(12);
+      pageDoc.setFontSize(8);
       pageDoc.setTextColor(0, 0, 0);
-      pageDoc.text("THANK YOU!", margin, bottomY);
+      pageDoc.text(`VALIDITY : ${validity} days    |    PAYMENT TERM: ${paymentTerm} days    |    DELIVERY TERM : ${deliveryTerm} days`, margin, y);
 
-      pageDoc.setFontSize(6.5);
+      y += 5;
       pageDoc.setFont("kollektif", "normal");
-      pageDoc.text(`${phone}  |  ${emailAddr}`, margin + 30, bottomY);
-
-      // Row 2: Payment info
-      const payY = bottomY - 6;
       pageDoc.setFontSize(7);
-      pageDoc.setFont("kollektif", "normal");
-      pageDoc.text(`Payment: ${bankName}  |  Acc: ${accountNumber}`, margin, payY);
-
-      // Right side: Manager
-      const rightX = pw - margin;
-      pageDoc.setFont("kollektif", "bold");
+      const splitNotes = pageDoc.splitTextToSize(`Note : ${notes}`, pw / 2 - 10);
+      pageDoc.text(splitNotes, margin, y);
+      y += splitNotes.length * 3 + 2;
       pageDoc.setFontSize(7.5);
-      pageDoc.text(`${managerName}  -  ${managerTitle}`, rightX, payY, { align: "right" });
+      pageDoc.text(depositNote, margin + 2, y);
 
-      // Row 3: Terms (single line)
-      const termsY = payY - 5;
+      // Manager + payment section (right side)
+      const rightX = pw - margin - 65;
+      let ry = y - 12;
       pageDoc.setFont("kollektif", "bold");
-      pageDoc.setFontSize(7);
-      pageDoc.text(`VALIDITY: ${validity} days  |  PAYMENT TERM: ${paymentTerm} days  |  DELIVERY TERM: ${deliveryTerm} days`, margin, termsY);
-
-      // Row 4: Notes + deposit note
-      const noteY = termsY - 4;
+      pageDoc.setFontSize(9);
+      pageDoc.text(managerName, rightX, ry);
+      ry += 4;
+      pageDoc.text(managerTitle, rightX, ry);
+      ry += 7;
+      pageDoc.setFontSize(7.5);
       pageDoc.setFont("kollektif", "normal");
-      pageDoc.setFontSize(6);
-      const noteText = `Note: ${notes}`;
-      const truncNote = noteText.length > 120 ? noteText.substring(0, 118) + ".." : noteText;
-      pageDoc.text(truncNote, margin, noteY);
-      const depY = noteY - 3;
-      pageDoc.setFontSize(6.5);
-      pageDoc.text(depositNote, margin, depY);
+      pageDoc.text("Payment Method:", rightX, ry);
+      ry += 4;
+      pageDoc.text("Bank Name: ", rightX, ry);
+      pageDoc.setFont("kollektif", "bold");
+      pageDoc.text(bankName, rightX + 20, ry);
+      ry += 4;
+      pageDoc.setFont("kollektif", "normal");
+      pageDoc.text("Account Number: ", rightX, ry);
+      pageDoc.setFont("kollektif", "bold");
+      pageDoc.text(accountNumber, rightX + 28, ry);
 
-      // Separator line
-      pageDoc.setDrawColor(200, 200, 200);
-      pageDoc.line(margin, depY - 2, pw - margin, depY - 2);
+      // Thank you + contact
+      y += 6;
+      pageDoc.setFont("kollektif", "bold");
+      pageDoc.setFontSize(16);
+      pageDoc.setTextColor(0, 0, 0);
+      pageDoc.text("THANK YOU!", margin, y + 6);
+      pageDoc.setTextColor(0);
+      pageDoc.setFontSize(7);
+      pageDoc.setFont("kollektif", "normal");
+      pageDoc.setDrawColor(0, 0, 0);
+      pageDoc.setLineWidth(0.3);
+      pageDoc.roundedRect(margin + 5.5, y + 9.5, 2, 3.5, 0.4, 0.4, "S");
+      pageDoc.text(phone, margin + 9, y + 12.5);
+      pageDoc.rect(margin + 5.5, y + 14.5, 2.5, 1.8, "S");
+      pageDoc.line(margin + 5.5, y + 14.5, margin + 6.75, y + 15.4);
+      pageDoc.line(margin + 8, y + 14.5, margin + 6.75, y + 15.4);
+      pageDoc.text(emailAddr, margin + 9, y + 16.5);
     };
 
     // ===== Draw page 1 header =====
