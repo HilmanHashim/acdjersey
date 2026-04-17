@@ -16,6 +16,7 @@ import client6 from "@/assets/clients/client-6.jpeg";
 import client7 from "@/assets/clients/client-7.jpeg";
 import client8 from "@/assets/clients/client-8.jpeg";
 import client9 from "@/assets/clients/client-9.jpeg";
+import client10 from "@/assets/BRC.jpeg";
 
 const clientImages = [
   { src: client1, alt: "Running team in yellow sublimation jerseys" },
@@ -27,6 +28,7 @@ const clientImages = [
   { src: client7, alt: "Bintulu Marathon team in purple sublimation jerseys" },
   { src: client8, alt: "Kelantan Half Marathon team in pink sublimation jerseys" },
   { src: client9, alt: "Football team in red sublimation jerseys" },
+  { src: client10, alt: "Bob Running Club sublimation jerseys" },
 ];
 
 const Clients = () => (
