@@ -16,8 +16,7 @@ import client6 from "@/assets/clients/client-6.jpeg";
 import client7 from "@/assets/clients/client-7.jpeg";
 import client8 from "@/assets/clients/client-8.jpeg";
 import client9 from "@/assets/clients/client-9.jpeg";
-import client10 from "@/assets/BRC.jpeg";
-
+import client10 from "@/assets/clients/client-10.jpeg";
 const clientImages = [
   { src: client1, alt: "Running team in yellow sublimation jerseys" },
   { src: client2, alt: "Team Treximo in custom sublimation singlets" },
