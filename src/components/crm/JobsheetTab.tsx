@@ -404,7 +404,7 @@ const JobsheetTab = () => {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <div>
                   <label className="text-xs text-muted-foreground">Category</label>
-                  <Select value={entry.category} onValueChange={(v) => updateEntry(idx, { category: v })}>
+                  <Select value={entry.category} onValueChange={(v) => updateEntry(idx, { category: v, sizeRows: getSizesForCategory(v).map((s) => ({ size: s, qty: 0, nameset: "" })) })}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
