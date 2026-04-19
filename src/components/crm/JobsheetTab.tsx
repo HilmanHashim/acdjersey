@@ -49,13 +49,13 @@ interface JobsheetEntry {
   sizeRows: SizeRow[];
 }
 
-const createEmptyEntry = (): JobsheetEntry => ({
-  category: "ADULTS: SHORT SLEEVE",
+const createEmptyEntry = (category = "ADULTS: SHORT SLEEVE"): JobsheetEntry => ({
+  category,
   type: "",
   material: "",
   remark: "",
   mockupImages: [null, null],
-  sizeRows: sizes.map((s) => ({ size: s, qty: 0, nameset: "" })),
+  sizeRows: getSizesForCategory(category).map((s) => ({ size: s, qty: 0, nameset: "" })),
 });
 
 const JobsheetTab = () => {
