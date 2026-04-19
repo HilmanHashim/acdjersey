@@ -10,7 +10,9 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import acdLogo from "@/assets/black-3.png";
 
-const sizes = ["24", "34", "XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL", "6XL"];
+const unisexSizes = ["XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL", "6XL", "7XL", "8XL"];
+const femaleSizes = ["S", "M", "L", "XL", "2XL"];
+const kidsSizes = ["20", "22", "24", "26", "28", "30", "32", "34"];
 
 const categories = [
   "ADULTS: SHORT SLEEVE",
@@ -25,6 +27,12 @@ const categories = [
   "LADIES: SINGLET",
   "LADIES: MUSLIMAH",
 ];
+
+const getSizesForCategory = (category: string): string[] => {
+  if (category.startsWith("KIDS")) return kidsSizes;
+  if (category.startsWith("LADIES")) return femaleSizes;
+  return unisexSizes;
+};
 
 interface SizeRow {
   size: string;
