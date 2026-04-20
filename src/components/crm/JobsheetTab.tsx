@@ -348,17 +348,34 @@ const JobsheetTab = () => {
       return;
     }
 
-    const doc = new jsPDF("p", "mm", "a4");
+    try {
+      const doc = new jsPDF("p", "mm", "a4");
 
-    for (let i = 0; i < entries.length; i++) {
-      if (i > 0) doc.addPage();
-      const entry = entries[i];
-      const entryTotal = entry.sizeRows.reduce((s, r) => s + (r.qty || 0), 0);
-      await renderJobsheetPage(doc, entry, entryTotal);
+      for (let i = 0; i < entries.length; i++) {
+        if (i > 0) doc.addPage();
+        const entry = entries[i];
+        const entryTotal = entry.sizeRows.reduce((s, r) => s + (r.qty || 0), 0);
+        await renderJobsheetPage(doc, entry, entryTotal);
+      }
+
+      const filename = `Jobsheet_${jobName || "draft"}.pdf`;
+      // Use blob + manual anchor click — works reliably inside iframes/preview
+      // where doc.save() can be silently blocked by sandbox restrictions.
+      const blob = doc.output("blob");
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+      toast.success("Jobsheet PDF generated!");
+    } catch (err: any) {
+      console.error("PDF generation failed:", err);
+      toast.error(`PDF failed: ${err?.message || "unknown error"}`);
     }
-
-    doc.save(`Jobsheet_${jobName || "draft"}.pdf`);
-    toast.success("Jobsheet PDF generated!");
   };
 
   return (
