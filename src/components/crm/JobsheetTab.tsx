@@ -359,19 +359,30 @@ const JobsheetTab = () => {
       }
 
       const filename = `Jobsheet_${jobName || "draft"}.pdf`;
-      // Use blob + manual anchor click — works reliably inside iframes/preview
-      // where doc.save() can be silently blocked by sandbox restrictions.
       const blob = doc.output("blob");
       const url = URL.createObjectURL(blob);
+
+      // Try anchor download first
       const a = document.createElement("a");
       a.href = url;
       a.download = filename;
+      a.target = "_blank";
+      a.rel = "noopener";
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
-      setTimeout(() => URL.revokeObjectURL(url), 1000);
 
-      toast.success("Jobsheet PDF generated!");
+      // Fallback: open in a new tab so the user can save manually.
+      // This is critical inside the Lovable preview iframe, which often
+      // blocks programmatic downloads but allows window.open via user gesture.
+      const popup = window.open(url, "_blank");
+      if (!popup) {
+        toast.error("Popup blocked — please allow popups for this site, or open the preview in a new tab.");
+      } else {
+        toast.success("Jobsheet PDF opened in a new tab — use the browser's save button to download.");
+      }
+
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
     } catch (err: any) {
       console.error("PDF generation failed:", err);
       toast.error(`PDF failed: ${err?.message || "unknown error"}`);
