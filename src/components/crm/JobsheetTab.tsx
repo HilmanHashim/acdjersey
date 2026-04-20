@@ -281,17 +281,34 @@ const JobsheetTab = () => {
 
     const tableBody = entry.sizeRows.map((r) => [r.size, r.qty || "", r.nameset]);
 
+    const namesetColWidth = pw - margin - tableStartX - 42;
+
+    // Dynamically pick a font size so the longest nameset fits within the column.
+    // autoTable will wrap text, but we shrink the font for very long entries to keep rows compact.
+    const longestNameset = entry.sizeRows.reduce((max, r) => Math.max(max, (r.nameset || "").length), 0);
+    let bodyFontSize = 9;
+    if (longestNameset > 60) bodyFontSize = 7;
+    else if (longestNameset > 40) bodyFontSize = 8;
+
     autoTable(doc, {
       startY: detailY - 3,
       head: [["SIZE", "QTY", "NAMESET"]],
       body: tableBody,
       theme: "grid",
-      styles: { fontSize: 9, cellPadding: 2.5, halign: "center", valign: "middle" },
+      styles: {
+        fontSize: bodyFontSize,
+        cellPadding: 2.5,
+        halign: "center",
+        valign: "middle",
+        overflow: "linebreak",
+        cellWidth: "wrap",
+      },
       headStyles: {
         textColor: [0, 0, 0],
         fontStyle: "bold",
         lineColor: [0, 0, 0],
         lineWidth: 0.3,
+        fontSize: 9,
       },
       didParseCell: (data: any) => {
         if (data.section === "head") {
@@ -301,13 +318,17 @@ const JobsheetTab = () => {
             data.cell.styles.textColor = [0, 0, 0];
           } else if (data.column.index === 2) data.cell.styles.fillColor = [0, 190, 220];
         }
+        if (data.section === "body" && data.column.index === 2) {
+          data.cell.styles.halign = "left";
+        }
       },
       bodyStyles: { lineColor: [0, 0, 0], lineWidth: 0.3 },
       margin: { left: tableStartX, right: margin },
+      tableWidth: pw - margin - tableStartX,
       columnStyles: {
         0: { cellWidth: 22 },
         1: { cellWidth: 20 },
-        2: { cellWidth: pw - margin - tableStartX - 42 },
+        2: { cellWidth: namesetColWidth, overflow: "linebreak" },
       },
     });
 
