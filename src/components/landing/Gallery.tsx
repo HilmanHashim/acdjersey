@@ -39,7 +39,6 @@ const Gallery = () => {
   }, [next, images.length]);
 
   const showDots = images.length > 1 && images.length <= 12;
-  const showCounter = images.length > 12;
 
   return (
     <section className="py-20 bg-card">
@@ -53,7 +52,7 @@ const Gallery = () => {
 
         <div className={`relative group my-0 py-0 reveal ${inView ? "in-view" : ""}`} style={{ animationDelay: "0.3s" }}>
           {/* Main image */}
-          <div className="relative h-[80vh] w-full overflow-hidden rounded-xl border border-border shadow-2xl">
+          <div className="relative h-[80vh] w-full overflow-hidden">
             {images.map((src, i) => (
               <img
                 key={i}
@@ -65,13 +64,6 @@ const Gallery = () => {
                 }`}
               />
             ))}
-
-            {/* Counter pill (when too many to show dots) */}
-            {showCounter && (
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-background/80 backdrop-blur border border-border rounded-full px-3 py-1 text-xs font-display text-foreground tracking-wider">
-                {current + 1} / {images.length}
-              </div>
-            )}
           </div>
 
           {/* Controls */}
