@@ -1,29 +1,45 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useInView } from "@/hooks/use-in-view";
 
-import img1 from "@/assets/carousel-1.jpg";
-import img2 from "@/assets/carousel-2.jpg";
-import img3 from "@/assets/carousel-3.jpg";
-import img4 from "@/assets/carousel-4.jpg";
-import img5 from "@/assets/carousel-5.jpg";
-import img6 from "@/assets/carousel-6.jpg";
-import img7 from "@/assets/carousel-7.jpg";
-import img8 from "@/assets/carousel-8.jpg";
+// Pull every catalogue image across all four categories.
+const collaredImgs = import.meta.glob("@/assets/catalogue/collared/*.{png,jpg,jpeg,webp}", { eager: true, query: "?url", import: "default" }) as Record<string, string>;
+const longsleeveImgs = import.meta.glob("@/assets/catalogue/longsleeve/*.{png,jpg,jpeg,webp}", { eager: true, query: "?url", import: "default" }) as Record<string, string>;
+const singletImgs = import.meta.glob("@/assets/catalogue/singlet/*.{png,jpg,jpeg,webp}", { eager: true, query: "?url", import: "default" }) as Record<string, string>;
+const standardImgs = import.meta.glob("@/assets/catalogue/standard/*.{png,jpg,jpeg,webp}", { eager: true, query: "?url", import: "default" }) as Record<string, string>;
 
-const images = [img1, img2, img3, img4, img5, img6, img7, img8];
+const allImages = [
+  ...Object.values(collaredImgs),
+  ...Object.values(longsleeveImgs),
+  ...Object.values(singletImgs),
+  ...Object.values(standardImgs),
+];
+
+const shuffle = <T,>(arr: T[]): T[] => {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+};
 
 const Gallery = () => {
+  const images = useMemo(() => shuffle(allImages), []);
   const [current, setCurrent] = useState(0);
   const { ref, inView } = useInView<HTMLDivElement>();
 
-  const next = useCallback(() => setCurrent((c) => (c + 1) % images.length), []);
-  const prev = useCallback(() => setCurrent((c) => (c - 1 + images.length) % images.length), []);
+  const next = useCallback(() => setCurrent((c) => (c + 1) % images.length), [images.length]);
+  const prev = useCallback(() => setCurrent((c) => (c - 1 + images.length) % images.length), [images.length]);
 
   useEffect(() => {
+    if (images.length <= 1) return;
     const id = setInterval(next, 3000);
     return () => clearInterval(id);
-  }, [next]);
+  }, [next, images.length]);
+
+  const showDots = images.length > 1 && images.length <= 12;
+  const showCounter = images.length > 12;
 
   return (
     <section className="py-20 bg-card">
@@ -43,11 +59,19 @@ const Gallery = () => {
                 key={i}
                 src={src}
                 alt={`Project ${i + 1}`}
+                loading={i === 0 ? "eager" : "lazy"}
                 className={`absolute inset-0 w-full h-full object-contain transition-all duration-1000 ease-out ${
                   i === current ? "opacity-100 scale-100" : "opacity-0 scale-105"
                 }`}
               />
             ))}
+
+            {/* Counter pill (when too many to show dots) */}
+            {showCounter && (
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-background/80 backdrop-blur border border-border rounded-full px-3 py-1 text-xs font-display text-foreground tracking-wider">
+                {current + 1} / {images.length}
+              </div>
+            )}
           </div>
 
           {/* Controls */}
@@ -64,18 +88,20 @@ const Gallery = () => {
             <ChevronRight className="h-5 w-5 text-foreground" />
           </button>
 
-          {/* Dots */}
-          <div className="flex justify-center gap-2 mt-6">
-            {images.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrent(i)}
-                className={`h-2 rounded-full transition-all duration-500 ease-out ${
-                  i === current ? "w-8 bg-accent" : "w-2 bg-muted-foreground/40 hover:bg-muted-foreground/70"
-                }`}
-              />
-            ))}
-          </div>
+          {/* Dots (only when image count is small enough) */}
+          {showDots && (
+            <div className="flex justify-center gap-2 mt-6">
+              {images.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setCurrent(i)}
+                  className={`h-2 rounded-full transition-all duration-500 ease-out ${
+                    i === current ? "w-8 bg-accent" : "w-2 bg-muted-foreground/40 hover:bg-muted-foreground/70"
+                  }`}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </section>

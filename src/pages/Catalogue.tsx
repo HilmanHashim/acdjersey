@@ -211,7 +211,7 @@ const Catalogue = () => {
         <p className="font-display text-accent uppercase tracking-[0.3em] text-sm">
           Browse
         </p>
-        <h1 className="text-4xl md:text-6xl font-display text-gradient">
+        <h1 className="text-4xl md:text-6xl font-display text-gradient title-glow inline-block">
           Our Catalogue
         </h1>
         <p className="text-muted-foreground max-w-lg mx-auto text-sm">

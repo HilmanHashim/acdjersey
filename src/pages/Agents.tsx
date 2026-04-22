@@ -107,7 +107,7 @@ const Agents = () => (
       </div>
 
       <div className="container relative z-10">
-        <h1 className="text-4xl md:text-5xl font-display text-gradient mb-3">Contact Our Team</h1>
+        <h1 className="text-4xl md:text-5xl font-display text-gradient title-glow inline-block mb-3">Contact Our Team</h1>
         <p className="text-foreground/70 max-w-lg">
           Reach out to any of our agents directly via WhatsApp for enquiries, quotations, or orders.
         </p>

@@ -62,7 +62,7 @@ const Enquiry = () => {
       <section className="min-h-[70vh] flex items-center justify-center px-4 py-16">
         <div className="w-full max-w-lg space-y-8 animate-slide-up">
           <div className="text-center space-y-2">
-            <h1 className="text-4xl md:text-5xl font-display text-gradient">Get A Quote</h1>
+            <h1 className="text-4xl md:text-5xl font-display text-gradient title-glow inline-block">Get A Quote</h1>
             <p className="text-muted-foreground max-w-md mx-auto">
               Interested in custom jerseys? Fill in the form below and our team will get back to you!
             </p>
