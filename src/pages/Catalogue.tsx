@@ -125,10 +125,17 @@ const CategoryCard = ({ category }: { category: Category }) => {
           ))}
         </div>
 
-        {/* Hover overlay with "View all" hint */}
+        {/* Always-visible "View all" badge in top-right */}
+        <div className="pointer-events-none absolute top-3 right-3 z-10">
+          <span className="font-display text-xs uppercase tracking-[0.15em] text-accent-foreground bg-accent px-3 py-1.5 rounded-full shadow-md inline-flex items-center gap-1.5 group-hover:scale-105 transition-transform duration-300">
+            View all {category.totalCount} <ArrowRight className="h-3 w-3" />
+          </span>
+        </div>
+
+        {/* Hover overlay reinforces the click affordance */}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/80 via-background/0 to-background/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end justify-center pb-16">
           <span className="font-display text-sm uppercase tracking-[0.2em] text-foreground bg-card/90 backdrop-blur px-4 py-2 rounded-full border border-border inline-flex items-center gap-2">
-            View all <ArrowRight className="h-4 w-4" />
+            Click to view all <ArrowRight className="h-4 w-4" />
           </span>
         </div>
 
@@ -179,8 +186,8 @@ const CategoryCard = ({ category }: { category: Category }) => {
       <div className="p-4 space-y-1 border-t border-border/50">
         <div className="flex items-center justify-between">
           <h3 className="font-display text-lg text-foreground">{category.title}</h3>
-          <span className="text-xs text-muted-foreground font-display">
-            {category.totalCount} design{category.totalCount !== 1 ? "s" : ""}
+          <span className="inline-flex items-center gap-1 text-xs text-accent font-display group-hover:translate-x-1 transition-transform">
+            View all <ArrowRight className="h-3 w-3" />
           </span>
         </div>
         <p className="text-muted-foreground text-xs leading-relaxed">
