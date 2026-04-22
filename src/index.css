@@ -107,4 +107,39 @@
   input[type="date"]::-webkit-calendar-picker-indicator {
     filter: invert(1);
   }
+
+  .reveal {
+    opacity: 0;
+  }
+  .reveal.in-view {
+    animation: fade-in-up 0.8s ease-out forwards;
+  }
+
+  .icon-nudge {
+    transition: transform 0.3s ease;
+  }
+  .group:hover .icon-nudge,
+  button:hover .icon-nudge,
+  a:hover .icon-nudge {
+    transform: translateX(4px);
+  }
+
+  .card-lift {
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  }
+  .card-lift:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 18px 40px -18px hsl(var(--primary) / 0.4);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .reveal {
+    opacity: 1 !important;
+  }
 }
