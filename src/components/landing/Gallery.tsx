@@ -50,7 +50,7 @@ const Gallery = () => {
           </h2>
         </div>
 
-        <div className={`relative group my-0 py-0 reveal ${inView ? "in-view" : ""}`} style={{ animationDelay: "0.3s" }}>
+        <div className={`relative group mx-auto w-full max-w-[80vh] reveal ${inView ? "in-view" : ""}`} style={{ animationDelay: "0.3s" }}>
           {/* Main image */}
           <div className="relative h-[80vh] w-full overflow-hidden">
             {images.map((src, i) => (
@@ -69,13 +69,13 @@ const Gallery = () => {
           {/* Controls */}
           <button
             onClick={prev}
-            className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 bg-background/80 backdrop-blur p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all border border-border hover:scale-110"
+            className="absolute -left-2 md:-left-4 top-1/2 -translate-y-1/2 bg-background/80 backdrop-blur p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all border border-border hover:scale-110"
           >
             <ChevronLeft className="h-5 w-5 text-foreground" />
           </button>
           <button
             onClick={next}
-            className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 bg-background/80 backdrop-blur p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all border border-border hover:scale-110"
+            className="absolute -right-2 md:-right-4 top-1/2 -translate-y-1/2 bg-background/80 backdrop-blur p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all border border-border hover:scale-110"
           >
             <ChevronRight className="h-5 w-5 text-foreground" />
           </button>
