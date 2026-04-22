@@ -81,7 +81,7 @@ const AboutUs = () => (
       <div className="absolute inset-0 bg-background/90 backdrop-blur-sm" />
       <div className="container max-w-3xl text-center space-y-6 relative z-10">
         <p className="font-display text-accent uppercase tracking-[0.3em] text-sm">About Us</p>
-        <h1 className="text-4xl md:text-6xl font-display text-gradient">Who We Are</h1>
+        <h1 className="text-4xl md:text-6xl font-display text-gradient title-glow inline-block">Who We Are</h1>
         <p className="text-foreground/80 text-lg leading-relaxed">
           ACD is a premium sublimation clothing service provider specializing in sport fashion apparel. We pride ourselves on delivering top-notch quality and customization to meet the needs of our clients. With a focus on innovation, we cater to running groups, events, and organizations seeking lightweight, comfortable, and stylish apparel.
         </p>

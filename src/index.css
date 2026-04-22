@@ -104,6 +104,22 @@
     background-clip: text;
   }
 
+  .title-glow {
+    position: relative;
+    isolation: isolate;
+  }
+  .title-glow::before {
+    content: "";
+    position: absolute;
+    inset: -1rem;
+    background: linear-gradient(to right, hsl(var(--primary) / 0.2), hsl(var(--accent) / 0.2));
+    filter: blur(48px);
+    border-radius: 9999px;
+    z-index: -1;
+    animation: pulse-glow 4s ease-in-out infinite;
+    pointer-events: none;
+  }
+
   input[type="date"]::-webkit-calendar-picker-indicator {
     filter: invert(1);
   }

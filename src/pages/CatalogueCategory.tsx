@@ -61,7 +61,7 @@ const CatalogueCategory = () => {
 
       <section className="container max-w-6xl pt-2 pb-10 text-center space-y-3 animate-slide-up">
         <p className="font-display text-accent uppercase tracking-[0.3em] text-sm">Category</p>
-        <h1 className="text-4xl md:text-6xl font-display text-gradient">{category.title}</h1>
+        <h1 className="text-4xl md:text-6xl font-display text-gradient title-glow inline-block">{category.title}</h1>
         <p className="text-muted-foreground max-w-lg mx-auto text-sm">{category.description}</p>
         <p className="text-xs text-muted-foreground font-display">
           {category.images.length} design{category.images.length !== 1 ? "s" : ""}
