@@ -49,12 +49,12 @@ const CatalogueCategory = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      <section className="container max-w-6xl pt-12 pb-6">
+      <section className="container max-w-6xl pt-8 pb-4">
         <Link
           to="/catalogue"
-          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-card border border-border hover:border-accent hover:bg-accent hover:text-accent-foreground text-foreground font-display text-sm shadow-sm hover:shadow-md transition-all duration-300 group"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />
           Back to Catalogue
         </Link>
       </section>
