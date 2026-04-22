@@ -1,71 +1,65 @@
 import { useState, useRef, useEffect } from "react";
+import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/landing/Footer";
-import { X, ChevronLeft, ChevronRight } from "lucide-react";
-
-import ls1 from "@/assets/catalogue/longsleeve-1.png";
-import ls2 from "@/assets/catalogue/longsleeve-2.png";
-import ls3 from "@/assets/catalogue/longsleeve-3.png";
-import ls4 from "@/assets/catalogue/longsleeve-4.png";
-import ls5 from "@/assets/catalogue/longsleeve-5.png";
-
-import sg1 from "@/assets/catalogue/singlet-1.png";
-import sg2 from "@/assets/catalogue/singlet-2.png";
-import sg3 from "@/assets/catalogue/singlet-3.png";
-import sg4 from "@/assets/catalogue/singlet-4.png";
-
-import cl1 from "@/assets/catalogue/collared-1.png";
-import cl2 from "@/assets/catalogue/collared-2.png";
-import cl3 from "@/assets/catalogue/collared-3.png";
-import cl4 from "@/assets/catalogue/collared-4.png";
-import cl5 from "@/assets/catalogue/collared-5.png";
-import cl6 from "@/assets/catalogue/collared-6.png";
-import cl7 from "@/assets/catalogue/collared-7.png";
-import cl8 from "@/assets/catalogue/collared-8.png";
-import cl9 from "@/assets/catalogue/collared-9.png";
-
-import st1 from "@/assets/catalogue/standard-1.png";
-import st2 from "@/assets/catalogue/standard-2.png";
-import st3 from "@/assets/catalogue/standard-3.png";
-import st4 from "@/assets/catalogue/standard-4.png";
-import st5 from "@/assets/catalogue/standard-5.png";
-import st6 from "@/assets/catalogue/standard-6.png";
-import st7 from "@/assets/catalogue/standard-7.png";
+import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 
 import fabricTypes from "@/assets/catalogue/fabric-types.png";
 import collarTypes from "@/assets/catalogue/collar-types.png";
 
-const categories = [
+// Load all category images via glob; pick first N for the preview carousel.
+const collaredImgs = import.meta.glob("@/assets/catalogue/collared/*.{png,jpg,jpeg,webp}", { eager: true, query: "?url", import: "default" }) as Record<string, string>;
+const longsleeveImgs = import.meta.glob("@/assets/catalogue/longsleeve/*.{png,jpg,jpeg,webp}", { eager: true, query: "?url", import: "default" }) as Record<string, string>;
+const singletImgs = import.meta.glob("@/assets/catalogue/singlet/*.{png,jpg,jpeg,webp}", { eager: true, query: "?url", import: "default" }) as Record<string, string>;
+const standardImgs = import.meta.glob("@/assets/catalogue/standard/*.{png,jpg,jpeg,webp}", { eager: true, query: "?url", import: "default" }) as Record<string, string>;
+
+const previewImages = (m: Record<string, string>, n = 5) =>
+  Object.entries(m)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .slice(0, n)
+    .map(([, v]) => v);
+
+type Category = {
+  slug: string;
+  title: string;
+  description: string;
+  images: string[];
+  totalCount: number;
+};
+
+const categories: Category[] = [
   {
+    slug: "long-sleeve",
     title: "Long Sleeve / MUSLIMAH",
     description: "Premium long sleeve jerseys for comfort & performance.",
-    images: [ls1, ls2, ls3, ls4, ls5],
+    images: previewImages(longsleeveImgs),
+    totalCount: Object.keys(longsleeveImgs).length,
   },
   {
+    slug: "singlet",
     title: "Singlet",
     description: "Lightweight singlets for high-intensity activities.",
-    images: [sg1, sg2, sg3, sg4],
+    images: previewImages(singletImgs),
+    totalCount: Object.keys(singletImgs).length,
   },
   {
+    slug: "collared",
     title: "Collared",
     description: "Professional collared jerseys for events & teams.",
-    images: [cl1, cl2, cl3, cl4, cl5, cl6, cl7, cl8, cl9],
+    images: previewImages(collaredImgs),
+    totalCount: Object.keys(collaredImgs).length,
   },
   {
+    slug: "standard-cutting",
     title: "Standard Cutting",
     description: "Classic versatile jersey cuts for any occasion.",
-    images: [st1, st2, st3, st4, st5, st6, st7],
+    images: previewImages(standardImgs),
+    totalCount: Object.keys(standardImgs).length,
   },
 ];
 
-/* ─── Category card with built-in horizontal carousel ─── */
-const CategoryCard = ({
-  category,
-  onImageClick,
-}: {
-  category: (typeof categories)[0];
-  onImageClick: (src: string) => void;
-}) => {
+/* ─── Category card: preview carousel that links to a sub-page ─── */
+const CategoryCard = ({ category }: { category: Category }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [current, setCurrent] = useState(0);
   const total = category.images.length;
@@ -98,43 +92,52 @@ const CategoryCard = ({
     }
   };
 
+  // Stop link navigation when interacting with carousel controls
+  const stop = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
   return (
-    <div className="group rounded-2xl border border-border bg-card overflow-hidden hover:border-primary/30 transition-all duration-500">
+    <Link
+      to={`/catalogue/${category.slug}`}
+      className="group block rounded-2xl border border-border bg-card overflow-hidden hover:border-primary/30 hover:shadow-xl transition-all duration-500"
+    >
       {/* Image carousel area */}
       <div className="relative">
         <div
           ref={scrollRef}
-          className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide"
+          className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide pointer-events-none"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-          onScroll={() => {
-            const el = scrollRef.current;
-            if (!el) return;
-            const scrollLeft = el.scrollLeft;
-            const childWidth = (el.children[0] as HTMLElement)?.offsetWidth || 1;
-            setCurrent(Math.round(scrollLeft / childWidth));
-          }}
         >
           {category.images.map((src, i) => (
-            <button
+            <div
               key={i}
-              onClick={() => onImageClick(src)}
-              className="flex-shrink-0 snap-start w-full aspect-square rounded-xl overflow-hidden"
+              className="flex-shrink-0 snap-start w-full aspect-square overflow-hidden"
             >
               <img
                 src={src}
                 alt={`${category.title} ${i + 1}`}
-                className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 loading="lazy"
               />
-            </button>
+            </div>
           ))}
+        </div>
+
+        {/* Hover overlay with "View all" hint */}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/80 via-background/0 to-background/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end justify-center pb-16">
+          <span className="font-display text-sm uppercase tracking-[0.2em] text-foreground bg-card/90 backdrop-blur px-4 py-2 rounded-full border border-border inline-flex items-center gap-2">
+            View all <ArrowRight className="h-4 w-4" />
+          </span>
         </div>
 
         {/* Nav arrows */}
         {total > 1 && (
           <>
             <button
-              onClick={() => scrollTo(current - 1)}
+              type="button"
+              onClick={(e) => { stop(e); scrollTo(current - 1); }}
               className={`absolute left-3 top-1/2 -translate-y-1/2 bg-card/90 backdrop-blur border border-border rounded-full p-1.5 transition-opacity shadow-md ${
                 current > 0 ? "opacity-0 group-hover:opacity-100" : "opacity-0 pointer-events-none"
               }`}
@@ -142,7 +145,8 @@ const CategoryCard = ({
               <ChevronLeft className="h-4 w-4 text-foreground" />
             </button>
             <button
-              onClick={() => scrollTo(current + 1)}
+              type="button"
+              onClick={(e) => { stop(e); scrollTo(current + 1); }}
               className={`absolute right-3 top-1/2 -translate-y-1/2 bg-card/90 backdrop-blur border border-border rounded-full p-1.5 transition-opacity shadow-md ${
                 current < total - 1 ? "opacity-0 group-hover:opacity-100" : "opacity-0 pointer-events-none"
               }`}
@@ -158,7 +162,8 @@ const CategoryCard = ({
             {category.images.map((_, i) => (
               <button
                 key={i}
-                onClick={() => scrollTo(i)}
+                type="button"
+                onClick={(e) => { stop(e); scrollTo(i); }}
                 className={`rounded-full transition-all duration-300 ${
                   i === current
                     ? "w-5 h-1.5 bg-accent"
@@ -175,21 +180,18 @@ const CategoryCard = ({
         <div className="flex items-center justify-between">
           <h3 className="font-display text-lg text-foreground">{category.title}</h3>
           <span className="text-xs text-muted-foreground font-display">
-            {total} sample{total !== 1 ? "s" : ""}
+            {category.totalCount} design{category.totalCount !== 1 ? "s" : ""}
           </span>
         </div>
         <p className="text-muted-foreground text-xs leading-relaxed">
           {category.description}
         </p>
       </div>
-    </div>
+    </Link>
   );
 };
 
 const Catalogue = () => {
-  const [lightbox, setLightbox] = useState<string | null>(null);
-
-  // 2x2 grid: left column = Long Sleeve + Singlet, right = Collared + Standard
   const leftCol = [categories[0], categories[1]];
   const rightCol = [categories[2], categories[3]];
 
@@ -215,20 +217,12 @@ const Catalogue = () => {
         <div className="grid md:grid-cols-2 gap-6">
           <div className="space-y-6">
             {leftCol.map((cat) => (
-              <CategoryCard
-                key={cat.title}
-                category={cat}
-                onImageClick={setLightbox}
-              />
+              <CategoryCard key={cat.slug} category={cat} />
             ))}
           </div>
           <div className="space-y-6">
             {rightCol.map((cat) => (
-              <CategoryCard
-                key={cat.title}
-                category={cat}
-                onImageClick={setLightbox}
-              />
+              <CategoryCard key={cat.slug} category={cat} />
             ))}
           </div>
         </div>
@@ -289,27 +283,6 @@ const Catalogue = () => {
           @acdjersey
         </a>
       </section>
-
-      {/* Lightbox */}
-      {lightbox && (
-        <div
-          className="fixed inset-0 z-50 bg-background/95 backdrop-blur-lg flex items-center justify-center p-4 animate-fade-in"
-          onClick={() => setLightbox(null)}
-        >
-          <button
-            onClick={() => setLightbox(null)}
-            className="absolute top-6 right-6 text-foreground bg-card/80 p-2 rounded-full border border-border hover:bg-card transition-colors z-10"
-          >
-            <X className="h-5 w-5" />
-          </button>
-          <img
-            src={lightbox}
-            alt="Design preview"
-            className="max-h-[85vh] max-w-full rounded-xl shadow-2xl object-contain animate-scale-in"
-            onClick={(e) => e.stopPropagation()}
-          />
-        </div>
-      )}
 
       <Footer />
     </div>
