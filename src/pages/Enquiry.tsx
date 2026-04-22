@@ -37,6 +37,11 @@ const Enquiry = () => {
       toast.error("Please fill in your name and phone number");
       return;
     }
+    const phoneDigits = form.phone.replace(/[^0-9]/g, "");
+    if (!phoneDigits.startsWith("6") || phoneDigits.length < 10) {
+      toast.error("Phone number must start with country code 6 (e.g. 60195716707)");
+      return;
+    }
     setLoading(true);
     try {
       const { error } = await supabase.from("enquiries").insert({
@@ -88,8 +93,10 @@ const Enquiry = () => {
                 onChange={(e) => setForm({ ...form, phone: e.target.value })}
                 required
                 maxLength={20}
+                pattern="^\+?6[0-9]{9,}$"
+                title="Phone number must start with country code 6 (e.g. 60195716707)"
               />
-              <p className="text-xs text-muted-foreground">Start with country code, e.g. 60123456789</p>
+              <p className="text-xs text-muted-foreground">Must start with country code 6, e.g. 60195716707 (not 0195716707)</p>
             </div>
 
             <div className="space-y-1.5">
