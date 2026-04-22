@@ -91,7 +91,7 @@ const AboutUs = () => (
     {/* Mission & Vision */}
     <section className="py-16">
       <div className="container grid md:grid-cols-2 gap-8 max-w-4xl">
-        <Card className="bg-card border-border">
+        <Card className="bg-card border-border card-lift">
           <CardContent className="p-8 space-y-4">
             <h2 className="text-2xl font-display text-gradient">Our Mission</h2>
             <p className="text-muted-foreground leading-relaxed">
@@ -99,7 +99,7 @@ const AboutUs = () => (
             </p>
           </CardContent>
         </Card>
-        <Card className="bg-card border-border">
+        <Card className="bg-card border-border card-lift">
           <CardContent className="p-8 space-y-4">
             <h2 className="text-2xl font-display text-gradient">Our Vision</h2>
             <p className="text-muted-foreground leading-relaxed">
@@ -118,7 +118,7 @@ const AboutUs = () => (
         <h2 className="text-3xl md:text-4xl font-display text-gradient text-center">Why Choose Us</h2>
         <div className="flex flex-wrap justify-center gap-6 max-w-5xl mx-auto">
           {whyChooseUs.map((item) => (
-            <div key={item.title} className="p-6 rounded-lg bg-background/90 border border-border space-y-3 w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
+            <div key={item.title} className="p-6 rounded-lg bg-background/90 border border-border space-y-3 w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] card-lift">
               <item.icon className="h-8 w-8 text-primary" />
               <h3 className="font-display text-lg text-foreground">{item.title}</h3>
               <p className="text-muted-foreground text-sm leading-relaxed">{item.desc}</p>
@@ -134,7 +134,7 @@ const AboutUs = () => (
         <h2 className="text-3xl md:text-4xl font-display text-gradient text-center">Our Products</h2>
         <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
           {products.map((product) => (
-            <Card key={product.title} className="bg-card border-border">
+            <Card key={product.title} className="bg-card border-border card-lift">
               <CardContent className="p-6 space-y-4">
                 <h3 className="font-display text-xl text-foreground">{product.title}</h3>
                 <ul className="space-y-2">
