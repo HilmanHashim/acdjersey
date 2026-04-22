@@ -8,6 +8,7 @@ import {
   CarouselNext,
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
+import { useInView } from "@/hooks/use-in-view";
 
 const reviews = [
   {
@@ -54,50 +55,55 @@ const reviews = [
   },
 ];
 
-const Reviews = () => (
-  <section className="py-20 surface-dark">
-    <div className="container">
-      <div className="text-center mb-12">
-        <h2 className="text-4xl font-display text-gradient mb-3">What Our Customers Say</h2>
-        <div className="flex items-center justify-center gap-2">
-          <div className="flex">
-            {[...Array(5)].map((_, i) => (
-              <Star key={i} className="h-5 w-5 fill-accent text-accent" />
-            ))}
+const Reviews = () => {
+  const { ref, inView } = useInView<HTMLDivElement>();
+  return (
+    <section className="py-20 surface-dark">
+      <div ref={ref} className="container">
+        <div className="text-center mb-12">
+          <h2 className={`text-4xl font-display text-gradient mb-3 reveal ${inView ? "in-view" : ""}`}>What Our Customers Say</h2>
+          <div className={`flex items-center justify-center gap-2 reveal ${inView ? "in-view" : ""}`} style={{ animationDelay: "0.15s" }}>
+            <div className="flex">
+              {[...Array(5)].map((_, i) => (
+                <Star key={i} className="h-5 w-5 fill-accent text-accent" />
+              ))}
+            </div>
+            <span className="font-display text-lg text-foreground">4.9</span>
+            <span className="text-muted-foreground text-sm">on Google Reviews</span>
           </div>
-          <span className="font-display text-lg text-foreground">4.9</span>
-          <span className="text-muted-foreground text-sm">on Google Reviews</span>
+        </div>
+
+        <div className={`reveal ${inView ? "in-view" : ""}`} style={{ animationDelay: "0.3s" }}>
+          <Carousel opts={{ align: "start", loop: true }} plugins={[Autoplay({ delay: 3000, stopOnInteraction: false })]} className="w-full max-w-5xl mx-auto">
+            <CarouselContent>
+              {reviews.map((review) => (
+                <CarouselItem key={review.name} className="md:basis-1/2 lg:basis-1/3">
+                  <Card className="h-full bg-card border-border card-lift">
+                    <CardContent className="p-6 flex flex-col h-full">
+                      <div className="flex gap-0.5 mb-3">
+                        {[...Array(review.rating)].map((_, i) => (
+                          <Star key={i} className="h-4 w-4 fill-accent text-accent" />
+                        ))}
+                      </div>
+                      <p className="text-muted-foreground text-sm leading-relaxed flex-1 mb-4">
+                        "{review.text}"
+                      </p>
+                      <div className="border-t border-border pt-3 mt-auto">
+                        <p className="font-display text-sm text-foreground">{review.name}</p>
+                        <p className="text-muted-foreground text-xs">{review.time}</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className="hidden md:flex -left-12 border-border text-foreground hover:bg-card" />
+            <CarouselNext className="hidden md:flex -right-12 border-border text-foreground hover:bg-card" />
+          </Carousel>
         </div>
       </div>
-
-      <Carousel opts={{ align: "start", loop: true }} plugins={[Autoplay({ delay: 3000, stopOnInteraction: false })]} className="w-full max-w-5xl mx-auto">
-        <CarouselContent>
-          {reviews.map((review) => (
-            <CarouselItem key={review.name} className="md:basis-1/2 lg:basis-1/3">
-              <Card className="h-full bg-card border-border">
-                <CardContent className="p-6 flex flex-col h-full">
-                  <div className="flex gap-0.5 mb-3">
-                    {[...Array(review.rating)].map((_, i) => (
-                      <Star key={i} className="h-4 w-4 fill-accent text-accent" />
-                    ))}
-                  </div>
-                  <p className="text-muted-foreground text-sm leading-relaxed flex-1 mb-4">
-                    "{review.text}"
-                  </p>
-                  <div className="border-t border-border pt-3 mt-auto">
-                    <p className="font-display text-sm text-foreground">{review.name}</p>
-                    <p className="text-muted-foreground text-xs">{review.time}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-        <CarouselPrevious className="hidden md:flex -left-12 border-border text-foreground hover:bg-card" />
-        <CarouselNext className="hidden md:flex -right-12 border-border text-foreground hover:bg-card" />
-      </Carousel>
-    </div>
-  </section>
-);
+    </section>
+  );
+};
 
 export default Reviews;

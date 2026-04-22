@@ -6,6 +6,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
+import { useInView } from "@/hooks/use-in-view";
 
 import client1 from "@/assets/clients/client-1.jpeg";
 import client2 from "@/assets/clients/client-2.jpeg";
@@ -30,46 +31,49 @@ const clientImages = [
   { src: client10, alt: "Bob Running Club sublimation jerseys" },
 ];
 
-const Clients = () => (
-  <section className="py-20 bg-background">
-    <div className="container">
-      <div className="text-center mb-12 animate-slide-up">
-        <p className="font-display text-accent uppercase tracking-[0.3em] text-sm mb-3">
-          Trusted By Many
-        </p>
-        <h2 className="text-3xl md:text-5xl font-display text-foreground">
-          Our <span className="text-gradient">Clients</span>
-        </h2>
-      </div>
+const Clients = () => {
+  const { ref, inView } = useInView<HTMLDivElement>();
+  return (
+    <section className="py-20 bg-background">
+      <div ref={ref} className="container">
+        <div className="text-center mb-12">
+          <p className={`font-display text-accent uppercase tracking-[0.3em] text-sm mb-3 reveal ${inView ? "in-view" : ""}`}>
+            Trusted By Many
+          </p>
+          <h2 className={`text-3xl md:text-5xl font-display text-foreground reveal ${inView ? "in-view" : ""}`} style={{ animationDelay: "0.15s" }}>
+            Our <span className="text-gradient">Clients</span>
+          </h2>
+        </div>
 
-      <div className="max-w-5xl mx-auto animate-slide-up" style={{ animationDelay: "0.15s" }}>
-        <Carousel
-          opts={{
-            align: "start",
-            loop: true,
-          }}
-          plugins={[Autoplay({ delay: 3000, stopOnInteraction: false })]}
-          className="w-full"
-        >
-          <CarouselContent className="-ml-4">
-            {clientImages.map((image, index) => (
-              <CarouselItem key={index} className="pl-4 basis-full sm:basis-1/2 lg:basis-1/3">
-                <div className="overflow-hidden rounded-lg border border-border hover:border-primary/50 transition-colors">
-                  <img
-                    src={image.src}
-                    alt={image.alt}
-                    className="w-full aspect-[4/3] object-cover hover:scale-105 transition-transform duration-500"
-                  />
-                </div>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious className="hidden sm:flex -left-12" />
-          <CarouselNext className="hidden sm:flex -right-12" />
-        </Carousel>
+        <div className={`max-w-5xl mx-auto reveal ${inView ? "in-view" : ""}`} style={{ animationDelay: "0.3s" }}>
+          <Carousel
+            opts={{
+              align: "start",
+              loop: true,
+            }}
+            plugins={[Autoplay({ delay: 3000, stopOnInteraction: false })]}
+            className="w-full"
+          >
+            <CarouselContent className="-ml-4">
+              {clientImages.map((image, index) => (
+                <CarouselItem key={index} className="pl-4 basis-full sm:basis-1/2 lg:basis-1/3">
+                  <div className="overflow-hidden rounded-lg border border-border hover:border-primary/60 transition-all duration-500 hover:shadow-[0_10px_30px_-10px_hsl(var(--primary)/0.4)]">
+                    <img
+                      src={image.src}
+                      alt={image.alt}
+                      className="w-full aspect-[4/3] object-cover hover:scale-110 transition-transform duration-700 ease-out"
+                    />
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className="hidden sm:flex -left-12" />
+            <CarouselNext className="hidden sm:flex -right-12" />
+          </Carousel>
+        </div>
       </div>
-    </div>
-  </section>
-);
+    </section>
+  );
+};
 
 export default Clients;
