@@ -5,7 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Trash2, FileText, Download, RefreshCw, Pencil } from "lucide-react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Plus, Trash2, FileText, Download, RefreshCw, Pencil, History } from "lucide-react";
 import { toast } from "sonner";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -16,6 +17,40 @@ interface LineItem {
   price: number;
   quantity: number;
 }
+
+type InvoiceLog = {
+  id: string;
+  invoice_number: string;
+  title: string | null;
+  project_title: string | null;
+  total_amount: number | null;
+  client_name: string | null;
+  client_phone: string | null;
+  created_at: string;
+  created_by_email: string | null;
+  invoice_date?: string | null;
+  material?: string | null;
+  agent?: string | null;
+  customer_address?: string | null;
+  jersey_items?: LineItem[] | null;
+  design_items?: LineItem[] | null;
+  validity?: string | null;
+  payment_term?: string | null;
+  delivery_term?: string | null;
+  notes?: string | null;
+  shirt_deposit_enabled?: boolean | null;
+  shirt_deposit_mode?: "percent" | "custom" | null;
+  shirt_deposit_percent?: number | null;
+  shirt_deposit_custom?: number | null;
+  lock_deposit_amount?: number | null;
+  deposit_note?: string | null;
+  manager_name?: string | null;
+  manager_title?: string | null;
+  bank_name?: string | null;
+  account_number?: string | null;
+  contact_phone?: string | null;
+  contact_email?: string | null;
+};
 
 const agents = [
   "ALIFF ACD",
@@ -60,6 +95,70 @@ const InvoiceTab = () => {
   const [accountNumber, setAccountNumber] = useState("512745567892");
   const [phone, setPhone] = useState("+60 19 - 339 6681");
   const [emailAddr, setEmailAddr] = useState("umarnazmi10@gmail.com");
+  const [invoiceLogs, setInvoiceLogs] = useState<InvoiceLog[]>([]);
+  const [isLoadingLogs, setIsLoadingLogs] = useState(false);
+
+  const loadInvoiceLogs = async () => {
+    setIsLoadingLogs(true);
+    try {
+      const { data, error } = await supabase
+        .from("invoices_log")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(50);
+      if (error) throw error;
+      setInvoiceLogs((data ?? []) as unknown as InvoiceLog[]);
+    } catch (err: any) {
+      toast.error("Failed to load invoice log: " + err.message);
+    } finally {
+      setIsLoadingLogs(false);
+    }
+  };
+
+  useEffect(() => {
+    loadInvoiceLogs();
+  }, []);
+
+  const cleanItems = (items?: LineItem[] | null): LineItem[] => {
+    if (!Array.isArray(items) || items.length === 0) return [{ description: "", price: 0, quantity: 0 }];
+    return items.map((item) => ({
+      description: item.description ?? "",
+      price: Number(item.price) || 0,
+      quantity: Number(item.quantity) || 0,
+    }));
+  };
+
+  const recreateInvoice = (log: InvoiceLog) => {
+    setInvoiceDate(log.invoice_date || new Date(log.created_at).toISOString().split("T")[0]);
+    setInvoiceNumber(log.invoice_number);
+    setIsInvoiceNumberLocked(true);
+    setTitle(log.title || log.project_title || "");
+    setMaterial(log.material || "");
+    setAgent(log.agent || "");
+    setCustomerName(log.client_name || "");
+    setCustomerPhone(log.client_phone || "");
+    setCustomerAddress(log.customer_address || "");
+    setJerseyItems(cleanItems(log.jersey_items));
+    setDesignItems(cleanItems(log.design_items));
+    setValidity(log.validity || "60");
+    setPaymentTerm(log.payment_term || "14");
+    setDeliveryTerm(log.delivery_term || "20");
+    setNotes(log.notes || "Prices are subjected to change without prior notice. We hope that our quotation is favourable to you and looking forward to receive your valued orders in due course. Thank and regards.");
+    setShirtDepositEnabled(log.shirt_deposit_enabled ?? true);
+    setShirtDepositMode(log.shirt_deposit_mode || "percent");
+    setShirtDepositPercent(Number(log.shirt_deposit_percent) || 50);
+    setShirtDepositCustom(Number(log.shirt_deposit_custom) || 0);
+    setLockDepositAmount(Number(log.lock_deposit_amount) || 0);
+    setDepositNote(log.deposit_note || "50 % Deposit is required before procceed an order");
+    setManagerName(log.manager_name || "AHMAD UMAR NAZMI");
+    setManagerTitle(log.manager_title || "MANAGER");
+    setBankName(log.bank_name || "Maybank (Bimasakti Marketing)");
+    setAccountNumber(log.account_number || "512745567892");
+    setPhone(log.contact_phone || "+60 19 - 339 6681");
+    setEmailAddr(log.contact_email || "umarnazmi10@gmail.com");
+    toast.success(`Invoice ${log.invoice_number} loaded for recreation`);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const addJerseyItem = () => setJerseyItems([...jerseyItems, { description: "", price: 0, quantity: 0 }]);
   const removeJerseyItem = (i: number) => setJerseyItems(jerseyItems.filter((_, idx) => idx !== i));
@@ -144,13 +243,36 @@ const InvoiceTab = () => {
       } = await supabase.auth.getUser();
       await supabase.from("invoices_log").insert({
         invoice_number: currentInvoiceNumber,
+        invoice_date: invoiceDate,
         title: title || null,
+        material: material || null,
+        agent: agent || null,
         total_amount: totalAmount,
         client_name: customerName || null,
         client_phone: customerPhone || null,
+        customer_address: customerAddress || null,
         project_title: title || null,
         created_by_email: user?.email || null,
+        jersey_items: jerseyItems.filter((it) => it.description.trim() || it.price > 0 || it.quantity > 0),
+        design_items: designItems.filter((it) => it.description.trim() || it.price > 0 || it.quantity > 0),
+        validity,
+        payment_term: paymentTerm,
+        delivery_term: deliveryTerm,
+        notes,
+        shirt_deposit_enabled: shirtDepositEnabled,
+        shirt_deposit_mode: shirtDepositMode,
+        shirt_deposit_percent: shirtDepositPercent,
+        shirt_deposit_custom: shirtDepositCustom,
+        lock_deposit_amount: lockDepositAmount,
+        deposit_note: depositNote,
+        manager_name: managerName,
+        manager_title: managerTitle,
+        bank_name: bankName,
+        account_number: accountNumber,
+        contact_phone: phone,
+        contact_email: emailAddr,
       } as any);
+      loadInvoiceLogs();
     } catch {
       // Non-blocking
     }
@@ -844,6 +966,58 @@ const InvoiceTab = () => {
           <span>RM {totalAmount.toLocaleString()}</span>
         </div>
       )}
+
+      {/* Invoice Log */}
+      <Card>
+        <CardHeader className="pb-3 flex flex-row items-center justify-between">
+          <CardTitle className="text-sm flex items-center gap-2">
+            <History className="h-4 w-4" /> Invoice Log
+          </CardTitle>
+          <Button variant="outline" size="sm" onClick={loadInvoiceLogs} disabled={isLoadingLogs}>
+            <RefreshCw className={`h-3 w-3 mr-1 ${isLoadingLogs ? "animate-spin" : ""}`} /> Refresh
+          </Button>
+        </CardHeader>
+        <CardContent>
+          {invoiceLogs.length === 0 ? (
+            <p className="text-sm text-muted-foreground text-center py-4">
+              {isLoadingLogs ? "Loading invoice log..." : "No invoice logs yet."}
+            </p>
+          ) : (
+            <div className="border rounded-lg overflow-hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Invoice No.</TableHead>
+                    <TableHead>Title</TableHead>
+                    <TableHead>Customer</TableHead>
+                    <TableHead className="text-right">Amount</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead className="text-right">Action</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {invoiceLogs.map((log) => (
+                    <TableRow key={log.id}>
+                      <TableCell className="font-mono text-xs">{log.invoice_number}</TableCell>
+                      <TableCell className="font-medium">{log.title || log.project_title || "-"}</TableCell>
+                      <TableCell>{log.client_name || "-"}</TableCell>
+                      <TableCell className="text-right font-mono">RM {Number(log.total_amount || 0).toLocaleString()}</TableCell>
+                      <TableCell className="text-xs text-muted-foreground">
+                        {new Date(log.created_at).toLocaleDateString("en-MY")}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button variant="outline" size="sm" onClick={() => recreateInvoice(log)}>
+                          Recreate
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Payment & Contact */}
       <Card>
