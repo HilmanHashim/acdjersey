@@ -243,13 +243,36 @@ const InvoiceTab = () => {
       } = await supabase.auth.getUser();
       await supabase.from("invoices_log").insert({
         invoice_number: currentInvoiceNumber,
+        invoice_date: invoiceDate,
         title: title || null,
+        material: material || null,
+        agent: agent || null,
         total_amount: totalAmount,
         client_name: customerName || null,
         client_phone: customerPhone || null,
+        customer_address: customerAddress || null,
         project_title: title || null,
         created_by_email: user?.email || null,
+        jersey_items: jerseyItems.filter((it) => it.description.trim() || it.price > 0 || it.quantity > 0),
+        design_items: designItems.filter((it) => it.description.trim() || it.price > 0 || it.quantity > 0),
+        validity,
+        payment_term: paymentTerm,
+        delivery_term: deliveryTerm,
+        notes,
+        shirt_deposit_enabled: shirtDepositEnabled,
+        shirt_deposit_mode: shirtDepositMode,
+        shirt_deposit_percent: shirtDepositPercent,
+        shirt_deposit_custom: shirtDepositCustom,
+        lock_deposit_amount: lockDepositAmount,
+        deposit_note: depositNote,
+        manager_name: managerName,
+        manager_title: managerTitle,
+        bank_name: bankName,
+        account_number: accountNumber,
+        contact_phone: phone,
+        contact_email: emailAddr,
       } as any);
+      loadInvoiceLogs();
     } catch {
       // Non-blocking
     }
