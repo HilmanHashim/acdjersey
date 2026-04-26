@@ -432,6 +432,25 @@ export type Database = {
         }
         Returns: boolean
       }
+      set_invoice_sequence: {
+        Args: {
+          target_last_number: number
+          target_month: number
+          target_year: number
+        }
+        Returns: {
+          id: string
+          last_number: number
+          month: number
+          year: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "invoice_sequences"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
     }
     Enums: {
       app_role: "admin" | "user" | "superadmin"
