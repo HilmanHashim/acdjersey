@@ -128,6 +128,13 @@ const InvoiceTab = () => {
     }));
   };
 
+  const hasSavedInvoiceDetails = (log: InvoiceLog) =>
+    Boolean(
+      (Array.isArray(log.jersey_items) && log.jersey_items.length > 0) ||
+        (Array.isArray(log.design_items) && log.design_items.length > 0) ||
+        Number(log.lock_deposit_amount) > 0,
+    );
+
   const recreateInvoice = (log: InvoiceLog) => {
     setInvoiceDate(log.invoice_date || new Date(log.created_at).toISOString().split("T")[0]);
     setInvoiceNumber(log.invoice_number);
@@ -156,7 +163,11 @@ const InvoiceTab = () => {
     setAccountNumber(log.account_number || "512745567892");
     setPhone(log.contact_phone || "+60 19 - 339 6681");
     setEmailAddr(log.contact_email || "umarnazmi10@gmail.com");
-    toast.success(`Invoice ${log.invoice_number} loaded for recreation`);
+    if (hasSavedInvoiceDetails(log)) {
+      toast.success(`Invoice ${log.invoice_number} loaded for recreation`);
+    } else {
+      toast.warning("This older log only has basic invoice info. Items and deposits will be saved for new invoices from now on.");
+    }
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -990,6 +1001,7 @@ const InvoiceTab = () => {
                     <TableHead>Invoice No.</TableHead>
                     <TableHead>Title</TableHead>
                     <TableHead>Customer</TableHead>
+                    <TableHead>Saved Details</TableHead>
                     <TableHead className="text-right">Amount</TableHead>
                     <TableHead>Date</TableHead>
                     <TableHead className="text-right">Action</TableHead>
@@ -1001,6 +1013,9 @@ const InvoiceTab = () => {
                       <TableCell className="font-mono text-xs">{log.invoice_number}</TableCell>
                       <TableCell className="font-medium">{log.title || log.project_title || "-"}</TableCell>
                       <TableCell>{log.client_name || "-"}</TableCell>
+                      <TableCell className="text-xs text-muted-foreground">
+                        {hasSavedInvoiceDetails(log) ? "Items + deposit" : "Basic info only"}
+                      </TableCell>
                       <TableCell className="text-right font-mono">RM {Number(log.total_amount || 0).toLocaleString()}</TableCell>
                       <TableCell className="text-xs text-muted-foreground">
                         {new Date(log.created_at).toLocaleDateString("en-MY")}
