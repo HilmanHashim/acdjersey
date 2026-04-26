@@ -95,6 +95,70 @@ const InvoiceTab = () => {
   const [accountNumber, setAccountNumber] = useState("512745567892");
   const [phone, setPhone] = useState("+60 19 - 339 6681");
   const [emailAddr, setEmailAddr] = useState("umarnazmi10@gmail.com");
+  const [invoiceLogs, setInvoiceLogs] = useState<InvoiceLog[]>([]);
+  const [isLoadingLogs, setIsLoadingLogs] = useState(false);
+
+  const loadInvoiceLogs = async () => {
+    setIsLoadingLogs(true);
+    try {
+      const { data, error } = await supabase
+        .from("invoices_log")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(50);
+      if (error) throw error;
+      setInvoiceLogs((data ?? []) as unknown as InvoiceLog[]);
+    } catch (err: any) {
+      toast.error("Failed to load invoice log: " + err.message);
+    } finally {
+      setIsLoadingLogs(false);
+    }
+  };
+
+  useEffect(() => {
+    loadInvoiceLogs();
+  }, []);
+
+  const cleanItems = (items?: LineItem[] | null): LineItem[] => {
+    if (!Array.isArray(items) || items.length === 0) return [{ description: "", price: 0, quantity: 0 }];
+    return items.map((item) => ({
+      description: item.description ?? "",
+      price: Number(item.price) || 0,
+      quantity: Number(item.quantity) || 0,
+    }));
+  };
+
+  const recreateInvoice = (log: InvoiceLog) => {
+    setInvoiceDate(log.invoice_date || new Date(log.created_at).toISOString().split("T")[0]);
+    setInvoiceNumber(log.invoice_number);
+    setIsInvoiceNumberLocked(true);
+    setTitle(log.title || log.project_title || "");
+    setMaterial(log.material || "");
+    setAgent(log.agent || "");
+    setCustomerName(log.client_name || "");
+    setCustomerPhone(log.client_phone || "");
+    setCustomerAddress(log.customer_address || "");
+    setJerseyItems(cleanItems(log.jersey_items));
+    setDesignItems(cleanItems(log.design_items));
+    setValidity(log.validity || "60");
+    setPaymentTerm(log.payment_term || "14");
+    setDeliveryTerm(log.delivery_term || "20");
+    setNotes(log.notes || "Prices are subjected to change without prior notice. We hope that our quotation is favourable to you and looking forward to receive your valued orders in due course. Thank and regards.");
+    setShirtDepositEnabled(log.shirt_deposit_enabled ?? true);
+    setShirtDepositMode(log.shirt_deposit_mode || "percent");
+    setShirtDepositPercent(Number(log.shirt_deposit_percent) || 50);
+    setShirtDepositCustom(Number(log.shirt_deposit_custom) || 0);
+    setLockDepositAmount(Number(log.lock_deposit_amount) || 0);
+    setDepositNote(log.deposit_note || "50 % Deposit is required before procceed an order");
+    setManagerName(log.manager_name || "AHMAD UMAR NAZMI");
+    setManagerTitle(log.manager_title || "MANAGER");
+    setBankName(log.bank_name || "Maybank (Bimasakti Marketing)");
+    setAccountNumber(log.account_number || "512745567892");
+    setPhone(log.contact_phone || "+60 19 - 339 6681");
+    setEmailAddr(log.contact_email || "umarnazmi10@gmail.com");
+    toast.success(`Invoice ${log.invoice_number} loaded for recreation`);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const addJerseyItem = () => setJerseyItems([...jerseyItems, { description: "", price: 0, quantity: 0 }]);
   const removeJerseyItem = (i: number) => setJerseyItems(jerseyItems.filter((_, idx) => idx !== i));
