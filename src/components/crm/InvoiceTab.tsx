@@ -1001,6 +1001,7 @@ const InvoiceTab = () => {
                     <TableHead>Invoice No.</TableHead>
                     <TableHead>Title</TableHead>
                     <TableHead>Customer</TableHead>
+                    <TableHead>Saved Details</TableHead>
                     <TableHead className="text-right">Amount</TableHead>
                     <TableHead>Date</TableHead>
                     <TableHead className="text-right">Action</TableHead>
@@ -1012,6 +1013,9 @@ const InvoiceTab = () => {
                       <TableCell className="font-mono text-xs">{log.invoice_number}</TableCell>
                       <TableCell className="font-medium">{log.title || log.project_title || "-"}</TableCell>
                       <TableCell>{log.client_name || "-"}</TableCell>
+                      <TableCell className="text-xs text-muted-foreground">
+                        {hasSavedInvoiceDetails(log) ? "Items + deposit" : "Basic info only"}
+                      </TableCell>
                       <TableCell className="text-right font-mono">RM {Number(log.total_amount || 0).toLocaleString()}</TableCell>
                       <TableCell className="text-xs text-muted-foreground">
                         {new Date(log.created_at).toLocaleDateString("en-MY")}
