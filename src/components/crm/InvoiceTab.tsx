@@ -5,7 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Trash2, FileText, Download, RefreshCw, Pencil } from "lucide-react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Plus, Trash2, FileText, Download, RefreshCw, Pencil, History } from "lucide-react";
 import { toast } from "sonner";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -16,6 +17,40 @@ interface LineItem {
   price: number;
   quantity: number;
 }
+
+type InvoiceLog = {
+  id: string;
+  invoice_number: string;
+  title: string | null;
+  project_title: string | null;
+  total_amount: number | null;
+  client_name: string | null;
+  client_phone: string | null;
+  created_at: string;
+  created_by_email: string | null;
+  invoice_date?: string | null;
+  material?: string | null;
+  agent?: string | null;
+  customer_address?: string | null;
+  jersey_items?: LineItem[] | null;
+  design_items?: LineItem[] | null;
+  validity?: string | null;
+  payment_term?: string | null;
+  delivery_term?: string | null;
+  notes?: string | null;
+  shirt_deposit_enabled?: boolean | null;
+  shirt_deposit_mode?: "percent" | "custom" | null;
+  shirt_deposit_percent?: number | null;
+  shirt_deposit_custom?: number | null;
+  lock_deposit_amount?: number | null;
+  deposit_note?: string | null;
+  manager_name?: string | null;
+  manager_title?: string | null;
+  bank_name?: string | null;
+  account_number?: string | null;
+  contact_phone?: string | null;
+  contact_email?: string | null;
+};
 
 const agents = [
   "ALIFF ACD",
