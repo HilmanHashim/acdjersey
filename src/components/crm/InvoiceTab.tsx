@@ -1072,6 +1072,41 @@ const InvoiceTab = () => {
         </CardContent>
       </Card>
 
+      {/* Payment & Contact */}
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm">Payment & Contact Info</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div>
+              <label className="text-xs text-muted-foreground">Manager Name</label>
+              <Input value={managerName} onChange={(e) => setManagerName(e.target.value)} />
+            </div>
+            <div>
+              <label className="text-xs text-muted-foreground">Title</label>
+              <Input value={managerTitle} onChange={(e) => setManagerTitle(e.target.value)} />
+            </div>
+            <div>
+              <label className="text-xs text-muted-foreground">Bank Name</label>
+              <Input value={bankName} onChange={(e) => setBankName(e.target.value)} />
+            </div>
+            <div>
+              <label className="text-xs text-muted-foreground">Account Number</label>
+              <Input value={accountNumber} onChange={(e) => setAccountNumber(e.target.value)} />
+            </div>
+            <div>
+              <label className="text-xs text-muted-foreground">Phone</label>
+              <Input value={phone} onChange={(e) => setPhone(e.target.value)} />
+            </div>
+            <div>
+              <label className="text-xs text-muted-foreground">Email</label>
+              <Input value={emailAddr} onChange={(e) => setEmailAddr(e.target.value)} />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Grand Total */}
       {(hasJerseyItems || hasDesignItems) && (
         <div className="flex justify-end gap-6 text-sm font-bold px-2">
@@ -1260,40 +1295,6 @@ const InvoiceTab = () => {
         </CardContent>
       </Card>
 
-      {/* Payment & Contact */}
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm">Payment & Contact Info</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div>
-              <label className="text-xs text-muted-foreground">Manager Name</label>
-              <Input value={managerName} onChange={(e) => setManagerName(e.target.value)} />
-            </div>
-            <div>
-              <label className="text-xs text-muted-foreground">Title</label>
-              <Input value={managerTitle} onChange={(e) => setManagerTitle(e.target.value)} />
-            </div>
-            <div>
-              <label className="text-xs text-muted-foreground">Bank Name</label>
-              <Input value={bankName} onChange={(e) => setBankName(e.target.value)} />
-            </div>
-            <div>
-              <label className="text-xs text-muted-foreground">Account Number</label>
-              <Input value={accountNumber} onChange={(e) => setAccountNumber(e.target.value)} />
-            </div>
-            <div>
-              <label className="text-xs text-muted-foreground">Phone</label>
-              <Input value={phone} onChange={(e) => setPhone(e.target.value)} />
-            </div>
-            <div>
-              <label className="text-xs text-muted-foreground">Email</label>
-              <Input value={emailAddr} onChange={(e) => setEmailAddr(e.target.value)} />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 };
