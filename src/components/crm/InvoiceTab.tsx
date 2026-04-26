@@ -967,6 +967,58 @@ const InvoiceTab = () => {
         </div>
       )}
 
+      {/* Invoice Log */}
+      <Card>
+        <CardHeader className="pb-3 flex flex-row items-center justify-between">
+          <CardTitle className="text-sm flex items-center gap-2">
+            <History className="h-4 w-4" /> Invoice Log
+          </CardTitle>
+          <Button variant="outline" size="sm" onClick={loadInvoiceLogs} disabled={isLoadingLogs}>
+            <RefreshCw className={`h-3 w-3 mr-1 ${isLoadingLogs ? "animate-spin" : ""}`} /> Refresh
+          </Button>
+        </CardHeader>
+        <CardContent>
+          {invoiceLogs.length === 0 ? (
+            <p className="text-sm text-muted-foreground text-center py-4">
+              {isLoadingLogs ? "Loading invoice log..." : "No invoice logs yet."}
+            </p>
+          ) : (
+            <div className="border rounded-lg overflow-hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Invoice No.</TableHead>
+                    <TableHead>Title</TableHead>
+                    <TableHead>Customer</TableHead>
+                    <TableHead className="text-right">Amount</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead className="text-right">Action</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {invoiceLogs.map((log) => (
+                    <TableRow key={log.id}>
+                      <TableCell className="font-mono text-xs">{log.invoice_number}</TableCell>
+                      <TableCell className="font-medium">{log.title || log.project_title || "-"}</TableCell>
+                      <TableCell>{log.client_name || "-"}</TableCell>
+                      <TableCell className="text-right font-mono">RM {Number(log.total_amount || 0).toLocaleString()}</TableCell>
+                      <TableCell className="text-xs text-muted-foreground">
+                        {new Date(log.created_at).toLocaleDateString("en-MY")}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button variant="outline" size="sm" onClick={() => recreateInvoice(log)}>
+                          Recreate
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
       {/* Payment & Contact */}
       <Card>
         <CardHeader className="pb-3">
