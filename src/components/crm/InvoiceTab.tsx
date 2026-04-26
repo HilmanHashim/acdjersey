@@ -221,6 +221,17 @@ const InvoiceTab = () => {
 
   const totalPcs = jerseyPcs + designPcs;
   const totalAmount = jerseyAmount + designAmount;
+  const filteredInvoiceLogs = invoiceLogs.filter((log) => {
+    const query = invoiceLogSearch.trim().toLowerCase();
+    if (!query) return true;
+    return `${log.title || ""} ${log.project_title || ""}`.toLowerCase().includes(query);
+  });
+  const invoiceLogTotalPages = Math.max(1, Math.ceil(filteredInvoiceLogs.length / invoiceLogsPerPage));
+  const safeInvoiceLogPage = Math.min(invoiceLogPage, invoiceLogTotalPages);
+  const paginatedInvoiceLogs = filteredInvoiceLogs.slice(
+    (safeInvoiceLogPage - 1) * invoiceLogsPerPage,
+    safeInvoiceLogPage * invoiceLogsPerPage,
+  );
 
   const formatDate = (dateStr: string) => {
     const d = new Date(dateStr);
