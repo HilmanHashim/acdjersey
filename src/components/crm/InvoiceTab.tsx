@@ -1080,6 +1080,73 @@ const InvoiceTab = () => {
         </div>
       )}
 
+      {/* Invoice Sequence */}
+      <Card>
+        <CardHeader className="pb-3 flex flex-row items-center justify-between">
+          <CardTitle className="text-sm">Invoice Number Sequence</CardTitle>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => loadInvoiceSequence(sequenceYear, sequenceMonth)}
+            disabled={isLoadingSequence}
+          >
+            <RefreshCw className={`h-3 w-3 mr-1 ${isLoadingSequence ? "animate-spin" : ""}`} /> Load
+          </Button>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-[120px_120px_1fr_auto] md:items-end">
+            <div>
+              <label className="text-xs text-muted-foreground">Year</label>
+              <Input
+                type="number"
+                value={sequenceYear}
+                onChange={(e) => setSequenceYear(parseInt(e.target.value, 10) || new Date().getFullYear())}
+              />
+            </div>
+            <div>
+              <label className="text-xs text-muted-foreground">Month</label>
+              <Input
+                type="number"
+                min={1}
+                max={12}
+                value={sequenceMonth}
+                onChange={(e) => setSequenceMonth(parseInt(e.target.value, 10) || 1)}
+              />
+            </div>
+            <div>
+              <label className="text-xs text-muted-foreground">Last used number</label>
+              <Input
+                type="number"
+                min={0}
+                value={sequenceLastNumber}
+                onChange={(e) => setSequenceLastNumber(e.target.value)}
+                placeholder="0"
+              />
+            </div>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button disabled={isSavingSequence || isLoadingSequence}>Save Sequence</Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Update invoice sequence?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This will set the last used number for {String(sequenceMonth).padStart(2, "0")}/{sequenceYear} to {parseInt(sequenceLastNumber, 10) || 0}. The next generated invoice number will be {nextSequencePreview}.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={saveInvoiceSequence}>Save</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Current saved value: {currentSequence ? currentSequence.last_number : "No record yet"}. Next generated number: {nextSequencePreview}.
+          </p>
+        </CardContent>
+      </Card>
+
       {/* Invoice Log */}
       <Card>
         <CardHeader className="pb-3 flex flex-row items-center justify-between">
