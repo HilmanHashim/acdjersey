@@ -156,43 +156,109 @@ export type Database = {
       }
       invoices_log: {
         Row: {
+          account_number: string | null
+          agent: string | null
+          bank_name: string | null
           client_name: string | null
           client_phone: string | null
+          contact_email: string | null
+          contact_phone: string | null
           created_at: string
           created_by: string | null
           created_by_email: string | null
+          customer_address: string | null
+          delivery_term: string | null
+          deposit_note: string | null
+          design_items: Json
           id: string
+          invoice_date: string | null
           invoice_number: string
+          jersey_items: Json
+          lock_deposit_amount: number
+          manager_name: string | null
+          manager_title: string | null
+          material: string | null
+          notes: string | null
+          payment_term: string | null
           project_title: string | null
+          shirt_deposit_custom: number
+          shirt_deposit_enabled: boolean
+          shirt_deposit_mode: string
+          shirt_deposit_percent: number
           status: string
           title: string | null
           total_amount: number | null
+          validity: string | null
         }
         Insert: {
+          account_number?: string | null
+          agent?: string | null
+          bank_name?: string | null
           client_name?: string | null
           client_phone?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
           created_at?: string
           created_by?: string | null
           created_by_email?: string | null
+          customer_address?: string | null
+          delivery_term?: string | null
+          deposit_note?: string | null
+          design_items?: Json
           id?: string
+          invoice_date?: string | null
           invoice_number: string
+          jersey_items?: Json
+          lock_deposit_amount?: number
+          manager_name?: string | null
+          manager_title?: string | null
+          material?: string | null
+          notes?: string | null
+          payment_term?: string | null
           project_title?: string | null
+          shirt_deposit_custom?: number
+          shirt_deposit_enabled?: boolean
+          shirt_deposit_mode?: string
+          shirt_deposit_percent?: number
           status?: string
           title?: string | null
           total_amount?: number | null
+          validity?: string | null
         }
         Update: {
+          account_number?: string | null
+          agent?: string | null
+          bank_name?: string | null
           client_name?: string | null
           client_phone?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
           created_at?: string
           created_by?: string | null
           created_by_email?: string | null
+          customer_address?: string | null
+          delivery_term?: string | null
+          deposit_note?: string | null
+          design_items?: Json
           id?: string
+          invoice_date?: string | null
           invoice_number?: string
+          jersey_items?: Json
+          lock_deposit_amount?: number
+          manager_name?: string | null
+          manager_title?: string | null
+          material?: string | null
+          notes?: string | null
+          payment_term?: string | null
           project_title?: string | null
+          shirt_deposit_custom?: number
+          shirt_deposit_enabled?: boolean
+          shirt_deposit_mode?: string
+          shirt_deposit_percent?: number
           status?: string
           title?: string | null
           total_amount?: number | null
+          validity?: string | null
         }
         Relationships: []
       }
