@@ -128,6 +128,13 @@ const InvoiceTab = () => {
     }));
   };
 
+  const hasSavedInvoiceDetails = (log: InvoiceLog) =>
+    Boolean(
+      (Array.isArray(log.jersey_items) && log.jersey_items.length > 0) ||
+        (Array.isArray(log.design_items) && log.design_items.length > 0) ||
+        Number(log.lock_deposit_amount) > 0,
+    );
+
   const recreateInvoice = (log: InvoiceLog) => {
     setInvoiceDate(log.invoice_date || new Date(log.created_at).toISOString().split("T")[0]);
     setInvoiceNumber(log.invoice_number);
@@ -156,7 +163,11 @@ const InvoiceTab = () => {
     setAccountNumber(log.account_number || "512745567892");
     setPhone(log.contact_phone || "+60 19 - 339 6681");
     setEmailAddr(log.contact_email || "umarnazmi10@gmail.com");
-    toast.success(`Invoice ${log.invoice_number} loaded for recreation`);
+    if (hasSavedInvoiceDetails(log)) {
+      toast.success(`Invoice ${log.invoice_number} loaded for recreation`);
+    } else {
+      toast.warning("This older log only has basic invoice info. Items and deposits will be saved for new invoices from now on.");
+    }
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
