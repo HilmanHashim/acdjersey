@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Plus, Trash2, FileText, Download, RefreshCw, Pencil, History } from "lucide-react";
 import { toast } from "sonner";
 import jsPDF from "jspdf";
@@ -97,6 +98,11 @@ const InvoiceTab = () => {
   const [emailAddr, setEmailAddr] = useState("umarnazmi10@gmail.com");
   const [invoiceLogs, setInvoiceLogs] = useState<InvoiceLog[]>([]);
   const [isLoadingLogs, setIsLoadingLogs] = useState(false);
+  const [invoiceLogSearch, setInvoiceLogSearch] = useState("");
+  const [invoiceLogPage, setInvoiceLogPage] = useState(1);
+  const [deletingLogId, setDeletingLogId] = useState<string | null>(null);
+
+  const invoiceLogsPerPage = 10;
 
   const loadInvoiceLogs = async () => {
     setIsLoadingLogs(true);
@@ -118,6 +124,10 @@ const InvoiceTab = () => {
   useEffect(() => {
     loadInvoiceLogs();
   }, []);
+
+  useEffect(() => {
+    setInvoiceLogPage(1);
+  }, [invoiceLogSearch]);
 
   const cleanItems = (items?: LineItem[] | null): LineItem[] => {
     if (!Array.isArray(items) || items.length === 0) return [{ description: "", price: 0, quantity: 0 }];
@@ -169,6 +179,20 @@ const InvoiceTab = () => {
       toast.warning("This older log only has basic invoice info. Items and deposits will be saved for new invoices from now on.");
     }
     window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const deleteInvoiceLog = async (log: InvoiceLog) => {
+    setDeletingLogId(log.id);
+    try {
+      const { error } = await supabase.from("invoices_log").delete().eq("id", log.id);
+      if (error) throw error;
+      setInvoiceLogs((logs) => logs.filter((item) => item.id !== log.id));
+      toast.success(`Invoice log ${log.invoice_number} deleted`);
+    } catch (err: any) {
+      toast.error("Failed to delete invoice log: " + err.message);
+    } finally {
+      setDeletingLogId(null);
+    }
   };
 
   const addJerseyItem = () => setJerseyItems([...jerseyItems, { description: "", price: 0, quantity: 0 }]);
