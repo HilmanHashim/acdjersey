@@ -1024,26 +1024,40 @@ const InvoiceTab = () => {
           </Button>
         </CardHeader>
         <CardContent>
+          <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <Input
+              placeholder="Search by title"
+              value={invoiceLogSearch}
+              onChange={(e) => setInvoiceLogSearch(e.target.value)}
+              className="sm:max-w-xs"
+            />
+            <p className="text-xs text-muted-foreground">
+              Showing {paginatedInvoiceLogs.length} of {filteredInvoiceLogs.length} logs
+            </p>
+          </div>
           {invoiceLogs.length === 0 ? (
             <p className="text-sm text-muted-foreground text-center py-4">
               {isLoadingLogs ? "Loading invoice log..." : "No invoice logs yet."}
             </p>
+          ) : filteredInvoiceLogs.length === 0 ? (
+            <p className="text-sm text-muted-foreground text-center py-4">No invoice logs match that title.</p>
           ) : (
-            <div className="border rounded-lg overflow-hidden">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Invoice No.</TableHead>
-                    <TableHead>Title</TableHead>
-                    <TableHead>Customer</TableHead>
-                    <TableHead>Saved Details</TableHead>
-                    <TableHead className="text-right">Amount</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead className="text-right">Action</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {invoiceLogs.map((log) => (
+            <div className="space-y-3">
+              <div className="border rounded-lg overflow-hidden">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Invoice No.</TableHead>
+                      <TableHead>Title</TableHead>
+                      <TableHead>Customer</TableHead>
+                      <TableHead>Saved Details</TableHead>
+                      <TableHead className="text-right">Amount</TableHead>
+                      <TableHead>Date</TableHead>
+                      <TableHead className="text-right">Action</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {paginatedInvoiceLogs.map((log) => (
                     <TableRow key={log.id}>
                       <TableCell className="font-mono text-xs">{log.invoice_number}</TableCell>
                       <TableCell className="font-medium">{log.title || log.project_title || "-"}</TableCell>
@@ -1056,14 +1070,57 @@ const InvoiceTab = () => {
                         {new Date(log.created_at).toLocaleDateString("en-MY")}
                       </TableCell>
                       <TableCell className="text-right">
-                        <Button variant="outline" size="sm" onClick={() => recreateInvoice(log)}>
-                          Recreate
-                        </Button>
+                        <div className="flex justify-end gap-2">
+                          <Button variant="outline" size="sm" onClick={() => recreateInvoice(log)}>
+                            Recreate
+                          </Button>
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button variant="ghost" size="icon" className="h-9 w-9" disabled={deletingLogId === log.id}>
+                                <Trash2 className="h-4 w-4 text-destructive" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Delete invoice log?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  This will permanently delete invoice log {log.invoice_number} from the database.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => deleteInvoiceLog(log)}>Delete</AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </div>
                       </TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+              <div className="flex items-center justify-between">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setInvoiceLogPage((page) => Math.max(1, page - 1))}
+                  disabled={safeInvoiceLogPage === 1}
+                >
+                  Previous
+                </Button>
+                <span className="text-xs text-muted-foreground">
+                  Page {safeInvoiceLogPage} of {invoiceLogTotalPages}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setInvoiceLogPage((page) => Math.min(invoiceLogTotalPages, page + 1))}
+                  disabled={safeInvoiceLogPage === invoiceLogTotalPages}
+                >
+                  Next
+                </Button>
+              </div>
             </div>
           )}
         </CardContent>
