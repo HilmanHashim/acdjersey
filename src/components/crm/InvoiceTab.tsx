@@ -53,6 +53,13 @@ type InvoiceLog = {
   contact_email?: string | null;
 };
 
+type InvoiceSequence = {
+  id: string;
+  year: number;
+  month: number;
+  last_number: number;
+};
+
 const agents = [
   "ALIFF ACD",
   "DIDO ACD",
@@ -101,8 +108,34 @@ const InvoiceTab = () => {
   const [invoiceLogSearch, setInvoiceLogSearch] = useState("");
   const [invoiceLogPage, setInvoiceLogPage] = useState(1);
   const [deletingLogId, setDeletingLogId] = useState<string | null>(null);
+  const [sequenceYear, setSequenceYear] = useState(new Date().getFullYear());
+  const [sequenceMonth, setSequenceMonth] = useState(new Date().getMonth() + 1);
+  const [sequenceLastNumber, setSequenceLastNumber] = useState("0");
+  const [currentSequence, setCurrentSequence] = useState<InvoiceSequence | null>(null);
+  const [isLoadingSequence, setIsLoadingSequence] = useState(false);
+  const [isSavingSequence, setIsSavingSequence] = useState(false);
 
   const invoiceLogsPerPage = 10;
+  const nextSequencePreview = `${String((parseInt(sequenceLastNumber, 10) || 0) + 1).padStart(5, "0")}/${String(sequenceMonth).padStart(2, "0")}/${sequenceYear}`;
+
+  const loadInvoiceSequence = async (targetYear = sequenceYear, targetMonth = sequenceMonth) => {
+    setIsLoadingSequence(true);
+    try {
+      const { data, error } = await supabase
+        .from("invoice_sequences")
+        .select("id, year, month, last_number")
+        .eq("year", targetYear)
+        .eq("month", targetMonth)
+        .maybeSingle();
+      if (error) throw error;
+      setCurrentSequence(data as InvoiceSequence | null);
+      setSequenceLastNumber(String(data?.last_number ?? 0));
+    } catch (err: any) {
+      toast.error("Failed to load invoice sequence: " + err.message);
+    } finally {
+      setIsLoadingSequence(false);
+    }
+  };
 
   const loadInvoiceLogs = async () => {
     setIsLoadingLogs(true);
@@ -123,6 +156,7 @@ const InvoiceTab = () => {
 
   useEffect(() => {
     loadInvoiceLogs();
+    loadInvoiceSequence();
   }, []);
 
   useEffect(() => {
@@ -192,6 +226,39 @@ const InvoiceTab = () => {
       toast.error("Failed to delete invoice log: " + err.message);
     } finally {
       setDeletingLogId(null);
+    }
+  };
+
+  const saveInvoiceSequence = async () => {
+    const nextLastNumber = parseInt(sequenceLastNumber, 10);
+    if (!Number.isInteger(sequenceYear) || sequenceYear < 2000 || sequenceYear > 2100) {
+      toast.error("Please enter a valid year between 2000 and 2100");
+      return;
+    }
+    if (!Number.isInteger(sequenceMonth) || sequenceMonth < 1 || sequenceMonth > 12) {
+      toast.error("Please enter a valid month between 1 and 12");
+      return;
+    }
+    if (!Number.isInteger(nextLastNumber) || nextLastNumber < 0) {
+      toast.error("Last number must be 0 or higher");
+      return;
+    }
+
+    setIsSavingSequence(true);
+    try {
+      const { data, error } = await (supabase as any).rpc("set_invoice_sequence", {
+        target_year: sequenceYear,
+        target_month: sequenceMonth,
+        target_last_number: nextLastNumber,
+      });
+      if (error) throw error;
+      setCurrentSequence(data as InvoiceSequence);
+      setSequenceLastNumber(String(data.last_number));
+      toast.success(`Invoice sequence updated. Next number will be ${nextSequencePreview}`);
+    } catch (err: any) {
+      toast.error("Failed to update invoice sequence: " + err.message);
+    } finally {
+      setIsSavingSequence(false);
     }
   };
 
@@ -1012,6 +1079,73 @@ const InvoiceTab = () => {
           <span>RM {totalAmount.toLocaleString()}</span>
         </div>
       )}
+
+      {/* Invoice Sequence */}
+      <Card>
+        <CardHeader className="pb-3 flex flex-row items-center justify-between">
+          <CardTitle className="text-sm">Invoice Number Sequence</CardTitle>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => loadInvoiceSequence(sequenceYear, sequenceMonth)}
+            disabled={isLoadingSequence}
+          >
+            <RefreshCw className={`h-3 w-3 mr-1 ${isLoadingSequence ? "animate-spin" : ""}`} /> Load
+          </Button>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-[120px_120px_1fr_auto] md:items-end">
+            <div>
+              <label className="text-xs text-muted-foreground">Year</label>
+              <Input
+                type="number"
+                value={sequenceYear}
+                onChange={(e) => setSequenceYear(parseInt(e.target.value, 10) || new Date().getFullYear())}
+              />
+            </div>
+            <div>
+              <label className="text-xs text-muted-foreground">Month</label>
+              <Input
+                type="number"
+                min={1}
+                max={12}
+                value={sequenceMonth}
+                onChange={(e) => setSequenceMonth(parseInt(e.target.value, 10) || 1)}
+              />
+            </div>
+            <div>
+              <label className="text-xs text-muted-foreground">Last used number</label>
+              <Input
+                type="number"
+                min={0}
+                value={sequenceLastNumber}
+                onChange={(e) => setSequenceLastNumber(e.target.value)}
+                placeholder="0"
+              />
+            </div>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button disabled={isSavingSequence || isLoadingSequence}>Save Sequence</Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Update invoice sequence?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This will set the last used number for {String(sequenceMonth).padStart(2, "0")}/{sequenceYear} to {parseInt(sequenceLastNumber, 10) || 0}. The next generated invoice number will be {nextSequencePreview}.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={saveInvoiceSequence}>Save</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Current saved value: {currentSequence ? currentSequence.last_number : "No record yet"}. Next generated number: {nextSequencePreview}.
+          </p>
+        </CardContent>
+      </Card>
 
       {/* Invoice Log */}
       <Card>
