@@ -53,6 +53,13 @@ type InvoiceLog = {
   contact_email?: string | null;
 };
 
+type InvoiceSequence = {
+  id: string;
+  year: number;
+  month: number;
+  last_number: number;
+};
+
 const agents = [
   "ALIFF ACD",
   "DIDO ACD",
@@ -101,8 +108,34 @@ const InvoiceTab = () => {
   const [invoiceLogSearch, setInvoiceLogSearch] = useState("");
   const [invoiceLogPage, setInvoiceLogPage] = useState(1);
   const [deletingLogId, setDeletingLogId] = useState<string | null>(null);
+  const [sequenceYear, setSequenceYear] = useState(new Date().getFullYear());
+  const [sequenceMonth, setSequenceMonth] = useState(new Date().getMonth() + 1);
+  const [sequenceLastNumber, setSequenceLastNumber] = useState("0");
+  const [currentSequence, setCurrentSequence] = useState<InvoiceSequence | null>(null);
+  const [isLoadingSequence, setIsLoadingSequence] = useState(false);
+  const [isSavingSequence, setIsSavingSequence] = useState(false);
 
   const invoiceLogsPerPage = 10;
+  const nextSequencePreview = `${String((parseInt(sequenceLastNumber, 10) || 0) + 1).padStart(5, "0")}/${String(sequenceMonth).padStart(2, "0")}/${sequenceYear}`;
+
+  const loadInvoiceSequence = async (targetYear = sequenceYear, targetMonth = sequenceMonth) => {
+    setIsLoadingSequence(true);
+    try {
+      const { data, error } = await supabase
+        .from("invoice_sequences")
+        .select("id, year, month, last_number")
+        .eq("year", targetYear)
+        .eq("month", targetMonth)
+        .maybeSingle();
+      if (error) throw error;
+      setCurrentSequence(data as InvoiceSequence | null);
+      setSequenceLastNumber(String(data?.last_number ?? 0));
+    } catch (err: any) {
+      toast.error("Failed to load invoice sequence: " + err.message);
+    } finally {
+      setIsLoadingSequence(false);
+    }
+  };
 
   const loadInvoiceLogs = async () => {
     setIsLoadingLogs(true);
@@ -123,6 +156,7 @@ const InvoiceTab = () => {
 
   useEffect(() => {
     loadInvoiceLogs();
+    loadInvoiceSequence();
   }, []);
 
   useEffect(() => {
@@ -192,6 +226,39 @@ const InvoiceTab = () => {
       toast.error("Failed to delete invoice log: " + err.message);
     } finally {
       setDeletingLogId(null);
+    }
+  };
+
+  const saveInvoiceSequence = async () => {
+    const nextLastNumber = parseInt(sequenceLastNumber, 10);
+    if (!Number.isInteger(sequenceYear) || sequenceYear < 2000 || sequenceYear > 2100) {
+      toast.error("Please enter a valid year between 2000 and 2100");
+      return;
+    }
+    if (!Number.isInteger(sequenceMonth) || sequenceMonth < 1 || sequenceMonth > 12) {
+      toast.error("Please enter a valid month between 1 and 12");
+      return;
+    }
+    if (!Number.isInteger(nextLastNumber) || nextLastNumber < 0) {
+      toast.error("Last number must be 0 or higher");
+      return;
+    }
+
+    setIsSavingSequence(true);
+    try {
+      const { data, error } = await (supabase as any).rpc("set_invoice_sequence", {
+        target_year: sequenceYear,
+        target_month: sequenceMonth,
+        target_last_number: nextLastNumber,
+      });
+      if (error) throw error;
+      setCurrentSequence(data as InvoiceSequence);
+      setSequenceLastNumber(String(data.last_number));
+      toast.success(`Invoice sequence updated. Next number will be ${nextSequencePreview}`);
+    } catch (err: any) {
+      toast.error("Failed to update invoice sequence: " + err.message);
+    } finally {
+      setIsSavingSequence(false);
     }
   };
 
