@@ -36,6 +36,16 @@ const statusLabel: Record<string, string> = {
   closed: "Closed",
 };
 
+const malaysiaTimestampFormatter = new Intl.DateTimeFormat("en-MY", {
+  day: "2-digit",
+  month: "short",
+  year: "numeric",
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: true,
+  timeZone: "Asia/Kuala_Lumpur",
+});
+
 const EnquiryTab = () => {
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
@@ -159,7 +169,7 @@ const EnquiryTab = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Date</TableHead>
+                <TableHead>Date & Time</TableHead>
                 <TableHead>Name</TableHead>
                 <TableHead>Phone</TableHead>
                 <TableHead>Organisation</TableHead>
@@ -174,7 +184,7 @@ const EnquiryTab = () => {
               {paginated.map((enq) => (
                 <TableRow key={enq.id}>
                   <TableCell className="text-xs text-muted-foreground whitespace-nowrap">
-                    {new Date(enq.created_at).toLocaleDateString("en-MY", { day: "2-digit", month: "short", year: "numeric" })}
+                    {malaysiaTimestampFormatter.format(new Date(enq.created_at))}
                   </TableCell>
                   <TableCell className="font-medium">{enq.name}</TableCell>
                   <TableCell>{enq.phone}</TableCell>
