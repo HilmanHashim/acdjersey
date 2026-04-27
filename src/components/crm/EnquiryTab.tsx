@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -40,6 +40,8 @@ const EnquiryTab = () => {
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 10;
 
   const { data: enquiries = [], isLoading } = useQuery({
     queryKey: ["enquiries"],
@@ -107,6 +109,14 @@ const EnquiryTab = () => {
     return matchesStatus && matchesSearch;
   });
 
+  const totalPages = Math.max(1, Math.ceil(filtered.length / rowsPerPage));
+  const safeCurrentPage = Math.min(currentPage, totalPages);
+  const paginated = filtered.slice((safeCurrentPage - 1) * rowsPerPage, safeCurrentPage * rowsPerPage);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, statusFilter]);
+
   const statusCounts = {
     all: enquiries.length,
     new: enquiries.filter((e) => e.status === "new").length,
@@ -161,7 +171,7 @@ const EnquiryTab = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filtered.map((enq) => (
+              {paginated.map((enq) => (
                 <TableRow key={enq.id}>
                   <TableCell className="text-xs text-muted-foreground whitespace-nowrap">
                     {new Date(enq.created_at).toLocaleDateString("en-MY", { day: "2-digit", month: "short", year: "numeric" })}
@@ -232,6 +242,34 @@ const EnquiryTab = () => {
               ))}
             </TableBody>
           </Table>
+          {filtered.length > rowsPerPage && (
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 border-t px-4 py-3 text-sm text-muted-foreground">
+              <span>
+                Showing {(safeCurrentPage - 1) * rowsPerPage + 1}-{Math.min(safeCurrentPage * rowsPerPage, filtered.length)} of {filtered.length}
+              </span>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
+                  disabled={safeCurrentPage === 1}
+                >
+                  Previous
+                </Button>
+                <span className="min-w-20 text-center">
+                  Page {safeCurrentPage} of {totalPages}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))}
+                  disabled={safeCurrentPage === totalPages}
+                >
+                  Next
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>
