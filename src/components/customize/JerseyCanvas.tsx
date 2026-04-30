@@ -52,47 +52,53 @@ const JerseyCanvas = forwardRef<HTMLDivElement, Props>(
           else if (ref) ref.current = node;
         }}
         className="relative w-full max-w-md aspect-[4/5] bg-muted/30 rounded-2xl border border-border overflow-hidden select-none"
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
-        onClick={() => onSelectVector(null)}
       >
+        {/* 3D canvas — receives orbit/zoom drags */}
         <div className="absolute inset-0">
           <Jersey3D type={type} colors={colors} view={view} />
         </div>
 
-        {vectors.map((v) => {
-          const VectorEl = VectorComponents[v.vectorId];
-          const size = 80 * v.scale;
-          const isSelected = v.id === selectedVectorId;
-          return (
-            <div
-              key={v.id}
-              onPointerDown={(e) => handlePointerDown(e, v.id)}
-              onClick={(e) => { e.stopPropagation(); onSelectVector(v.id); }}
-              className="absolute cursor-move touch-none"
-              style={{
-                left: `${v.x}%`,
-                top: `${v.y}%`,
-                width: size,
-                height: size,
-                transform: "translate(-50%, -50%)",
-                outline: isSelected ? "2px dashed hsl(var(--accent))" : "none",
-                outlineOffset: 4,
-              }}
-            >
-              <VectorEl color={v.color} size={size} />
-              {isSelected && (
-                <button
-                  type="button"
-                  onClick={(e) => { e.stopPropagation(); onRemoveVector(v.id); }}
-                  className="absolute -top-3 -right-3 bg-destructive text-destructive-foreground rounded-full p-1 shadow-md"
-                >
-                  <X className="h-3 w-3" />
-                </button>
-              )}
-            </div>
-          );
-        })}
+        {/* Vector overlay — non-blocking layer; only individual vectors capture events */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          style={{ pointerEvents: dragging ? "auto" : "none" }}
+        >
+          {vectors.map((v) => {
+            const VectorEl = VectorComponents[v.vectorId];
+            const size = 80 * v.scale;
+            const isSelected = v.id === selectedVectorId;
+            return (
+              <div
+                key={v.id}
+                onPointerDown={(e) => handlePointerDown(e, v.id)}
+                onClick={(e) => { e.stopPropagation(); onSelectVector(v.id); }}
+                className="absolute cursor-move touch-none pointer-events-auto"
+                style={{
+                  left: `${v.x}%`,
+                  top: `${v.y}%`,
+                  width: size,
+                  height: size,
+                  transform: "translate(-50%, -50%)",
+                  outline: isSelected ? "2px dashed hsl(var(--accent))" : "none",
+                  outlineOffset: 4,
+                }}
+              >
+                <VectorEl color={v.color} size={size} />
+                {isSelected && (
+                  <button
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); onRemoveVector(v.id); }}
+                    className="absolute -top-3 -right-3 bg-destructive text-destructive-foreground rounded-full p-1 shadow-md pointer-events-auto"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
     );
   }
