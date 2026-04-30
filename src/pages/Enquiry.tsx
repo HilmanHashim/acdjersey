@@ -93,6 +93,30 @@ const Enquiry = () => {
             </p>
           </div>
 
+          {customDesign && (
+            <div className="bg-card border-2 border-accent/40 rounded-xl p-4 space-y-3">
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-accent" />
+                <p className="font-display uppercase tracking-[0.2em] text-xs text-accent">
+                  Your Custom Design
+                </p>
+              </div>
+              <div className="flex gap-4 items-start">
+                <img
+                  src={customDesign.previewDataUrl}
+                  alt="Your custom jersey design"
+                  className="w-24 h-30 object-contain rounded-md border border-border bg-muted/30"
+                />
+                <pre className="text-xs text-muted-foreground whitespace-pre-wrap font-sans flex-1">
+                  {customDesign.summary}
+                </pre>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Your design details have been added to the form below — just fill in your contact info!
+              </p>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-4 bg-card border border-border rounded-xl p-6 md:p-8">
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-foreground">Your Name *</label>
