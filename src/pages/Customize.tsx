@@ -158,6 +158,7 @@ const Customize = () => {
                 ref={canvasRef}
                 type={jerseyType}
                 view={view}
+                onViewChange={setView}
                 colors={colors}
                 vectors={vectors}
                 selectedVectorId={selectedVectorId}
