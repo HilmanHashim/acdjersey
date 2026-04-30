@@ -10,7 +10,8 @@ import AboutUs from "./pages/AboutUs.tsx";
 import Catalogue from "./pages/Catalogue.tsx";
 import CatalogueCategory from "./pages/CatalogueCategory.tsx";
 import Enquiry from "./pages/Enquiry.tsx";
-import Customize from "./pages/Customize.tsx";
+// TEMP HIDDEN — uncomment to re-enable the Customize page
+// import Customize from "./pages/Customize.tsx";
 import EnquirySubmitted from "./pages/EnquirySubmitted.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import ScrollToTop from "./components/ScrollToTop";
@@ -35,7 +36,8 @@ const App = () => (
           <Route path="/about" element={<AboutUs />} />
           <Route path="/catalogue" element={<Catalogue />} />
           <Route path="/catalogue/:slug" element={<CatalogueCategory />} />
-          <Route path="/customize" element={<Customize />} />
+          {/* TEMP HIDDEN — uncomment to re-enable the Customize route */}
+          {/* <Route path="/customize" element={<Customize />} /> */}
           <Route path="/enquiry" element={<Enquiry />} />
           <Route path="/enquiry-submitted" element={<EnquirySubmitted />} />
           <Route path="*" element={<NotFound />} />
