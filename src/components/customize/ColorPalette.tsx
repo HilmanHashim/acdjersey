@@ -50,7 +50,7 @@ const ColorPalette = ({ selectedColor, onPick }: Props) => {
           <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground/70 font-display">
             {group.label}
           </p>
-          <div className="grid grid-cols-6 gap-1.5">
+          <div className="grid grid-cols-8 gap-1">
             {group.colors.map((c) => {
               const active = selectedColor.toLowerCase() === c.toLowerCase();
               return (
@@ -59,9 +59,9 @@ const ColorPalette = ({ selectedColor, onPick }: Props) => {
                   type="button"
                   onClick={() => onPick(c)}
                   className={cn(
-                    "relative aspect-square rounded-md transition-all duration-200 hover:scale-110 hover:-translate-y-0.5",
+                    "relative aspect-square rounded transition-all duration-200 hover:scale-110",
                     active
-                      ? "ring-2 ring-offset-2 ring-offset-card ring-accent shadow-lg"
+                      ? "ring-2 ring-offset-1 ring-offset-card ring-accent shadow"
                       : "ring-1 ring-border/60 hover:ring-accent/60"
                   )}
                   style={{
@@ -80,11 +80,11 @@ const ColorPalette = ({ selectedColor, onPick }: Props) => {
       ))}
 
       {/* Custom hex picker */}
-      <div className="pt-2 border-t border-border/50 space-y-2">
+      <div className="pt-2 border-t border-border/50 space-y-1.5">
         <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground/70 font-display flex items-center gap-1.5">
           <Pipette className="h-3 w-3" /> Custom Color
         </p>
-        <div className="flex gap-2 items-center">
+        <div className="flex gap-1.5 items-center">
           <input
             type="color"
             value={hex.startsWith("#") ? hex : "#000000"}
@@ -92,18 +92,18 @@ const ColorPalette = ({ selectedColor, onPick }: Props) => {
               setHex(e.target.value);
               onPick(e.target.value);
             }}
-            className="h-9 w-9 rounded-md border border-border bg-background cursor-pointer p-0.5"
+            className="h-8 w-8 rounded border border-border bg-background cursor-pointer p-0.5 shrink-0"
           />
           <Input
             value={hex}
             onChange={(e) => setHex(e.target.value)}
             placeholder="#hex"
-            className="text-xs h-9 font-mono uppercase"
+            className="text-xs h-8 font-mono uppercase"
           />
           <button
             type="button"
             onClick={apply}
-            className="text-xs px-3 h-9 rounded-md bg-gradient-to-br from-accent to-primary text-accent-foreground font-display uppercase tracking-wider hover:opacity-90 transition-opacity"
+            className="text-[10px] px-2.5 h-8 rounded bg-gradient-to-br from-accent to-primary text-accent-foreground font-display uppercase tracking-wider hover:opacity-90 transition-opacity shrink-0"
           >
             Set
           </button>
