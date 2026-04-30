@@ -117,9 +117,6 @@ const Customize = () => {
 
       {/* Hero */}
       <section className="py-12 text-center space-y-3 animate-slide-up">
-        <p className="font-display text-accent uppercase tracking-[0.3em] text-sm inline-flex items-center gap-2">
-          <Sparkles className="h-4 w-4" /> Design Studio
-        </p>
         <h1 className="text-4xl md:text-6xl font-display text-gradient title-glow inline-block">
           Custom Your Design
         </h1>
