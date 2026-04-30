@@ -129,8 +129,12 @@ const Customize = () => {
         <div className="grid lg:grid-cols-[260px_1fr_300px] gap-6">
           {/* LEFT — jersey type + vectors */}
           <aside className="space-y-6">
-            <div className="bg-card border border-border rounded-2xl p-4 space-y-3">
-              <h2 className="font-display uppercase tracking-[0.2em] text-xs text-accent">Jersey Type</h2>
+            <div className="relative bg-gradient-to-br from-card via-card to-card/60 border border-border rounded-2xl p-5 space-y-3 overflow-hidden">
+              <div className="absolute -top-12 -right-12 w-32 h-32 bg-accent/15 blur-3xl rounded-full pointer-events-none" />
+              <div className="flex items-center gap-2">
+                <span className="h-1.5 w-6 rounded-full bg-gradient-to-r from-accent to-primary" />
+                <h2 className="font-display uppercase tracking-[0.2em] text-xs text-foreground">Jersey Type</h2>
+              </div>
               <div className="space-y-2">
                 {(Object.keys(JERSEY_TYPE_LABELS) as JerseyType[]).map((t) => (
                   <button
@@ -138,20 +142,27 @@ const Customize = () => {
                     type="button"
                     onClick={() => setJerseyType(t)}
                     className={cn(
-                      "w-full text-left px-3 py-2 rounded-md font-display text-sm transition-all border",
+                      "w-full text-left px-3 py-2.5 rounded-lg font-display text-sm transition-all border relative overflow-hidden group",
                       jerseyType === t
-                        ? "border-accent bg-accent/10 text-foreground"
-                        : "border-border text-muted-foreground hover:text-foreground hover:border-accent/40"
+                        ? "border-accent bg-gradient-to-r from-accent/20 via-accent/10 to-transparent text-foreground shadow-[0_0_18px_-4px_hsl(var(--accent)/0.6)]"
+                        : "border-border text-muted-foreground hover:text-foreground hover:border-accent/40 hover:bg-accent/5"
                     )}
                   >
-                    {JERSEY_TYPE_LABELS[t]}
+                    <span className="relative z-10">{JERSEY_TYPE_LABELS[t]}</span>
+                    {jerseyType === t && (
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 h-1.5 w-1.5 rounded-full bg-accent shadow-[0_0_8px_hsl(var(--accent))]" />
+                    )}
                   </button>
                 ))}
               </div>
             </div>
 
-            <div className="bg-card border border-border rounded-2xl p-4 space-y-3">
-              <h2 className="font-display uppercase tracking-[0.2em] text-xs text-accent">Graphics</h2>
+            <div className="relative bg-gradient-to-br from-card via-card to-card/60 border border-border rounded-2xl p-5 space-y-3 overflow-hidden">
+              <div className="absolute -bottom-12 -left-12 w-32 h-32 bg-primary/15 blur-3xl rounded-full pointer-events-none" />
+              <div className="flex items-center gap-2">
+                <span className="h-1.5 w-6 rounded-full bg-gradient-to-r from-primary to-accent" />
+                <h2 className="font-display uppercase tracking-[0.2em] text-xs text-foreground">Graphics</h2>
+              </div>
               <p className="text-xs text-muted-foreground">Tap to add — drag to position.</p>
               <div className="grid grid-cols-3 gap-2">
                 {VECTOR_LIST.map(({ id, label }) => {
@@ -162,7 +173,7 @@ const Customize = () => {
                       type="button"
                       onClick={() => addVector(id)}
                       title={label}
-                      className="aspect-square bg-background border border-border rounded-md p-1.5 hover:border-accent hover:scale-105 transition-all flex items-center justify-center"
+                      className="aspect-square bg-background/60 border border-border rounded-lg p-1.5 hover:border-accent hover:bg-accent/10 hover:scale-105 hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center group"
                     >
                       <V color="hsl(var(--foreground))" size={40} />
                     </button>
