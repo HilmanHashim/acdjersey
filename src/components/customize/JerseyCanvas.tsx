@@ -1,5 +1,6 @@
 import { forwardRef, useRef, useState } from "react";
-import { JerseyTemplate, JerseyType, JerseyView, ZoneColors } from "./jerseyTemplates";
+import { JerseyType, JerseyView, ZoneColors } from "./jerseyTemplates";
+import Jersey3D from "./Jersey3D";
 import { VectorComponents, VectorId } from "./vectorLibrary";
 import { X } from "lucide-react";
 
@@ -56,7 +57,7 @@ const JerseyCanvas = forwardRef<HTMLDivElement, Props>(
         onClick={() => onSelectVector(null)}
       >
         <div className="absolute inset-0">
-          <JerseyTemplate type={type} colors={colors} view={view} />
+          <Jersey3D type={type} colors={colors} view={view} />
         </div>
 
         {vectors.map((v) => {
