@@ -2,6 +2,7 @@ import { forwardRef, useRef, useState } from "react";
 import { JerseyType, JerseyView, ZoneColors, JerseyTemplate } from "./jerseyTemplates";
 import { VectorComponents, VectorId } from "./vectorLibrary";
 import { X } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export type PlacedVector = {
   id: string;
@@ -15,6 +16,7 @@ export type PlacedVector = {
 interface Props {
   type: JerseyType;
   view: JerseyView;
+  onViewChange?: (v: JerseyView) => void;
   colors: ZoneColors;
   vectors: PlacedVector[];
   selectedVectorId: string | null;
@@ -24,7 +26,7 @@ interface Props {
 }
 
 const JerseyCanvas = forwardRef<HTMLDivElement, Props>(
-  ({ type, view, colors, vectors, selectedVectorId, onSelectVector, onMoveVector, onRemoveVector }, ref) => {
+  ({ type, view, onViewChange, colors, vectors, selectedVectorId, onSelectVector, onMoveVector, onRemoveVector }, ref) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [dragging, setDragging] = useState<string | null>(null);
 
@@ -53,12 +55,48 @@ const JerseyCanvas = forwardRef<HTMLDivElement, Props>(
         onClick={() => onSelectVector(null)}
         className="relative w-full h-full min-h-[520px] rounded-2xl overflow-hidden select-none border border-border/40 shadow-[0_30px_80px_-40px_rgba(0,0,0,0.6)] flex items-center justify-center"
         style={{
-          background:
-            "radial-gradient(ellipse at 50% 30%, #ffffff 0%, #eef0f3 55%, #d8dde3 100%)",
+          backgroundColor: "#eef0f3",
+          backgroundImage: `
+            radial-gradient(ellipse at 50% 25%, rgba(255,255,255,0.95) 0%, rgba(238,240,243,0) 60%),
+            radial-gradient(circle at 12% 88%, hsl(var(--accent) / 0.12) 0%, transparent 45%),
+            radial-gradient(circle at 88% 12%, hsl(var(--primary) / 0.10) 0%, transparent 45%),
+            linear-gradient(135deg, transparent 49.6%, rgba(0,0,0,0.045) 49.6%, rgba(0,0,0,0.045) 50.4%, transparent 50.4%),
+            linear-gradient(45deg, transparent 49.6%, rgba(0,0,0,0.045) 49.6%, rgba(0,0,0,0.045) 50.4%, transparent 50.4%)
+          `,
+          backgroundSize: "auto, auto, auto, 28px 28px, 28px 28px",
         }}
       >
+        {/* Front / Back toggle pill (top center) */}
+        {onViewChange && (
+          <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 flex items-center gap-1 bg-white/85 backdrop-blur border border-black/10 rounded-full p-1 shadow-md">
+            {(["front", "back"] as JerseyView[]).map((v) => (
+              <button
+                key={v}
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onViewChange(v);
+                }}
+                className={cn(
+                  "px-5 py-1.5 rounded-full font-display uppercase text-[11px] tracking-[0.18em] transition-all",
+                  view === v
+                    ? "bg-accent text-accent-foreground shadow"
+                    : "text-neutral-600 hover:text-neutral-900"
+                )}
+              >
+                {v}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* View label badge (bottom center) */}
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 px-3 py-1 rounded-full bg-white/70 backdrop-blur text-[10px] uppercase tracking-[0.2em] font-display text-neutral-500 border border-black/5">
+          {view} view
+        </div>
+
         {/* 2D vector jersey */}
-        <div className="relative w-[min(80%,520px)] aspect-[4/5]">
+        <div className="relative w-[min(75%,480px)] aspect-[4/5]">
           <JerseyTemplate type={type} colors={colors} view={view} />
 
           {/* Vector overlay */}
