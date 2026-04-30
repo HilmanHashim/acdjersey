@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/landing/Footer";
@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Send } from "lucide-react";
+import { Send, Sparkles } from "lucide-react";
 
 const jerseyTypes = [
   "Running Jersey",
@@ -17,19 +17,39 @@ const jerseyTypes = [
   "Baju Sukan",
   "Hoodie",
   "Jacket",
+  "Custom Design",
   "Others",
 ];
 
+type CustomDesignState = {
+  jerseyType: string;
+  jerseyTypeLabel: string;
+  summary: string;
+  previewDataUrl: string;
+};
+
 const Enquiry = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const customDesign = (location.state as { customDesign?: CustomDesignState } | null)?.customDesign || null;
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     name: "",
     phone: "",
-    organisation: "",
+    organisation: customDesign ? customDesign.summary : "",
     estimated_quantity: "",
-    jersey_type: "",
+    jersey_type: customDesign ? "Custom Design" : "",
   });
+
+  useEffect(() => {
+    if (customDesign) {
+      setForm((f) => ({
+        ...f,
+        organisation: customDesign.summary,
+        jersey_type: "Custom Design",
+      }));
+    }
+  }, [customDesign]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
