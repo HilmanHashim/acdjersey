@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/landing/Footer";
@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Send } from "lucide-react";
+import { Send, Sparkles } from "lucide-react";
 
 const jerseyTypes = [
   "Running Jersey",
@@ -17,19 +17,39 @@ const jerseyTypes = [
   "Baju Sukan",
   "Hoodie",
   "Jacket",
+  "Custom Design",
   "Others",
 ];
 
+type CustomDesignState = {
+  jerseyType: string;
+  jerseyTypeLabel: string;
+  summary: string;
+  previewDataUrl: string;
+};
+
 const Enquiry = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const customDesign = (location.state as { customDesign?: CustomDesignState } | null)?.customDesign || null;
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     name: "",
     phone: "",
-    organisation: "",
+    organisation: customDesign ? customDesign.summary : "",
     estimated_quantity: "",
-    jersey_type: "",
+    jersey_type: customDesign ? "Custom Design" : "",
   });
+
+  useEffect(() => {
+    if (customDesign) {
+      setForm((f) => ({
+        ...f,
+        organisation: customDesign.summary,
+        jersey_type: "Custom Design",
+      }));
+    }
+  }, [customDesign]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,6 +93,30 @@ const Enquiry = () => {
             </p>
           </div>
 
+          {customDesign && (
+            <div className="bg-card border-2 border-accent/40 rounded-xl p-4 space-y-3">
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-accent" />
+                <p className="font-display uppercase tracking-[0.2em] text-xs text-accent">
+                  Your Custom Design
+                </p>
+              </div>
+              <div className="flex gap-4 items-start">
+                <img
+                  src={customDesign.previewDataUrl}
+                  alt="Your custom jersey design"
+                  className="w-24 h-30 object-contain rounded-md border border-border bg-muted/30"
+                />
+                <pre className="text-xs text-muted-foreground whitespace-pre-wrap font-sans flex-1">
+                  {customDesign.summary}
+                </pre>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Your design details have been added to the form below — just fill in your contact info!
+              </p>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-4 bg-card border border-border rounded-xl p-6 md:p-8">
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-foreground">Your Name *</label>
@@ -100,12 +144,16 @@ const Enquiry = () => {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-sm font-medium text-foreground">Organisation / Team</label>
-              <Input
+              <label className="text-sm font-medium text-foreground">
+                {customDesign ? "Organisation / Team & Design Notes" : "Organisation / Team"}
+              </label>
+              <textarea
                 placeholder="e.g. Falcon FC"
                 value={form.organisation}
                 onChange={(e) => setForm({ ...form, organisation: e.target.value })}
-                maxLength={200}
+                maxLength={1000}
+                rows={customDesign ? 6 : 2}
+                className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               />
             </div>
 
