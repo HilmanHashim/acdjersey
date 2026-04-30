@@ -4,8 +4,9 @@ import { toPng } from "html-to-image";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/landing/Footer";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
-import { Send, RotateCcw } from "lucide-react";
+import { Send, RotateCcw, Shirt, Palette, Sparkles, ClipboardCheck } from "lucide-react";
 import { toast } from "sonner";
 
 import {
@@ -45,6 +46,7 @@ const Customize = () => {
   const [vectors, setVectors] = useState<PlacedVector[]>([]);
   const [selectedVectorId, setSelectedVectorId] = useState<string | null>(null);
   const [vectorColor, setVectorColor] = useState<string>("#000000");
+  const [tab, setTab] = useState<"design" | "colors" | "graphics" | "review">("design");
 
   const selectedVector = vectors.find((v) => v.id === selectedVectorId) || null;
 
@@ -112,213 +114,253 @@ const Customize = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
 
-      {/* Hero */}
-      <section className="py-12 text-center space-y-3 animate-slide-up">
-        <h1 className="text-4xl md:text-6xl font-display text-gradient title-glow inline-block">
-          Customize Your Design
-        </h1>
-        <p className="text-muted-foreground max-w-xl mx-auto text-sm">
-          Pick a jersey, paint each zone, and stamp graphics. When you're done, we'll send it straight to our team.
-        </p>
-      </section>
-
-      <section className="container max-w-7xl pb-20">
-        <div className="grid lg:grid-cols-[260px_1fr_300px] gap-6">
-          {/* LEFT — jersey type + vectors */}
-          <aside className="space-y-6">
-            <div className="relative bg-gradient-to-br from-card via-card to-card/60 border border-border rounded-2xl p-5 space-y-3 overflow-hidden">
-              <div className="absolute -top-12 -right-12 w-32 h-32 bg-accent/15 blur-3xl rounded-full pointer-events-none" />
-              <div className="flex items-center gap-2">
-                <span className="h-1.5 w-6 rounded-full bg-gradient-to-r from-accent to-primary" />
-                <h2 className="font-display uppercase tracking-[0.2em] text-xs text-foreground">Jersey Type</h2>
-              </div>
-              <div className="space-y-2">
-                {(Object.keys(JERSEY_TYPE_LABELS) as JerseyType[]).map((t) => (
-                  <button
-                    key={t}
-                    type="button"
-                    onClick={() => setJerseyType(t)}
-                    className={cn(
-                      "w-full text-left px-3 py-2.5 rounded-lg font-display text-sm transition-all border relative overflow-hidden group",
-                      jerseyType === t
-                        ? "border-accent bg-gradient-to-r from-accent/20 via-accent/10 to-transparent text-foreground shadow-[0_0_18px_-4px_hsl(var(--accent)/0.6)]"
-                        : "border-border text-muted-foreground hover:text-foreground hover:border-accent/40 hover:bg-accent/5"
-                    )}
-                  >
-                    <span className="relative z-10">{JERSEY_TYPE_LABELS[t]}</span>
-                    {jerseyType === t && (
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 h-1.5 w-1.5 rounded-full bg-accent shadow-[0_0_8px_hsl(var(--accent))]" />
-                    )}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="relative bg-gradient-to-br from-card via-card to-card/60 border border-border rounded-2xl p-5 space-y-3 overflow-hidden">
-              <div className="absolute -bottom-12 -left-12 w-32 h-32 bg-primary/15 blur-3xl rounded-full pointer-events-none" />
-              <div className="flex items-center gap-2">
-                <span className="h-1.5 w-6 rounded-full bg-gradient-to-r from-primary to-accent" />
-                <h2 className="font-display uppercase tracking-[0.2em] text-xs text-foreground">Graphics</h2>
-              </div>
-              <p className="text-xs text-muted-foreground">Tap to add — drag to position.</p>
-              <div className="grid grid-cols-3 gap-2">
-                {VECTOR_LIST.map(({ id, label }) => {
-                  const V = VectorComponents[id];
-                  return (
-                    <button
-                      key={id}
-                      type="button"
-                      onClick={() => addVector(id)}
-                      title={label}
-                      className="aspect-square bg-background/60 border border-border rounded-lg p-1.5 hover:border-accent hover:bg-accent/10 hover:scale-105 hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center group"
-                    >
-                      <V color="hsl(var(--foreground))" size={40} />
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          </aside>
-
-          {/* CENTER — preview */}
-          <div className="flex flex-col items-center gap-4">
-            <div className="flex gap-2">
-              {(["front", "back"] as JerseyView[]).map((v) => (
-                <button
-                  key={v}
-                  type="button"
-                  onClick={() => setView(v)}
-                  className={cn(
-                    "px-4 py-1.5 rounded-full font-display uppercase text-xs tracking-wider transition-all border",
-                    view === v
-                      ? "bg-accent text-accent-foreground border-accent"
-                      : "border-border text-muted-foreground hover:text-foreground"
-                  )}
-                >
-                  {v}
-                </button>
-              ))}
-            </div>
-
-            <JerseyCanvas
-              ref={canvasRef}
-              type={jerseyType}
-              view={view}
-              colors={colors}
-              vectors={vectors}
-              selectedVectorId={selectedVectorId}
-              onSelectVector={setSelectedVectorId}
-              onMoveVector={(id, x, y) =>
-                setVectors((prev) => prev.map((v) => (v.id === id ? { ...v, x, y } : v)))
-              }
-              onRemoveVector={(id) => {
-                setVectors((prev) => prev.filter((v) => v.id !== id));
-                setSelectedVectorId(null);
-              }}
-            />
-
-            {selectedVector && (
-              <div className="w-full max-w-md bg-card border border-border rounded-xl p-3 space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-display uppercase tracking-wider text-muted-foreground">
-                    Selected: {selectedVector.vectorId}
-                  </span>
-                  <span className="text-xs text-muted-foreground">Size</span>
-                </div>
-                <input
-                  type="range"
-                  min={0.3}
-                  max={2.5}
-                  step={0.1}
-                  value={selectedVector.scale}
-                  onChange={(e) => updateScale(Number(e.target.value))}
-                  className="w-full"
-                />
-              </div>
-            )}
-
-            <div className="flex gap-3 w-full max-w-md">
-              <Button variant="outline" onClick={reset} className="flex-1">
-                <RotateCcw className="h-4 w-4 mr-2" /> Reset
-              </Button>
-              <Button variant="hero" onClick={sendToEnquiry} className="flex-1">
-                <Send className="h-4 w-4 mr-2" /> Send to Enquiry
-              </Button>
-            </div>
+      {/* Slim header bar */}
+      <div className="border-b border-border/60 bg-card/40 backdrop-blur">
+        <div className="container max-w-[1500px] py-4 flex items-center justify-between gap-4 flex-wrap">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-display text-gradient leading-none">
+              Customize Your Design
+            </h1>
+            <p className="text-xs text-muted-foreground mt-1">
+              Pick a jersey, paint each zone, stamp graphics — then send it to our team.
+            </p>
           </div>
+          <div className="flex items-center gap-2 bg-background/60 border border-border rounded-full p-1">
+            {(["front", "back"] as JerseyView[]).map((v) => (
+              <button
+                key={v}
+                type="button"
+                onClick={() => setView(v)}
+                className={cn(
+                  "px-4 py-1.5 rounded-full font-display uppercase text-xs tracking-wider transition-all",
+                  view === v
+                    ? "bg-accent text-accent-foreground shadow"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                {v}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
 
-          {/* RIGHT — colors */}
-          <aside className="space-y-6">
-            <div className="relative bg-gradient-to-br from-card via-card to-card/60 border border-border rounded-2xl p-5 space-y-5 overflow-hidden">
-              <div className="absolute -top-16 -right-16 w-40 h-40 bg-accent/15 blur-3xl rounded-full pointer-events-none" />
-              <div className="absolute -bottom-16 -left-16 w-40 h-40 bg-primary/15 blur-3xl rounded-full pointer-events-none" />
+      {/* Main 2-column layout */}
+      <section className="flex-1">
+        <div className="container max-w-[1500px] py-6">
+          <div className="grid lg:grid-cols-[1fr_400px] gap-6 h-[calc(100vh-220px)] min-h-[600px]">
+            {/* LEFT — 3D stage */}
+            <div className="relative">
+              <JerseyCanvas
+                ref={canvasRef}
+                type={jerseyType}
+                view={view}
+                colors={colors}
+                vectors={vectors}
+                selectedVectorId={selectedVectorId}
+                onSelectVector={setSelectedVectorId}
+                onMoveVector={(id, x, y) =>
+                  setVectors((prev) => prev.map((v) => (v.id === id ? { ...v, x, y } : v)))
+                }
+                onRemoveVector={(id) => {
+                  setVectors((prev) => prev.filter((v) => v.id !== id));
+                  setSelectedVectorId(null);
+                }}
+              />
+            </div>
 
-              {/* Zone picker */}
-              <div className="relative">
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="h-1.5 w-6 rounded-full bg-gradient-to-r from-accent to-primary" />
-                  <h2 className="font-display uppercase tracking-[0.2em] text-xs text-foreground">
-                    {selectedVector ? "Graphic" : "Paint Zone"}
-                  </h2>
-                </div>
-                {!selectedVector ? (
-                  <div className="grid grid-cols-2 gap-2">
-                    {(Object.keys(ZONE_LABELS) as ZoneKey[]).map((k) => {
-                      const active = selectedZone === k;
-                      return (
+            {/* RIGHT — control panel */}
+            <aside className="bg-card border border-border rounded-2xl flex flex-col overflow-hidden">
+              <Tabs
+                value={tab}
+                onValueChange={(v) => setTab(v as typeof tab)}
+                className="flex-1 flex flex-col"
+              >
+                <TabsList className="grid grid-cols-4 w-full rounded-none bg-card border-b border-border h-auto p-0">
+                  <TabTrigger value="design" icon={<Shirt className="h-4 w-4" />} label="Design" />
+                  <TabTrigger value="colors" icon={<Palette className="h-4 w-4" />} label="Colors" />
+                  <TabTrigger value="graphics" icon={<Sparkles className="h-4 w-4" />} label="Graphics" />
+                  <TabTrigger value="review" icon={<ClipboardCheck className="h-4 w-4" />} label="Review" />
+                </TabsList>
+
+                <div className="flex-1 overflow-y-auto p-5">
+                  {/* DESIGN */}
+                  <TabsContent value="design" className="m-0 space-y-3">
+                    <SectionHeader title="Jersey Type" />
+                    <div className="grid grid-cols-1 gap-2">
+                      {(Object.keys(JERSEY_TYPE_LABELS) as JerseyType[]).map((t) => (
                         <button
-                          key={k}
+                          key={t}
                           type="button"
-                          onClick={() => setSelectedZone(k)}
+                          onClick={() => setJerseyType(t)}
                           className={cn(
-                            "relative px-2.5 py-2.5 rounded-lg font-display text-[11px] uppercase tracking-wider border transition-all flex items-center gap-2 group",
-                            active
-                              ? "border-accent bg-gradient-to-br from-accent/20 to-transparent text-foreground shadow-[0_0_14px_-4px_hsl(var(--accent)/0.6)]"
+                            "group w-full text-left px-4 py-3 rounded-xl font-display text-sm transition-all border flex items-center justify-between",
+                            jerseyType === t
+                              ? "border-accent bg-accent/10 text-foreground shadow-[0_0_18px_-6px_hsl(var(--accent)/0.7)]"
                               : "border-border text-muted-foreground hover:text-foreground hover:border-accent/40 hover:bg-accent/5"
                           )}
                         >
+                          <span>{JERSEY_TYPE_LABELS[t]}</span>
                           <span
-                            className="w-5 h-5 rounded-md border border-foreground/20 shadow-inner shrink-0"
-                            style={{
-                              background: `linear-gradient(135deg, ${colors[k]} 0%, ${colors[k]} 60%, rgba(0,0,0,0.25))`,
-                            }}
+                            className={cn(
+                              "h-2 w-2 rounded-full transition-all",
+                              jerseyType === t
+                                ? "bg-accent shadow-[0_0_8px_hsl(var(--accent))]"
+                                : "bg-border group-hover:bg-accent/50"
+                            )}
                           />
-                          <span className="truncate">{ZONE_LABELS[k]}</span>
                         </button>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg border border-accent/40 bg-accent/5">
-                    <span
-                      className="w-6 h-6 rounded-md border border-foreground/20 shrink-0"
-                      style={{ background: selectedVector.color }}
-                    />
-                    <span className="font-display text-xs uppercase tracking-wider text-foreground">
-                      {selectedVector.vectorId}
-                    </span>
-                  </div>
-                )}
-              </div>
+                      ))}
+                    </div>
+                  </TabsContent>
 
-              {/* Palette */}
-              <div className="relative">
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="h-1.5 w-6 rounded-full bg-gradient-to-r from-primary to-accent" />
-                  <h2 className="font-display uppercase tracking-[0.2em] text-xs text-foreground">
-                    Color Palette
-                  </h2>
+                  {/* COLORS */}
+                  <TabsContent value="colors" className="m-0 space-y-5">
+                    <div>
+                      <SectionHeader title={selectedVector ? "Graphic" : "Paint Zone"} />
+                      {!selectedVector ? (
+                        <div className="grid grid-cols-2 gap-2">
+                          {(Object.keys(ZONE_LABELS) as ZoneKey[]).map((k) => {
+                            const active = selectedZone === k;
+                            return (
+                              <button
+                                key={k}
+                                type="button"
+                                onClick={() => setSelectedZone(k)}
+                                className={cn(
+                                  "px-3 py-2.5 rounded-lg font-display text-[11px] uppercase tracking-wider border transition-all flex items-center gap-2",
+                                  active
+                                    ? "border-accent bg-accent/10 text-foreground shadow-[0_0_14px_-4px_hsl(var(--accent)/0.6)]"
+                                    : "border-border text-muted-foreground hover:text-foreground hover:border-accent/40"
+                                )}
+                              >
+                                <span
+                                  className="w-5 h-5 rounded-md border border-foreground/20 shadow-inner shrink-0"
+                                  style={{ background: colors[k] }}
+                                />
+                                <span className="truncate">{ZONE_LABELS[k]}</span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg border border-accent/40 bg-accent/5">
+                          <div className="flex items-center gap-2">
+                            <span
+                              className="w-6 h-6 rounded-md border border-foreground/20"
+                              style={{ background: selectedVector.color }}
+                            />
+                            <span className="font-display text-xs uppercase tracking-wider">
+                              {selectedVector.vectorId}
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setSelectedVectorId(null)}
+                            className="text-[10px] uppercase tracking-wider text-muted-foreground hover:text-foreground"
+                          >
+                            Deselect
+                          </button>
+                        </div>
+                      )}
+                    </div>
+
+                    <div>
+                      <SectionHeader title="Color Palette" />
+                      <ColorPalette
+                        selectedColor={selectedVector ? selectedVector.color : colors[selectedZone]}
+                        onPick={pickColor}
+                      />
+                    </div>
+                  </TabsContent>
+
+                  {/* GRAPHICS */}
+                  <TabsContent value="graphics" className="m-0 space-y-4">
+                    <SectionHeader title="Add Graphic" />
+                    <p className="text-xs text-muted-foreground -mt-2">Tap to add — drag to position.</p>
+                    <div className="grid grid-cols-4 gap-2">
+                      {VECTOR_LIST.map(({ id, label }) => {
+                        const V = VectorComponents[id];
+                        return (
+                          <button
+                            key={id}
+                            type="button"
+                            onClick={() => addVector(id)}
+                            title={label}
+                            className="aspect-square bg-background/60 border border-border rounded-lg p-2 hover:border-accent hover:bg-accent/10 hover:scale-105 transition-all flex items-center justify-center"
+                          >
+                            <V color="hsl(var(--foreground))" size={36} />
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    {selectedVector && (
+                      <div className="bg-background/60 border border-border rounded-xl p-3 space-y-2 mt-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-display uppercase tracking-wider text-muted-foreground">
+                            Selected: {selectedVector.vectorId}
+                          </span>
+                          <span className="text-xs text-muted-foreground">
+                            Size {selectedVector.scale.toFixed(1)}×
+                          </span>
+                        </div>
+                        <input
+                          type="range"
+                          min={0.3}
+                          max={2.5}
+                          step={0.1}
+                          value={selectedVector.scale}
+                          onChange={(e) => updateScale(Number(e.target.value))}
+                          className="w-full accent-[hsl(var(--accent))]"
+                        />
+                      </div>
+                    )}
+                  </TabsContent>
+
+                  {/* REVIEW */}
+                  <TabsContent value="review" className="m-0 space-y-4">
+                    <SectionHeader title="Summary" />
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between border-b border-border/60 pb-2">
+                        <span className="text-muted-foreground">Jersey type</span>
+                        <span className="font-display">{JERSEY_TYPE_LABELS[jerseyType]}</span>
+                      </div>
+                      {(Object.keys(ZONE_LABELS) as ZoneKey[]).map((k) => (
+                        <div key={k} className="flex justify-between items-center border-b border-border/60 pb-2">
+                          <span className="text-muted-foreground">{ZONE_LABELS[k]}</span>
+                          <span className="flex items-center gap-2 font-mono text-xs">
+                            <span
+                              className="w-4 h-4 rounded border border-foreground/20"
+                              style={{ background: colors[k] }}
+                            />
+                            {colors[k].toUpperCase()}
+                          </span>
+                        </div>
+                      ))}
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Graphics</span>
+                        <span className="font-display">{vectors.length}</span>
+                      </div>
+                    </div>
+                  </TabsContent>
                 </div>
-                <ColorPalette
-                  selectedColor={selectedVector ? selectedVector.color : colors[selectedZone]}
-                  onPick={pickColor}
-                />
-              </div>
-            </div>
-          </aside>
+
+                {/* Sticky footer */}
+                <div className="border-t border-border p-3 bg-card flex gap-2">
+                  <Button variant="outline" onClick={reset} className="flex-1">
+                    <RotateCcw className="h-4 w-4 mr-2" /> Reset
+                  </Button>
+                  <Button variant="hero" onClick={sendToEnquiry} className="flex-[2]">
+                    <Send className="h-4 w-4 mr-2" /> Send to Enquiry
+                  </Button>
+                </div>
+              </Tabs>
+            </aside>
+          </div>
         </div>
       </section>
 
@@ -326,5 +368,34 @@ const Customize = () => {
     </div>
   );
 };
+
+const SectionHeader = ({ title }: { title: string }) => (
+  <div className="flex items-center gap-2 mb-3">
+    <span className="h-1.5 w-6 rounded-full bg-gradient-to-r from-accent to-primary" />
+    <h2 className="font-display uppercase tracking-[0.2em] text-xs text-foreground">{title}</h2>
+  </div>
+);
+
+const TabTrigger = ({
+  value,
+  icon,
+  label,
+}: {
+  value: string;
+  icon: React.ReactNode;
+  label: string;
+}) => (
+  <TabsTrigger
+    value={value}
+    className={cn(
+      "rounded-none h-12 flex flex-col items-center justify-center gap-0.5 text-[10px] uppercase tracking-wider font-display border-b-2 border-transparent",
+      "data-[state=active]:border-accent data-[state=active]:bg-accent/5 data-[state=active]:text-foreground data-[state=active]:shadow-none",
+      "text-muted-foreground hover:text-foreground transition-colors"
+    )}
+  >
+    {icon}
+    <span>{label}</span>
+  </TabsTrigger>
+);
 
 export default Customize;

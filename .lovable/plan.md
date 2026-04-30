@@ -1,88 +1,64 @@
-## Custom Your Design — Interactive Jersey Builder
+## Goal
 
-A new public page where visitors can pick a jersey type, recolor its zones, and stamp simple vector graphics onto it. When done, their selections are passed to the existing Enquiry form so they can submit contact details.
+Restyle the `/customize` page to mimic owayo's 3D Designer layout & feel — a clean, light, studio-style configurator with a big 3D stage on the left and a tabbed control panel docked on the right.
 
-### Page layout
+## Reference layout (owayo)
 
 ```text
-┌──────────────────────────────────────────────────────────────┐
-│ Navbar                                                        │
-├──────────────┬───────────────────────────┬───────────────────┤
-│ JERSEY TYPE  │                           │  COLORS           │
-│ ◉ Standard   │                           │  ▢▢▢▢▢▢▢▢        │
-│ ○ Long Sleeve│      [ Live SVG          │  ▢▢▢▢▢▢▢▢        │
-│ ○ Singlet    │        Jersey Preview ]   │  + custom hex     │
-│ ○ Collared   │                           │                   │
-│              │      Front / Back toggle  │  ZONES            │
-│ VECTORS      │                           │  • Body  ■        │
-│ [stripe]     │                           │  • Sleeves ■     │
-│ [chevron]    │                           │  • Collar ■       │
-│ [star] ...   │                           │  • Side panel ■   │
-│              │                           │                   │
-│              │                           │  [ Reset ]        │
-│              │                           │  [ Send to Enquiry] │
-└──────────────┴───────────────────────────┴───────────────────┘
+┌──────────────────────────────────────────────┬────────────────────────┐
+│  [logo] owayo 3D Designer                    │  Change Product | Feat │
+│                                              │  ─────────────────────│
+│                                              │  ( Design )( Colors ) │
+│                                              │  ( Text )( Logos )    │
+│                                              │                       │
+│            ┌──────────────┐                  │  [active tab content] │
+│   ‹  →     │   3D JERSEY  │   ←  ›           │                       │
+│            └──────────────┘                  │                       │
+│                                              │                       │
+│  [zoom+] [zoom-] [rotate] [undo] [reset]     │                       │
+│                                              │  Save  Drafts  Roster │
+│                                              │  [ Add to cart ]      │
+└──────────────────────────────────────────────┴────────────────────────┘
 ```
 
-### Features
+## Changes
 
-1. **Jersey type picker** — 4 options matching existing catalogue: Standard Cutting (default), Long Sleeve, Singlet, Collared. Switching swaps the SVG template; chosen colors persist across types when the zone exists.
+### 1. Page layout (`src/pages/Customize.tsx`)
+- Replace the current 3-column grid with a 2-column layout: large 3D stage (≈65% width) on the left, control panel (≈35%, max ~440px) on the right.
+- Light "studio" background for the stage area (soft off-white/very light gray) instead of the dark card it sits in now — matches owayo's airy feel.
+- Move all controls (jersey type, zones, palette, graphics) into the right panel as **tabs**: `Design` (jersey type) · `Colors` (zones + palette) · `Graphics` (vector library) · `Review` (summary + send).
+- Floating toolbar overlay on the bottom-left of the stage: Zoom in / Zoom out / Reset rotation / Undo / Front-Back toggle — using small round icon buttons like owayo.
+- Sticky footer inside right panel with **Reset** + **Send to Enquiry** (styled like owayo's "Add to cart" pill button).
+- Keep the "Customize Your Design" hero but make it a slim header bar above the stage rather than a tall hero.
 
-2. **Live SVG preview** — Flat front/back jersey illustrations with named, separately-fillable zones (`body`, `sleeves`, `collar`, `sidePanel`). All zones default to **white**. Front/back toggle button.
+### 2. 3D stage styling (`src/components/customize/Jersey3D.tsx`)
+- Switch background from dark gray `#5a5a5d` to a soft light studio (`#f3f4f6` → radial gradient to `#e5e7eb`) to match owayo's clean look.
+- Adjust lighting for the lighter backdrop (reduce ambient slightly, soften directional, keep contact shadows).
+- Keep the existing geometry — model replacement is on hold until you provide a `.glb`.
 
-3. **Color picker**
-   - Curated swatch palette (~20 colors: white, black, greys, reds, blues, greens, yellow, orange, purple, pink, gold, navy, maroon).
-   - Custom HEX input for anything off-palette.
-   - User first selects which zone to paint, then taps a color.
+### 3. Right panel — tabbed controls
+- Use the existing shadcn `Tabs` component for `Design / Colors / Graphics / Review`.
+- **Design tab**: jersey type list (current cards, simplified — light theme).
+- **Colors tab**: zone selector (Body / Sleeves / Collar / Side panel) as a row of pill chips with a color swatch dot, then the palette grid below. If a graphic is selected, swap to "Graphic color" mode like today.
+- **Graphics tab**: the vector grid (tap to add). Includes the size slider for the currently selected graphic.
+- **Review tab**: small summary list (jersey type, each zone color w/ swatch, graphics count) + the Send button.
 
-4. **Vector graphics library** (~10 starter SVG shapes)
-   - stripe, chevron, diagonal slash, dots pattern, star, flame, lightning, wing, shield, tiger-stripe.
-   - Click to add onto the jersey; placed graphic can be dragged, resized via corner handle, recolored, and removed (X button).
-   - Stored as an array of `{vectorId, x, y, scale, rotation, color}`.
+### 4. Floating canvas toolbar (`JerseyCanvas` or new overlay)
+- Bottom-left vertical stack of round icon buttons (Lucide: `ZoomIn`, `ZoomOut`, `RotateCcw`, `Undo2`, `RefreshCw`).
+- Front/Back toggle becomes a pill at the top-center of the stage (like owayo's arrow chevrons but clearer).
+- Zoom buttons drive the existing `OrbitControls` via a ref (`controls.dollyIn / dollyOut` then `update()`), reset button resets camera + rotation.
 
-5. **Send to Enquiry**
-   - Generates a PNG snapshot of the preview using `html-to-image` (lightweight, no canvas-tainting issues since everything is inline SVG).
-   - Builds a structured summary string: jersey type + color list + vector list.
-   - Navigates to `/enquiry` with the summary pre-filled into the existing `notes` / `jersey_type` field via React Router `state`. The Enquiry page reads `location.state` on mount and pre-fills the form.
-   - The PNG preview is shown above the enquiry form as a thumbnail so the user (and admins later) can see what they designed.
+### 5. Theming tweaks
+- Use Tailwind tokens already in the project; introduce light-stage utility classes (no new global tokens needed).
+- Keep the accent/primary color story consistent — buttons, active tab, Send-to-Enquiry pill all use `accent`.
 
-6. **Navigation** — Add "Customize" link to `Navbar` between Catalogue and Enquiry. Add a CTA card on the Catalogue page linking to `/customize`.
+## Files to edit
 
-### Technical details
+- `src/pages/Customize.tsx` — full restructure into 2-col + tabs.
+- `src/components/customize/Jersey3D.tsx` — lighter background + minor lighting tweak; expose imperative camera/orbit ref for toolbar.
+- `src/components/customize/JerseyCanvas.tsx` — render the floating toolbar overlay; forward ref for zoom/reset.
+- (No new dependencies — `@radix-ui/react-tabs` is already in shadcn `tabs.tsx`.)
 
-**New files**
-- `src/pages/Customize.tsx` — main page, layout, state management.
-- `src/components/customize/JerseyCanvas.tsx` — wraps the SVG, handles vector placement/drag.
-- `src/components/customize/jerseyTemplates.tsx` — 4 SVG components (Standard, LongSleeve, Singlet, Collared) each accepting `colors: { body, sleeves, collar, sidePanel }` and a `view: 'front' | 'back'` prop. Shapes drawn with rounded vector paths in a clean flat style.
-- `src/components/customize/vectorLibrary.tsx` — 10 inline SVG vector components with `color` prop.
-- `src/components/customize/ColorPalette.tsx` — swatch grid + hex input.
-
-**Modified files**
-- `src/App.tsx` — add `<Route path="/customize" element={<Customize />} />`.
-- `src/components/Navbar.tsx` — add `{ to: "/customize", label: "Customize" }`.
-- `src/pages/Enquiry.tsx` — read `location.state.customDesign` (summary string + preview dataURL), pre-fill notes textarea, render preview thumbnail above form.
-- `src/pages/Catalogue.tsx` — add a small CTA section linking to the customizer.
-
-**Dependencies**
-- Add `html-to-image` (~15kb) for SVG → PNG export.
-
-**State shape (Customize page)**
-```ts
-type ZoneColors = { body: string; sleeves: string; collar: string; sidePanel: string };
-type PlacedVector = { id: string; vectorId: string; x: number; y: number; scale: number; rotation: number; color: string };
-type DesignState = {
-  jerseyType: 'standard' | 'long-sleeve' | 'singlet' | 'collared';
-  view: 'front' | 'back';
-  colors: ZoneColors;
-  vectors: PlacedVector[];
-  selectedZone: keyof ZoneColors;
-  selectedVectorId: string | null;
-};
-```
-
-**No backend changes required.** Submissions still flow through the existing `enquiries` table via the unchanged Enquiry form. PNG preview is held in memory only (passed via router state), since storage of design images can be added later if needed.
-
-### Out of scope (future)
-- Saving designs to the database / user accounts.
-- Number, name, and logo upload onto the jersey (can be added as another vector slot later).
-- Realistic 3D mockup — current scope is clean flat SVG only.
+## Out of scope (waiting on you)
+- Replacing the 3D model with a real jersey `.glb` — you mentioned you'll send a file. I'll wire it up via `useGLTF` once it lands.
+- Real-time text/logo upload features (owayo has them but you haven't asked for them yet).
