@@ -5,7 +5,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/landing/Footer";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Send, RotateCcw, Sparkles } from "lucide-react";
+import { Send, RotateCcw } from "lucide-react";
 import { toast } from "sonner";
 
 import {
@@ -118,7 +118,7 @@ const Customize = () => {
       {/* Hero */}
       <section className="py-12 text-center space-y-3 animate-slide-up">
         <h1 className="text-4xl md:text-6xl font-display text-gradient title-glow inline-block">
-          Custom Your Design
+          Customize Your Design
         </h1>
         <p className="text-muted-foreground max-w-xl mx-auto text-sm">
           Pick a jersey, paint each zone, and stamp graphics. When you're done, we'll send it straight to our team.
