@@ -144,12 +144,16 @@ const Enquiry = () => {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-sm font-medium text-foreground">Organisation / Team</label>
-              <Input
+              <label className="text-sm font-medium text-foreground">
+                {customDesign ? "Organisation / Team & Design Notes" : "Organisation / Team"}
+              </label>
+              <textarea
                 placeholder="e.g. Falcon FC"
                 value={form.organisation}
                 onChange={(e) => setForm({ ...form, organisation: e.target.value })}
-                maxLength={200}
+                maxLength={1000}
+                rows={customDesign ? 6 : 2}
+                className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               />
             </div>
 
