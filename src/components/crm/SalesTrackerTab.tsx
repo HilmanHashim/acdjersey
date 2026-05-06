@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,12 +7,11 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Trash2, Plus, Target, TrendingUp, Users, DollarSign } from "lucide-react";
+import { Trash2, Plus } from "lucide-react";
 import { toast } from "sonner";
 
 const SALESPEOPLE = ["JEED", "DIDO", "MUNIR", "ALIFF", "HILMAN", "UMAR"] as const;
 const ENERGY_LEVELS = ["🔥 On Fire", "💪🏻 Bring it on", "✊🏻 All Good", "😐 Tough day", "😔 Struggling"];
-const MONTHLY_TARGET = 55000;
 
 type SalesEntry = {
   id: string;
@@ -70,87 +69,8 @@ const SalesTrackerTab = () => {
     };
   }, [qc]);
 
-  // Aggregations
-  const today = todayISO();
-  const mStart = monthStart();
-
-  const aggregate = (rows: SalesEntry[]) => {
-    return rows.reduce(
-      (acc, r) => {
-        acc.leads += r.new_leads || 0;
-        acc.contacted += r.prospects_contacted || 0;
-        acc.quotes += r.quotations_sent || 0;
-        acc.closed += r.orders_closed || 0;
-        acc.revenue += Number(r.revenue_closed) || 0;
-        acc.pcs += r.quantity || 0;
-        return acc;
-      },
-      { leads: 0, contacted: 0, quotes: 0, closed: 0, revenue: 0, pcs: 0 }
-    );
-  };
-
-  const monthRows = useMemo(() => entries.filter((e) => e.entry_date >= mStart), [entries, mStart]);
-  const todayRows = useMemo(() => entries.filter((e) => e.entry_date === today), [entries, today]);
-
-  const monthTotals = aggregate(monthRows);
-  const pctAchieved = (monthTotals.revenue / MONTHLY_TARGET) * 100;
-
-  const perPersonMonth = SALESPEOPLE.map((sp) => ({
-    name: sp,
-    ...aggregate(monthRows.filter((r) => r.salesperson === sp)),
-  }));
-  const perPersonToday = SALESPEOPLE.map((sp) => ({
-    name: sp,
-    ...aggregate(todayRows.filter((r) => r.salesperson === sp)),
-    energy: todayRows.find((r) => r.salesperson === sp)?.energy_level || "—",
-  }));
-
   return (
     <div className="space-y-6">
-      {/* DASHBOARD */}
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-lg font-display flex items-center gap-2">
-            <Target className="h-5 w-5" /> Monthly Target Progress
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-6 gap-3 text-center">
-            <Stat label="Target" value={`RM ${MONTHLY_TARGET.toLocaleString()}`} icon={Target} />
-            <Stat label="Revenue" value={`RM ${monthTotals.revenue.toLocaleString()}`} icon={DollarSign} accent />
-            <Stat label="% Achieved" value={`${pctAchieved.toFixed(1)}%`} icon={TrendingUp} />
-            <Stat label="Orders Closed" value={monthTotals.closed} icon={Users} />
-            <Stat label="Total Leads" value={monthTotals.leads} icon={Users} />
-            <Stat label="Days Left" value={daysLeftInMonth()} icon={Target} />
-          </div>
-          <div className="mt-4 h-3 w-full rounded-full bg-muted overflow-hidden">
-            <div
-              className="h-full bg-gradient-to-r from-primary to-emerald-500 transition-all"
-              style={{ width: `${Math.min(100, pctAchieved)}%` }}
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base font-display">👤 Team Performance — Today</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <PerfTable rows={perPersonToday} showEnergy />
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base font-display">📈 Month Cumulative — Individual</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <PerfTable rows={perPersonMonth} />
-        </CardContent>
-      </Card>
-
-      {/* ENTRY FORMS */}
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-lg font-display">📝 Daily Entry</CardTitle>
@@ -173,47 +93,6 @@ const SalesTrackerTab = () => {
     </div>
   );
 };
-
-const Stat = ({ label, value, icon: Icon, accent }: any) => (
-  <div className={`p-3 rounded-lg border ${accent ? "bg-primary/10 border-primary/30" : "bg-muted/30"}`}>
-    <Icon className="h-4 w-4 mx-auto mb-1 text-muted-foreground" />
-    <p className="text-xs text-muted-foreground">{label}</p>
-    <p className="text-lg font-bold">{value}</p>
-  </div>
-);
-
-const PerfTable = ({ rows, showEnergy }: { rows: any[]; showEnergy?: boolean }) => (
-  <div className="border rounded-lg overflow-x-auto">
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Name</TableHead>
-          <TableHead className="text-center">Leads</TableHead>
-          <TableHead className="text-center">Contacted</TableHead>
-          <TableHead className="text-center">Quotes</TableHead>
-          <TableHead className="text-center">Closed</TableHead>
-          <TableHead className="text-right">Revenue (RM)</TableHead>
-          <TableHead className="text-center">Pcs</TableHead>
-          {showEnergy && <TableHead>Energy</TableHead>}
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {rows.map((r) => (
-          <TableRow key={r.name}>
-            <TableCell className="font-medium">{r.name}</TableCell>
-            <TableCell className="text-center">{r.leads}</TableCell>
-            <TableCell className="text-center">{r.contacted}</TableCell>
-            <TableCell className="text-center">{r.quotes}</TableCell>
-            <TableCell className="text-center">{r.closed}</TableCell>
-            <TableCell className="text-right font-mono">{r.revenue.toLocaleString()}</TableCell>
-            <TableCell className="text-center">{r.pcs}</TableCell>
-            {showEnergy && <TableCell className="text-xs">{r.energy}</TableCell>}
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
-  </div>
-);
 
 const SalespersonForm = ({ salesperson, entries }: { salesperson: string; entries: SalesEntry[] }) => {
   const qc = useQueryClient();
