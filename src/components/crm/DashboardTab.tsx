@@ -186,20 +186,23 @@ const PerfTable = ({ rows, showEnergy, accent }: { rows: any[]; showEnergy?: boo
           </TableRow>
         </TableHeader>
         <TableBody>
-          {rows.map((r) => (
-            <TableRow key={r.name} className="hover:bg-muted/40">
+          {rows.map((r, i) => (
+            <TableRow
+              key={r.name}
+              className={`${i % 2 === 0 ? "bg-background" : "bg-muted/60 dark:bg-muted/30"} hover:bg-accent/60 dark:hover:bg-accent/30`}
+            >
               <TableCell>
                 <span className={`inline-block px-2.5 py-1 rounded-md text-white text-xs font-bold bg-gradient-to-r ${PERSON_COLORS[r.name] || "from-slate-500 to-slate-600"}`}>
                   {r.name}
                 </span>
               </TableCell>
-              <TableCell className="text-center font-medium text-blue-600 dark:text-blue-400">{r.leads}</TableCell>
-              <TableCell className="text-center font-medium text-cyan-600 dark:text-cyan-400">{r.contacted}</TableCell>
-              <TableCell className="text-center font-medium text-violet-600 dark:text-violet-400">{r.quotes}</TableCell>
-              <TableCell className="text-center font-bold text-emerald-600 dark:text-emerald-400">{r.closed}</TableCell>
-              <TableCell className="text-right font-mono font-bold text-amber-600 dark:text-amber-400">{r.revenue.toLocaleString()}</TableCell>
-              <TableCell className="text-center font-medium text-pink-600 dark:text-pink-400">{r.pcs}</TableCell>
-              {showEnergy && <TableCell className="text-xs">{r.energy}</TableCell>}
+              <TableCell className="text-center font-semibold text-blue-700 dark:text-blue-300">{r.leads}</TableCell>
+              <TableCell className="text-center font-semibold text-cyan-700 dark:text-cyan-300">{r.contacted}</TableCell>
+              <TableCell className="text-center font-semibold text-violet-700 dark:text-violet-300">{r.quotes}</TableCell>
+              <TableCell className="text-center font-bold text-emerald-700 dark:text-emerald-300">{r.closed}</TableCell>
+              <TableCell className="text-right font-mono font-bold text-amber-700 dark:text-amber-300">{r.revenue.toLocaleString()}</TableCell>
+              <TableCell className="text-center font-semibold text-pink-700 dark:text-pink-300">{r.pcs}</TableCell>
+              {showEnergy && <TableCell className="text-xs text-foreground">{r.energy}</TableCell>}
             </TableRow>
           ))}
         </TableBody>
