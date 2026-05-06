@@ -312,7 +312,7 @@ const DashboardTab = () => {
           👤  TEAM PERFORMANCE — {isCurrentMonth ? "TODAY" : focusDate.toUpperCase()}
         </div>
         <div className="overflow-hidden">
-          <table className="w-full table-auto text-sm border-separate border-spacing-0 [&_td]:border [&_th]:border" style={{ borderColor: "#2A2A30" }}>
+          <table className="w-full table-auto text-sm border-separate border-spacing-0 [&_td]:border [&_th]:border" style={{ borderColor: BORDER_COL }}>
             <thead>
               <tr>
                 {["NAME","LEADS","CONTACTED","QUOTES SENT","CLOSED","REVENUE (RM)","ENERGY","AVG PRICE PER PC","TOTAL PCS"].map((h) => (
@@ -324,15 +324,15 @@ const DashboardTab = () => {
             <tbody>
               {todayPer.map((p, i) => (
                 <tr key={p.key} style={{ background: i % 2 === 0 ? C.panel : C.panelAlt }}>
-                  <td className="px-3 py-2 whitespace-nowrap font-bold border" style={{ color: C.text, borderColor: "#2A2A30" }}>{p.label}</td>
-                  <td className="px-3 py-2 whitespace-nowrap border" style={{ color: C.text, borderColor: "#2A2A30" }}>{p.leads}</td>
-                  <td className="px-3 py-2 whitespace-nowrap border" style={{ color: C.text, borderColor: "#2A2A30" }}>{p.contacted}</td>
-                  <td className="px-3 py-2 whitespace-nowrap border" style={{ color: C.yellow, borderColor: "#2A2A30" }}>{p.quotes}</td>
-                  <td className="px-3 py-2 whitespace-nowrap border" style={{ color: C.green, borderColor: "#2A2A30" }}>{p.closed}</td>
-                  <td className="px-3 py-2 whitespace-nowrap font-bold border" style={{ color: C.yellowBright, borderColor: "#2A2A30" }}>RM {fmtMoney(p.revenue)}</td>
-                  <td className="px-3 py-2 whitespace-nowrap text-xs border" style={{ color: C.subtle, borderColor: "#2A2A30" }}>{p.energy}</td>
-                  <td className="px-3 py-2 whitespace-nowrap font-bold border" style={{ color: C.yellow, borderColor: "#2A2A30" }}>{p.avgPrice ? `RM ${p.avgPrice.toFixed(2)}` : "—"}</td>
-                  <td className="px-3 py-2 whitespace-nowrap border" style={{ color: C.white, borderColor: "#2A2A30" }}>{p.pcs}</td>
+                  <td className="px-3 py-2 whitespace-nowrap font-bold border" style={{ color: C.text, borderColor: BORDER_COL }}>{p.label}</td>
+                  <td className="px-3 py-2 whitespace-nowrap border" style={{ color: C.text, borderColor: BORDER_COL }}>{p.leads}</td>
+                  <td className="px-3 py-2 whitespace-nowrap border" style={{ color: C.text, borderColor: BORDER_COL }}>{p.contacted}</td>
+                  <td className="px-3 py-2 whitespace-nowrap border" style={{ color: C.yellow, borderColor: BORDER_COL }}>{p.quotes}</td>
+                  <td className="px-3 py-2 whitespace-nowrap border" style={{ color: C.green, borderColor: BORDER_COL }}>{p.closed}</td>
+                  <td className="px-3 py-2 whitespace-nowrap font-bold border" style={{ color: C.yellowBright, borderColor: BORDER_COL }}>RM {fmtMoney(p.revenue)}</td>
+                  <td className="px-3 py-2 whitespace-nowrap text-xs border" style={{ color: C.subtle, borderColor: BORDER_COL }}>{p.energy}</td>
+                  <td className="px-3 py-2 whitespace-nowrap font-bold border" style={{ color: C.yellow, borderColor: BORDER_COL }}>{p.avgPrice ? `RM ${p.avgPrice.toFixed(2)}` : "—"}</td>
+                  <td className="px-3 py-2 whitespace-nowrap border" style={{ color: C.white, borderColor: BORDER_COL }}>{p.pcs}</td>
                 </tr>
               ))}
               <tr style={{ background: C.panelStrong }}>
@@ -360,7 +360,7 @@ const DashboardTab = () => {
           📈  MONTH CUMULATIVE — INDIVIDUAL
         </div>
         <div className="overflow-hidden">
-          <table className="w-full table-fixed text-sm border-separate border-spacing-0 [&_td]:border [&_th]:border" style={{ borderColor: "#2A2A30" }}>
+          <table className="w-full table-fixed text-sm border-separate border-spacing-0 [&_td]:border [&_th]:border" style={{ borderColor: BORDER_COL }}>
             <thead>
               <tr>
                 {[
@@ -385,16 +385,16 @@ const DashboardTab = () => {
                 const contrib = monthTotals.revenue > 0 ? p.revenue / monthTotals.revenue : 0;
                 return (
                 <tr key={p.key} style={{ background: i % 2 === 0 ? C.panel : C.panelAlt }}>
-                  <td className="px-2 py-2 truncate font-bold border" style={{ color: C.text, borderColor: "#2A2A30" }}>{p.label}</td>
-                  <td className="px-2 py-2 border" style={{ color: C.text, borderColor: "#2A2A30" }}>{p.leads}</td>
-                  <td className="px-2 py-2 border" style={{ color: C.text, borderColor: "#2A2A30" }}>{p.contacted}</td>
-                  <td className="px-2 py-2 border" style={{ color: C.yellow, borderColor: "#2A2A30" }}>{p.quotes}</td>
-                  <td className="px-2 py-2 font-bold border" style={{ color: C.green, borderColor: "#2A2A30" }}>{p.closed}</td>
-                  <td className="px-2 py-2 font-bold border" style={{ color: C.yellowBright, borderColor: "#2A2A30" }}>RM {fmtMoney(p.revenue)}</td>
-                  <td className="px-2 py-2 font-bold border" style={{ color: C.blue, borderColor: "#2A2A30" }}>{fmtPct(p.closeRate)}</td>
-                  <td className="px-2 py-2 font-bold border" style={{ color: C.yellow, borderColor: "#2A2A30" }}>{p.avgPrice ? `RM ${p.avgPrice.toFixed(2)}` : "—"}</td>
-                  <td className="px-2 py-2 border" style={{ color: C.white, borderColor: "#2A2A30" }}>{p.pcs}</td>
-                  <td className="px-2 py-2 font-bold border" style={{ color: C.green, borderColor: "#2A2A30" }}>{fmtPct(contrib)}</td>
+                  <td className="px-2 py-2 truncate font-bold border" style={{ color: C.text, borderColor: BORDER_COL }}>{p.label}</td>
+                  <td className="px-2 py-2 border" style={{ color: C.text, borderColor: BORDER_COL }}>{p.leads}</td>
+                  <td className="px-2 py-2 border" style={{ color: C.text, borderColor: BORDER_COL }}>{p.contacted}</td>
+                  <td className="px-2 py-2 border" style={{ color: C.yellow, borderColor: BORDER_COL }}>{p.quotes}</td>
+                  <td className="px-2 py-2 font-bold border" style={{ color: C.green, borderColor: BORDER_COL }}>{p.closed}</td>
+                  <td className="px-2 py-2 font-bold border" style={{ color: C.yellowBright, borderColor: BORDER_COL }}>RM {fmtMoney(p.revenue)}</td>
+                  <td className="px-2 py-2 font-bold border" style={{ color: C.blue, borderColor: BORDER_COL }}>{fmtPct(p.closeRate)}</td>
+                  <td className="px-2 py-2 font-bold border" style={{ color: C.yellow, borderColor: BORDER_COL }}>{p.avgPrice ? `RM ${p.avgPrice.toFixed(2)}` : "—"}</td>
+                  <td className="px-2 py-2 border" style={{ color: C.white, borderColor: BORDER_COL }}>{p.pcs}</td>
+                  <td className="px-2 py-2 font-bold border" style={{ color: C.green, borderColor: BORDER_COL }}>{fmtPct(contrib)}</td>
                 </tr>
                 );
               })}
