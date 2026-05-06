@@ -187,7 +187,7 @@ const DashboardTab = () => {
           👤  TEAM PERFORMANCE — TODAY
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-sm border-collapse [&_td]:border [&_th]:border" style={{ borderColor: "#2A2A30" }}>
+            <table className="w-full table-fixed text-sm border-separate border-spacing-0 [&_td]:border [&_th]:border" style={{ borderColor: "#2A2A30" }}>
             <thead>
               <tr>
                 {["NAME","LEADS","CONTACTED","QUOTES SENT","CLOSED","REVENUE (RM)","ENERGY","AVG PRICE PER PC","TOTAL PCS"].map((h) => (
@@ -235,7 +235,7 @@ const DashboardTab = () => {
           📈  MONTH CUMULATIVE — INDIVIDUAL
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-sm border-collapse [&_td]:border [&_th]:border" style={{ borderColor: "#2A2A30" }}>
+            <table className="w-full table-fixed text-sm border-separate border-spacing-0 [&_td]:border [&_th]:border" style={{ borderColor: "#2A2A30" }}>
             <thead>
               <tr>
                 {["NAME","LEADS","CONTACTED","QUOTES","CLOSED","REVENUE (RM)","CLOSE RATE","TOTAL AVG PRICE PC","ALL TOTAL PCS"].map((h) => (
