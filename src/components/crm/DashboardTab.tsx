@@ -288,7 +288,7 @@ const DashboardTab = () => {
           </div>
           <div className="h-2.5 w-full rounded-full overflow-hidden relative" style={{ background: C.panelAlt }}>
             <div className="h-full transition-all rounded-full relative overflow-hidden"
-              style={{ width: `${Math.min(100, pct * 100)}%`, background: `linear-gradient(90deg, ${C.yellow}, ${C.green})` }}>
+              style={{ width: `${Math.min(100, pct * 100)}%`, background: HERO_GRADIENT }}>
               <div className="absolute inset-0 progress-sheen" />
             </div>
           </div>
