@@ -130,9 +130,9 @@ const DashboardTab = () => {
 
       {/* Today */}
       <Card className="border-2 border-orange-200 dark:border-orange-900/40">
-        <CardHeader className="pb-3 bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950/30 dark:to-amber-950/30 rounded-t-lg">
-          <CardTitle className="text-lg font-display flex items-center gap-2">
-            <Flame className="h-5 w-5 text-orange-500" /> Team Performance — Today
+        <CardHeader className="pb-3 bg-gradient-to-r from-orange-500 to-amber-500 rounded-t-lg">
+          <CardTitle className="text-lg font-display flex items-center gap-2 text-white">
+            <Flame className="h-5 w-5 text-white" /> Team Performance — Today
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-4">
@@ -142,9 +142,9 @@ const DashboardTab = () => {
 
       {/* Month cumulative */}
       <Card className="border-2 border-emerald-200 dark:border-emerald-900/40">
-        <CardHeader className="pb-3 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 rounded-t-lg">
-          <CardTitle className="text-lg font-display flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-emerald-500" /> Month Cumulative — Individual
+        <CardHeader className="pb-3 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-t-lg">
+          <CardTitle className="text-lg font-display flex items-center gap-2 text-white">
+            <TrendingUp className="h-5 w-5 text-white" /> Month Cumulative — Individual
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-4">
@@ -165,21 +165,21 @@ const HeroStat = ({ icon: Icon, label, value }: any) => (
 
 const PerfTable = ({ rows, showEnergy, accent }: { rows: any[]; showEnergy?: boolean; accent: "orange" | "emerald" }) => {
   const headBg = accent === "orange"
-    ? "bg-orange-100/60 dark:bg-orange-950/40"
-    : "bg-emerald-100/60 dark:bg-emerald-950/40";
+    ? "bg-orange-600 hover:bg-orange-600"
+    : "bg-emerald-600 hover:bg-emerald-600";
   return (
     <div className="border rounded-lg overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow className={headBg}>
-            <TableHead className="font-bold">Name</TableHead>
-            <TableHead className="text-center font-bold">Leads</TableHead>
-            <TableHead className="text-center font-bold">Contacted</TableHead>
-            <TableHead className="text-center font-bold">Quotes</TableHead>
-            <TableHead className="text-center font-bold">Closed</TableHead>
-            <TableHead className="text-right font-bold">Revenue (RM)</TableHead>
-            <TableHead className="text-center font-bold">Pcs</TableHead>
-            {showEnergy && <TableHead className="font-bold">Energy</TableHead>}
+            <TableHead className="font-bold text-white">Name</TableHead>
+            <TableHead className="text-center font-bold text-white">Leads</TableHead>
+            <TableHead className="text-center font-bold text-white">Contacted</TableHead>
+            <TableHead className="text-center font-bold text-white">Quotes</TableHead>
+            <TableHead className="text-center font-bold text-white">Closed</TableHead>
+            <TableHead className="text-right font-bold text-white">Revenue (RM)</TableHead>
+            <TableHead className="text-center font-bold text-white">Pcs</TableHead>
+            {showEnergy && <TableHead className="font-bold text-white">Energy</TableHead>}
           </TableRow>
         </TableHeader>
         <TableBody>
