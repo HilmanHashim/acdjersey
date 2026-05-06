@@ -3,7 +3,6 @@ import { Link, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/landing/Footer";
-import CartDrawer from "@/components/shop/CartDrawer";
 import { Button } from "@/components/ui/button";
 import { Minus, Plus, ArrowLeft } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
@@ -113,7 +112,6 @@ const ShopProduct = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <CartDrawer />
 
       <section className="container max-w-6xl py-10">
         <Link to="/shop" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">

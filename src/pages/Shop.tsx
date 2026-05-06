@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/landing/Footer";
-import CartDrawer from "@/components/shop/CartDrawer";
 import { Button } from "@/components/ui/button";
 
 type Product = {
@@ -46,7 +45,6 @@ const Shop = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <CartDrawer />
 
       <section className="py-16 text-center space-y-4">
         <p className="font-display text-accent uppercase tracking-[0.3em] text-sm">Shop</p>
