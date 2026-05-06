@@ -1,18 +1,42 @@
 import { useEffect, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Target, TrendingUp, Users, DollarSign, Package, Flame, CalendarDays } from "lucide-react";
 
-const SALESPEOPLE = ["JEED", "DIDO", "MUNIR", "ALIFF", "HILMAN", "UMAR"] as const;
 const MONTHLY_TARGET = 55000;
+
+// Salespeople in display order; key = sheet name in DB
+const PEOPLE: { key: string; label: string }[] = [
+  { key: "MUNIR", label: "🧢 Munir" },
+  { key: "DIDO", label: "📣 Dido" },
+  { key: "JEED", label: "⚡ Najeed" },
+  { key: "UMAR", label: "👑 Umar" },
+  { key: "ALIFF", label: "🔧 Aliff" },
+  { key: "HILMAN", label: "💻 Hilman" },
+];
+
+// Exact palette from Excel
+const C = {
+  bg: "#0C0C0E",
+  panel: "#131316",
+  panelAlt: "#1C1C21",
+  panelStrong: "#252529",
+  muted: "#55555E",
+  text: "#F0F0F2",
+  subtle: "#9999A8",
+  yellow: "#F0FF44",
+  yellowBright: "#FFFF00",
+  green: "#2DDF8A",
+  blue: "#4D9FFF",
+  orange: "#FF5C3A",
+  white: "#FFFFFF",
+};
 
 type SalesEntry = {
   id: string;
   salesperson: string;
   entry_date: string;
   quantity: number | null;
+  price_per_pc: number | null;
   new_leads: number;
   prospects_contacted: number;
   quotations_sent: number;
@@ -32,28 +56,24 @@ const daysLeftInMonth = () => {
   return last - d.getDate();
 };
 
-const aggregate = (rows: SalesEntry[]) =>
+const agg = (rows: SalesEntry[]) =>
   rows.reduce(
-    (acc, r) => {
-      acc.leads += r.new_leads || 0;
-      acc.contacted += r.prospects_contacted || 0;
-      acc.quotes += r.quotations_sent || 0;
-      acc.closed += r.orders_closed || 0;
-      acc.revenue += Number(r.revenue_closed) || 0;
-      acc.pcs += r.quantity || 0;
-      return acc;
+    (a, r) => {
+      a.leads += r.new_leads || 0;
+      a.contacted += r.prospects_contacted || 0;
+      a.quotes += r.quotations_sent || 0;
+      a.closed += r.orders_closed || 0;
+      a.revenue += Number(r.revenue_closed) || 0;
+      a.pcs += r.quantity || 0;
+      a.priceSum += Number(r.price_per_pc) || 0;
+      a.priceCount += r.price_per_pc ? 1 : 0;
+      return a;
     },
-    { leads: 0, contacted: 0, quotes: 0, closed: 0, revenue: 0, pcs: 0 }
+    { leads: 0, contacted: 0, quotes: 0, closed: 0, revenue: 0, pcs: 0, priceSum: 0, priceCount: 0 }
   );
 
-const PERSON_COLORS: Record<string, string> = {
-  JEED: "from-pink-500 to-rose-500",
-  DIDO: "from-amber-500 to-orange-500",
-  MUNIR: "from-emerald-500 to-teal-500",
-  ALIFF: "from-sky-500 to-blue-500",
-  HILMAN: "from-violet-500 to-purple-500",
-  UMAR: "from-yellow-500 to-amber-500",
-};
+const fmtMoney = (n: number) => n.toLocaleString(undefined, { maximumFractionDigits: 0 });
+const fmtPct = (n: number) => `${(n * 100).toFixed(1)}%`;
 
 const DashboardTab = () => {
   const qc = useQueryClient();
@@ -63,7 +83,7 @@ const DashboardTab = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("sales_entries")
-        .select("id,salesperson,entry_date,quantity,new_leads,prospects_contacted,quotations_sent,orders_closed,revenue_closed,energy_level")
+        .select("id,salesperson,entry_date,quantity,price_per_pc,new_leads,prospects_contacted,quotations_sent,orders_closed,revenue_closed,energy_level")
         .order("entry_date", { ascending: false });
       if (error) throw error;
       return (data || []) as SalesEntry[];
@@ -85,128 +105,166 @@ const DashboardTab = () => {
   const monthRows = useMemo(() => entries.filter((e) => e.entry_date >= mStart), [entries, mStart]);
   const todayRows = useMemo(() => entries.filter((e) => e.entry_date === today), [entries, today]);
 
-  const monthTotals = aggregate(monthRows);
-  const pctAchieved = (monthTotals.revenue / MONTHLY_TARGET) * 100;
+  const monthTotals = agg(monthRows);
+  const pct = monthTotals.revenue / MONTHLY_TARGET;
 
-  const perPersonMonth = SALESPEOPLE.map((sp) => ({
-    name: sp,
-    ...aggregate(monthRows.filter((r) => r.salesperson === sp)),
-  }));
-  const perPersonToday = SALESPEOPLE.map((sp) => ({
-    name: sp,
-    ...aggregate(todayRows.filter((r) => r.salesperson === sp)),
-    energy: todayRows.find((r) => r.salesperson === sp)?.energy_level || "—",
-  }));
+  const todayPer = PEOPLE.map((p) => {
+    const rows = todayRows.filter((r) => r.salesperson === p.key);
+    const a = agg(rows);
+    return {
+      ...p,
+      ...a,
+      energy: rows[0]?.energy_level || "—",
+      avgPrice: a.priceCount ? a.priceSum / a.priceCount : 0,
+    };
+  });
+  const monthPer = PEOPLE.map((p) => {
+    const rows = monthRows.filter((r) => r.salesperson === p.key);
+    const a = agg(rows);
+    return {
+      ...p,
+      ...a,
+      closeRate: a.leads ? a.closed / a.leads : 0,
+      avgPrice: a.priceCount ? a.priceSum / a.priceCount : 0,
+    };
+  });
+
+  const todayTotals = agg(todayRows);
 
   return (
-    <div className="space-y-6">
-      {/* Hero target progress */}
-      <Card className="overflow-hidden border-0 shadow-lg">
-        <div className="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 p-6 text-white">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <p className="text-xs uppercase tracking-widest opacity-80">Monthly Target Progress</p>
-              <h2 className="text-3xl font-display font-bold mt-1">RM {monthTotals.revenue.toLocaleString()} <span className="text-lg opacity-70">/ RM {MONTHLY_TARGET.toLocaleString()}</span></h2>
-            </div>
-            <div className="text-right">
-              <p className="text-5xl font-bold font-display">{pctAchieved.toFixed(1)}%</p>
-              <p className="text-xs opacity-80 mt-1">achieved</p>
-            </div>
-          </div>
-          <div className="h-3 w-full rounded-full bg-white/20 overflow-hidden">
-            <div
-              className="h-full bg-gradient-to-r from-yellow-300 via-emerald-300 to-cyan-300 transition-all shadow-lg"
-              style={{ width: `${Math.min(100, pctAchieved)}%` }}
-            />
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-5">
-            <HeroStat icon={Package} label="Orders Closed" value={monthTotals.closed} />
-            <HeroStat icon={Users} label="Total Leads" value={monthTotals.leads} />
-            <HeroStat icon={TrendingUp} label="Quotes Sent" value={monthTotals.quotes} />
-            <HeroStat icon={CalendarDays} label="Days Left" value={daysLeftInMonth()} />
-          </div>
+    <div className="rounded-xl p-4 md:p-6 space-y-6" style={{ background: C.bg }}>
+      {/* TITLE */}
+      <h2 className="text-2xl md:text-3xl font-bold tracking-wide" style={{ color: C.yellow }}>
+        ACD JERSEY — SALES DASHBOARD
+      </h2>
+
+      {/* MONTHLY TARGET PROGRESS */}
+      <section>
+        <div className="px-3 py-2 rounded-t-md text-xs font-bold tracking-widest"
+          style={{ background: C.panel, color: C.muted }}>
+          📅  MONTHLY TARGET PROGRESS
         </div>
-      </Card>
-
-      {/* Today */}
-      <Card className="border-2 border-orange-200 dark:border-orange-900/40">
-        <CardHeader className="pb-3 bg-gradient-to-r from-orange-200 to-amber-200 dark:from-orange-900/40 dark:to-amber-900/40 rounded-t-lg">
-          <CardTitle className="text-lg font-display flex items-center gap-2 text-orange-900 dark:text-orange-100">
-            <Flame className="h-5 w-5" /> Team Performance — Today
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="pt-4">
-          <PerfTable rows={perPersonToday} showEnergy accent="orange" />
-        </CardContent>
-      </Card>
-
-      {/* Month cumulative */}
-      <Card className="border-2 border-emerald-200 dark:border-emerald-900/40">
-        <CardHeader className="pb-3 bg-gradient-to-r from-emerald-200 to-teal-200 dark:from-emerald-900/40 dark:to-teal-900/40 rounded-t-lg">
-          <CardTitle className="text-lg font-display flex items-center gap-2 text-emerald-900 dark:text-emerald-100">
-            <TrendingUp className="h-5 w-5" /> Month Cumulative — Individual
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="pt-4">
-          <PerfTable rows={perPersonMonth} accent="emerald" />
-        </CardContent>
-      </Card>
-    </div>
-  );
-};
-
-const HeroStat = ({ icon: Icon, label, value }: any) => (
-  <div className="bg-white/10 backdrop-blur rounded-lg p-3 border border-white/20">
-    <Icon className="h-4 w-4 mb-1 opacity-80" />
-    <p className="text-xs opacity-80">{label}</p>
-    <p className="text-2xl font-bold font-display">{value}</p>
-  </div>
-);
-
-const PerfTable = ({ rows, showEnergy, accent }: { rows: any[]; showEnergy?: boolean; accent: "orange" | "emerald" }) => {
-  const headBg = accent === "orange"
-    ? "bg-orange-200/70 hover:bg-orange-200/70 dark:bg-orange-900/30"
-    : "bg-emerald-200/70 hover:bg-emerald-200/70 dark:bg-emerald-900/30";
-  const headText = accent === "orange"
-    ? "text-orange-900 dark:text-orange-100"
-    : "text-emerald-900 dark:text-emerald-100";
-  return (
-    <div className="border rounded-lg overflow-x-auto">
-      <Table>
-        <TableHeader>
-          <TableRow className={headBg}>
-            <TableHead className={`font-semibold ${headText}`}>Name</TableHead>
-            <TableHead className={`text-center font-semibold ${headText}`}>Leads</TableHead>
-            <TableHead className={`text-center font-semibold ${headText}`}>Contacted</TableHead>
-            <TableHead className={`text-center font-semibold ${headText}`}>Quotes</TableHead>
-            <TableHead className={`text-center font-semibold ${headText}`}>Closed</TableHead>
-            <TableHead className={`text-right font-semibold ${headText}`}>Revenue (RM)</TableHead>
-            <TableHead className={`text-center font-semibold ${headText}`}>Pcs</TableHead>
-            {showEnergy && <TableHead className={`font-semibold ${headText}`}>Energy</TableHead>}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {rows.map((r, i) => (
-            <TableRow
-              key={r.name}
-              className={`${i % 2 === 0 ? "bg-background" : "bg-muted/60 dark:bg-muted/30"} hover:bg-accent/60 dark:hover:bg-accent/30`}
-            >
-              <TableCell>
-                <span className={`inline-block px-2.5 py-1 rounded-md text-white text-xs font-bold bg-gradient-to-r ${PERSON_COLORS[r.name] || "from-slate-500 to-slate-600"}`}>
-                  {r.name}
-                </span>
-              </TableCell>
-              <TableCell className="text-center font-semibold text-blue-700 dark:text-blue-300">{r.leads}</TableCell>
-              <TableCell className="text-center font-semibold text-cyan-700 dark:text-cyan-300">{r.contacted}</TableCell>
-              <TableCell className="text-center font-semibold text-violet-700 dark:text-violet-300">{r.quotes}</TableCell>
-              <TableCell className="text-center font-bold text-emerald-700 dark:text-emerald-300">{r.closed}</TableCell>
-              <TableCell className="text-right font-mono font-bold text-amber-700 dark:text-amber-300">{r.revenue.toLocaleString()}</TableCell>
-              <TableCell className="text-center font-semibold text-pink-700 dark:text-pink-300">{r.pcs}</TableCell>
-              {showEnergy && <TableCell className="text-xs text-foreground">{r.energy}</TableCell>}
-            </TableRow>
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-px" style={{ background: C.bg }}>
+          {[
+            { l: "MONTHLY TARGET", v: `RM ${fmtMoney(MONTHLY_TARGET)}`, color: C.subtle },
+            { l: "TOTAL REVENUE", v: `RM ${fmtMoney(monthTotals.revenue)}`, color: C.yellow },
+            { l: "% ACHIEVED", v: fmtPct(pct), color: C.green },
+            { l: "ORDERS CLOSED", v: monthTotals.closed, color: C.blue },
+            { l: "TOTAL LEADS", v: monthTotals.leads, color: C.text },
+            { l: "DAYS LEFT IN MONTH", v: daysLeftInMonth(), color: C.orange },
+          ].map((s) => (
+            <div key={s.l}>
+              <div className="px-3 py-2 text-[11px] font-bold tracking-wider"
+                style={{ background: C.panelAlt, color: C.muted }}>{s.l}</div>
+              <div className="px-3 py-3 text-lg font-bold"
+                style={{ background: C.panelStrong, color: s.color }}>{s.v}</div>
+            </div>
           ))}
-        </TableBody>
-      </Table>
+        </div>
+        {/* Progress bar */}
+        <div className="mt-2 h-2 w-full rounded-full overflow-hidden" style={{ background: C.panelAlt }}>
+          <div className="h-full transition-all"
+            style={{ width: `${Math.min(100, pct * 100)}%`, background: `linear-gradient(90deg, ${C.yellow}, ${C.green})` }} />
+        </div>
+      </section>
+
+      {/* TEAM PERFORMANCE — TODAY */}
+      <section>
+        <div className="px-3 py-2 rounded-t-md text-xs font-bold tracking-widest"
+          style={{ background: C.panel, color: C.muted }}>
+          👤  TEAM PERFORMANCE — TODAY
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm border-collapse [&_td]:border [&_th]:border" style={{ borderColor: "#2A2A30" }}>
+            <thead>
+              <tr>
+                {["NAME","LEADS","CONTACTED","QUOTES SENT","CLOSED","REVENUE (RM)","ENERGY","AVG PRICE PER PC","TOTAL PCS"].map((h) => (
+                  <th key={h} className="px-3 py-2 text-left font-bold text-xs tracking-wider border"
+                    style={{ background: C.yellow, color: "#000", borderColor: "#2A2A30" }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {todayPer.map((p, i) => (
+                <tr key={p.key} style={{ background: i % 2 === 0 ? C.panel : C.panelAlt }}>
+                  <td className="px-3 py-2 font-bold border" style={{ color: C.text, borderColor: "#2A2A30" }}>{p.label}</td>
+                  <td className="px-3 py-2 border" style={{ color: C.text, borderColor: "#2A2A30" }}>{p.leads}</td>
+                  <td className="px-3 py-2 border" style={{ color: C.text, borderColor: "#2A2A30" }}>{p.contacted}</td>
+                  <td className="px-3 py-2 border" style={{ color: C.yellow, borderColor: "#2A2A30" }}>{p.quotes}</td>
+                  <td className="px-3 py-2 border" style={{ color: C.green, borderColor: "#2A2A30" }}>{p.closed}</td>
+                  <td className="px-3 py-2 font-bold border" style={{ color: C.yellowBright, borderColor: "#2A2A30" }}>{fmtMoney(p.revenue)}</td>
+                  <td className="px-3 py-2 text-xs border" style={{ color: C.subtle, borderColor: "#2A2A30" }}>{p.energy}</td>
+                  <td className="px-3 py-2 font-bold border" style={{ color: C.yellow, borderColor: "#2A2A30" }}>{p.avgPrice ? p.avgPrice.toFixed(2) : "—"}</td>
+                  <td className="px-3 py-2 border" style={{ color: C.white, borderColor: "#2A2A30" }}>{p.pcs}</td>
+                </tr>
+              ))}
+              <tr style={{ background: C.panelStrong }}>
+                <td className="px-3 py-2 font-bold" style={{ color: C.yellow, border: `2px solid ${C.yellow}` }}>TOTAL</td>
+                <td className="px-3 py-2 font-bold" style={{ color: C.yellow, border: `2px solid ${C.yellow}` }}>{todayTotals.leads}</td>
+                <td className="px-3 py-2 font-bold" style={{ color: C.yellow, border: `2px solid ${C.yellow}` }}>{todayTotals.contacted}</td>
+                <td className="px-3 py-2 font-bold" style={{ color: C.yellow, border: `2px solid ${C.yellow}` }}>{todayTotals.quotes}</td>
+                <td className="px-3 py-2 font-bold" style={{ color: C.yellow, border: `2px solid ${C.yellow}` }}>{todayTotals.closed}</td>
+                <td className="px-3 py-2 font-bold" style={{ color: C.yellow, border: `2px solid ${C.yellow}` }}>{fmtMoney(todayTotals.revenue)}</td>
+                <td className="px-3 py-2" style={{ color: C.subtle, border: `2px solid ${C.yellow}` }}>—</td>
+                <td className="px-3 py-2 font-bold" style={{ color: C.yellow, border: `2px solid ${C.yellow}` }}>
+                  {todayTotals.priceCount ? (todayTotals.priceSum / todayTotals.priceCount).toFixed(2) : "—"}
+                </td>
+                <td className="px-3 py-2 font-bold" style={{ color: C.white, border: `2px solid ${C.yellow}` }}>{todayTotals.pcs}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      {/* MONTH CUMULATIVE — INDIVIDUAL */}
+      <section>
+        <div className="px-3 py-2 rounded-t-md text-xs font-bold tracking-widest"
+          style={{ background: C.panel, color: C.muted }}>
+          📈  MONTH CUMULATIVE — INDIVIDUAL
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm border-collapse [&_td]:border [&_th]:border" style={{ borderColor: "#2A2A30" }}>
+            <thead>
+              <tr>
+                {["NAME","LEADS","CONTACTED","QUOTES","CLOSED","REVENUE (RM)","CLOSE RATE","TOTAL AVG PRICE PC","ALL TOTAL PCS"].map((h) => (
+                  <th key={h} className="px-3 py-2 text-left font-bold text-xs tracking-wider border"
+                    style={{ background: C.yellow, color: "#000", borderColor: "#2A2A30" }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {monthPer.map((p, i) => (
+                <tr key={p.key} style={{ background: i % 2 === 0 ? C.panel : C.panelAlt }}>
+                  <td className="px-3 py-2 font-bold border" style={{ color: C.text, borderColor: "#2A2A30" }}>{p.label}</td>
+                  <td className="px-3 py-2 border" style={{ color: C.text, borderColor: "#2A2A30" }}>{p.leads}</td>
+                  <td className="px-3 py-2 border" style={{ color: C.text, borderColor: "#2A2A30" }}>{p.contacted}</td>
+                  <td className="px-3 py-2 border" style={{ color: C.yellow, borderColor: "#2A2A30" }}>{p.quotes}</td>
+                  <td className="px-3 py-2 font-bold border" style={{ color: C.green, borderColor: "#2A2A30" }}>{p.closed}</td>
+                  <td className="px-3 py-2 font-bold border" style={{ color: C.yellowBright, borderColor: "#2A2A30" }}>{fmtMoney(p.revenue)}</td>
+                  <td className="px-3 py-2 font-bold border" style={{ color: C.blue, borderColor: "#2A2A30" }}>{fmtPct(p.closeRate)}</td>
+                  <td className="px-3 py-2 font-bold border" style={{ color: C.yellow, borderColor: "#2A2A30" }}>{p.avgPrice ? p.avgPrice.toFixed(2) : "—"}</td>
+                  <td className="px-3 py-2 border" style={{ color: C.white, borderColor: "#2A2A30" }}>{p.pcs}</td>
+                </tr>
+              ))}
+              <tr style={{ background: C.panelStrong }}>
+                <td className="px-3 py-2 font-bold" style={{ color: C.yellow, border: `2px solid ${C.yellow}` }}>TOTAL</td>
+                <td className="px-3 py-2 font-bold" style={{ color: C.yellow, border: `2px solid ${C.yellow}` }}>{monthTotals.leads}</td>
+                <td className="px-3 py-2 font-bold" style={{ color: C.yellow, border: `2px solid ${C.yellow}` }}>{monthTotals.contacted}</td>
+                <td className="px-3 py-2 font-bold" style={{ color: C.yellow, border: `2px solid ${C.yellow}` }}>{monthTotals.quotes}</td>
+                <td className="px-3 py-2 font-bold" style={{ color: C.yellow, border: `2px solid ${C.yellow}` }}>{monthTotals.closed}</td>
+                <td className="px-3 py-2 font-bold" style={{ color: C.yellow, border: `2px solid ${C.yellow}` }}>{fmtMoney(monthTotals.revenue)}</td>
+                <td className="px-3 py-2 font-bold" style={{ color: C.blue, border: `2px solid ${C.yellow}` }}>
+                  {monthTotals.leads ? fmtPct(monthTotals.closed / monthTotals.leads) : "0.0%"}
+                </td>
+                <td className="px-3 py-2 font-bold" style={{ color: C.yellow, border: `2px solid ${C.yellow}` }}>
+                  {monthTotals.priceCount ? (monthTotals.priceSum / monthTotals.priceCount).toFixed(2) : "—"}
+                </td>
+                <td className="px-3 py-2 font-bold" style={{ color: C.white, border: `2px solid ${C.yellow}` }}>{monthTotals.pcs}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
     </div>
   );
 };
