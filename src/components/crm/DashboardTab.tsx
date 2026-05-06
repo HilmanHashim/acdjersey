@@ -444,6 +444,8 @@ const DashboardTab = () => {
           </ResponsiveContainer>
         </div>
       </section>
+
+      <DailyActivityChart monthRows={monthRows} mStart={mStart} mEnd={mEnd} />
     </div>
   );
 };
