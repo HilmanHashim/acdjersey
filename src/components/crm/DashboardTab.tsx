@@ -392,7 +392,7 @@ const DashboardTab = () => {
                   {monthTotals.leads ? fmtPct(monthTotals.closed / monthTotals.leads) : "0.0%"}
                 </td>
                 <td className="px-3 py-2 whitespace-nowrap font-bold" style={{ color: C.yellow, border: TOTAL_BORDER }}>
-                  {monthTotals.priceCount ? (monthTotals.priceSum / monthTotals.priceCount).toFixed(2) : "—"}
+                  {monthTotals.pcsForPrice ? (monthTotals.priceWeighted / monthTotals.pcsForPrice).toFixed(2) : "—"}
                 </td>
                 <td className="px-3 py-2 whitespace-nowrap font-bold" style={{ color: C.white, border: TOTAL_BORDER }}>{monthTotals.pcs}</td>
               </tr>
