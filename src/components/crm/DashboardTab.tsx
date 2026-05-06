@@ -375,8 +375,8 @@ const DashboardTab = () => {
                   { h: "TOTAL PCS", w: "8%" },
                   { h: "CONTRIBUTION", w: "11%" },
                 ].map((c) => (
-                  <th key={c.h} style={{ width: c.w, background: C.yellow, color: "#000", borderColor: "#2A2A30" }}
-                    className="px-2 py-2 text-left font-bold text-[11px] tracking-wider border">{c.h}</th>
+                  <th key={c.h} style={{ width: c.w, background: HERO_GRADIENT, color: C.white, borderColor: BORDER_COL }}
+                    className="px-2 py-2 text-left font-display text-[11px] tracking-wider border">{c.h}</th>
                 ))}
               </tr>
             </thead>
