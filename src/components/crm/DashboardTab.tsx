@@ -140,31 +140,41 @@ const DashboardTab = () => {
 
       {/* MONTHLY TARGET PROGRESS */}
       <section>
-        <div className="px-3 py-2 rounded-t-md text-xs font-bold tracking-widest"
+        <div className="flex items-center justify-between px-3 py-2 rounded-t-md text-xs font-bold tracking-widest"
           style={{ background: C.panel, color: C.muted }}>
-          📅  MONTHLY TARGET PROGRESS
+          <span>📅  MONTHLY TARGET PROGRESS</span>
+          <span style={{ color: C.yellow }}>{fmtPct(pct)} of target</span>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-6 gap-px" style={{ background: C.bg }}>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 p-3 rounded-b-md"
+          style={{ background: C.panel }}>
           {[
-            { l: "MONTHLY TARGET", v: `RM ${fmtMoney(MONTHLY_TARGET)}`, color: C.subtle },
-            { l: "TOTAL REVENUE", v: `RM ${fmtMoney(monthTotals.revenue)}`, color: C.yellow },
-            { l: "% ACHIEVED", v: fmtPct(pct), color: C.green },
-            { l: "ORDERS CLOSED", v: monthTotals.closed, color: C.blue },
-            { l: "TOTAL LEADS", v: monthTotals.leads, color: C.text },
-            { l: "DAYS LEFT IN MONTH", v: daysLeftInMonth(), color: C.orange },
+            { l: "MONTHLY TARGET", v: `RM ${fmtMoney(MONTHLY_TARGET)}`, color: C.subtle, icon: "🎯" },
+            { l: "TOTAL REVENUE", v: `RM ${fmtMoney(monthTotals.revenue)}`, color: C.yellow, icon: "💰" },
+            { l: "% ACHIEVED", v: fmtPct(pct), color: C.green, icon: "📈" },
+            { l: "ORDERS CLOSED", v: monthTotals.closed, color: C.blue, icon: "✅" },
+            { l: "TOTAL LEADS", v: monthTotals.leads, color: C.text, icon: "👥" },
+            { l: "DAYS LEFT IN MONTH", v: daysLeftInMonth(), color: C.orange, icon: "⏳" },
           ].map((s) => (
-            <div key={s.l}>
-              <div className="px-3 py-2 text-[11px] font-bold tracking-wider"
-                style={{ background: C.panelAlt, color: C.muted }}>{s.l}</div>
-              <div className="px-3 py-3 text-lg font-bold"
-                style={{ background: C.panelStrong, color: s.color }}>{s.v}</div>
+            <div key={s.l} className="rounded-lg p-3 transition-transform hover:scale-[1.02]"
+              style={{ background: C.panelStrong, borderLeft: `3px solid ${s.color}` }}>
+              <div className="flex items-center justify-between mb-1.5">
+                <div className="text-[10px] font-bold tracking-wider" style={{ color: C.muted }}>{s.l}</div>
+                <span className="text-sm opacity-70">{s.icon}</span>
+              </div>
+              <div className="text-xl font-bold leading-tight" style={{ color: s.color }}>{s.v}</div>
             </div>
           ))}
         </div>
         {/* Progress bar */}
-        <div className="mt-2 h-2 w-full rounded-full overflow-hidden" style={{ background: C.panelAlt }}>
-          <div className="h-full transition-all"
-            style={{ width: `${Math.min(100, pct * 100)}%`, background: `linear-gradient(90deg, ${C.yellow}, ${C.green})` }} />
+        <div className="mt-3 space-y-1">
+          <div className="flex justify-between text-[10px] font-bold tracking-wider" style={{ color: C.muted }}>
+            <span>PROGRESS</span>
+            <span style={{ color: C.text }}>RM {fmtMoney(monthTotals.revenue)} / RM {fmtMoney(MONTHLY_TARGET)}</span>
+          </div>
+          <div className="h-2.5 w-full rounded-full overflow-hidden" style={{ background: C.panelAlt }}>
+            <div className="h-full transition-all rounded-full"
+              style={{ width: `${Math.min(100, pct * 100)}%`, background: `linear-gradient(90deg, ${C.yellow}, ${C.green})` }} />
+          </div>
         </div>
       </section>
 
