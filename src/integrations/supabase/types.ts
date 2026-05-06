@@ -574,6 +574,42 @@ export type Database = {
         }
         Relationships: []
       }
+      shipping_zones: {
+        Row: {
+          created_at: string
+          display_order: number
+          fee: number
+          id: string
+          is_active: boolean
+          is_default: boolean
+          name: string
+          states: string[]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number
+          fee?: number
+          id?: string
+          is_active?: boolean
+          is_default?: boolean
+          name: string
+          states?: string[]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number
+          fee?: number
+          id?: string
+          is_active?: boolean
+          is_default?: boolean
+          name?: string
+          states?: string[]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       shop_order_items: {
         Row: {
           created_at: string
