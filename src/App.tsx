@@ -22,6 +22,7 @@ import NotFound from "./pages/NotFound.tsx";
 import ScrollToTop from "./components/ScrollToTop";
 import ScrollToTopButton from "./components/ScrollToTopButton";
 import FacebookPixel from "./components/FacebookPixel";
+import CartDrawer from "./components/shop/CartDrawer";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +36,7 @@ const App = () => (
           <ScrollToTop />
           <ScrollToTopButton />
           <FacebookPixel />
+          <CartDrawer />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/crm" element={<CRM />} />
