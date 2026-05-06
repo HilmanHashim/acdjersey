@@ -224,8 +224,39 @@ const DashboardTab = () => {
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 p-3 rounded-b-md"
           style={{ background: C.panel }}>
+          {/* Editable Monthly Target card */}
+          <div className="rounded-lg p-3 transition-transform hover:scale-[1.02]"
+            style={{ background: C.panelStrong, borderLeft: `3px solid ${C.subtle}` }}>
+            <div className="flex items-center justify-between mb-1.5">
+              <div className="text-[10px] font-bold tracking-wider" style={{ color: C.muted }}>MONTHLY TARGET</div>
+              <span className="text-sm opacity-70">🎯</span>
+            </div>
+            {editingTarget ? (
+              <input
+                autoFocus
+                type="number"
+                value={targetDraft}
+                onChange={(e) => setTargetDraft(e.target.value)}
+                onBlur={saveTarget}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") saveTarget();
+                  if (e.key === "Escape") setEditingTarget(false);
+                }}
+                className="w-full bg-transparent text-xl font-bold leading-tight focus:outline-none"
+                style={{ color: C.subtle, borderBottom: `1px solid ${C.yellow}` }}
+              />
+            ) : (
+              <button
+                onClick={() => { setTargetDraft(String(monthlyTarget)); setEditingTarget(true); }}
+                title="Click to edit monthly target"
+                className="text-xl font-bold leading-tight text-left w-full hover:opacity-80"
+                style={{ color: C.subtle }}
+              >
+                RM {fmtMoney(monthlyTarget)} <span className="text-[10px] opacity-60">✏️</span>
+              </button>
+            )}
+          </div>
           {[
-            { l: "MONTHLY TARGET", v: `RM ${fmtMoney(MONTHLY_TARGET)}`, color: C.subtle, icon: "🎯" },
             { l: "TOTAL REVENUE", v: `RM ${fmtMoney(monthTotals.revenue)}`, color: C.yellow, icon: "💰" },
             { l: "% ACHIEVED", v: fmtPct(pct), color: C.green, icon: "📈" },
             { l: "ORDERS CLOSED", v: monthTotals.closed, color: C.blue, icon: "✅" },
@@ -246,7 +277,7 @@ const DashboardTab = () => {
         <div className="mt-3 space-y-1">
           <div className="flex justify-between text-[10px] font-bold tracking-wider" style={{ color: C.muted }}>
             <span>PROGRESS</span>
-            <span style={{ color: C.text }}>RM {fmtMoney(monthTotals.revenue)} / RM {fmtMoney(MONTHLY_TARGET)}</span>
+            <span style={{ color: C.text }}>RM {fmtMoney(monthTotals.revenue)} / RM {fmtMoney(monthlyTarget)}</span>
           </div>
           <div className="h-2.5 w-full rounded-full overflow-hidden" style={{ background: C.panelAlt }}>
             <div className="h-full transition-all rounded-full"
