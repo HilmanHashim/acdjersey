@@ -118,10 +118,24 @@ const DashboardTab = () => {
     return () => { supabase.removeChannel(ch); };
   }, [qc]);
 
+  const monthOptions = useMemo(() => buildMonthOptions(), []);
+  const [selected, setSelected] = useState<string>(monthOptions[monthOptions.length - 1]?.value || "");
+  const sel = monthOptions.find((m) => m.value === selected) || monthOptions[monthOptions.length - 1];
+  const { start: mStart, end: mEnd } = monthBounds(sel.year, sel.month);
   const today = todayISO();
-  const mStart = monthStart();
-  const monthRows = useMemo(() => entries.filter((e) => e.entry_date >= mStart), [entries, mStart]);
-  const todayRows = useMemo(() => entries.filter((e) => e.entry_date === today), [entries, today]);
+  const now = new Date();
+  const isCurrentMonth = sel.year === now.getFullYear() && sel.month === now.getMonth() + 1;
+
+  const monthRows = useMemo(
+    () => entries.filter((e) => e.entry_date >= mStart && e.entry_date <= mEnd),
+    [entries, mStart, mEnd]
+  );
+  const focusDate = useMemo(() => {
+    if (isCurrentMonth) return today;
+    const dates = monthRows.map((r) => r.entry_date).sort();
+    return dates[dates.length - 1] || mEnd;
+  }, [isCurrentMonth, today, monthRows, mEnd]);
+  const todayRows = useMemo(() => monthRows.filter((e) => e.entry_date === focusDate), [monthRows, focusDate]);
 
   const monthTotals = agg(monthRows);
   const pct = monthTotals.revenue / MONTHLY_TARGET;
