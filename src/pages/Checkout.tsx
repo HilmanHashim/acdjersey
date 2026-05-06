@@ -84,11 +84,10 @@ const Checkout = () => {
           customer_phone: parsed.data.customer_phone,
           customer_email: parsed.data.customer_email || null,
           shipping_address: parsed.data.shipping_address,
-          notes: parsed.data.notes || null,
+          notes: [parsed.data.notes || null, selectedZone ? `Shipping zone: ${selectedZone.name}` : null].filter(Boolean).join(" | ") || null,
           subtotal,
           shipping_fee: shippingFee,
           total_amount: total,
-          notes: [parsed.data.notes, selectedZone ? `Shipping zone: ${selectedZone.name}` : null].filter(Boolean).join(" | ") || null,
         })
         .select()
         .single();
