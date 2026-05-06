@@ -339,10 +339,10 @@ const DashboardTab = () => {
                 <td className="px-3 py-2 whitespace-nowrap font-bold" style={{ color: C.yellow, border: TOTAL_BORDER }}>{todayTotals.contacted}</td>
                 <td className="px-3 py-2 whitespace-nowrap font-bold" style={{ color: C.yellow, border: TOTAL_BORDER }}>{todayTotals.quotes}</td>
                 <td className="px-3 py-2 whitespace-nowrap font-bold" style={{ color: C.yellow, border: TOTAL_BORDER }}>{todayTotals.closed}</td>
-                <td className="px-3 py-2 whitespace-nowrap font-bold" style={{ color: C.yellow, border: TOTAL_BORDER }}>{fmtMoney(todayTotals.revenue)}</td>
+                <td className="px-3 py-2 whitespace-nowrap font-bold" style={{ color: C.yellow, border: TOTAL_BORDER }}>RM {fmtMoney(todayTotals.revenue)}</td>
                 <td className="px-3 py-2 whitespace-nowrap" style={{ color: C.subtle, border: TOTAL_BORDER }}>—</td>
                 <td className="px-3 py-2 whitespace-nowrap font-bold" style={{ color: C.yellow, border: TOTAL_BORDER }}>
-                  {todayTotals.pcsForPrice ? (todayTotals.priceWeighted / todayTotals.pcsForPrice).toFixed(2) : "—"}
+                  {todayTotals.pcsForPrice ? `RM ${(todayTotals.priceWeighted / todayTotals.pcsForPrice).toFixed(2)}` : "—"}
                 </td>
                 <td className="px-3 py-2 whitespace-nowrap font-bold" style={{ color: C.white, border: TOTAL_BORDER }}>{todayTotals.pcs}</td>
               </tr>
