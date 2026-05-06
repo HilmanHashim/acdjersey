@@ -130,9 +130,9 @@ const DashboardTab = () => {
 
       {/* Today */}
       <Card className="border-2 border-orange-200 dark:border-orange-900/40">
-        <CardHeader className="pb-3 bg-gradient-to-r from-orange-500 to-amber-500 rounded-t-lg">
-          <CardTitle className="text-lg font-display flex items-center gap-2 text-white">
-            <Flame className="h-5 w-5 text-white" /> Team Performance — Today
+        <CardHeader className="pb-3 bg-gradient-to-r from-orange-200 to-amber-200 dark:from-orange-900/40 dark:to-amber-900/40 rounded-t-lg">
+          <CardTitle className="text-lg font-display flex items-center gap-2 text-orange-900 dark:text-orange-100">
+            <Flame className="h-5 w-5" /> Team Performance — Today
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-4">
@@ -142,9 +142,9 @@ const DashboardTab = () => {
 
       {/* Month cumulative */}
       <Card className="border-2 border-emerald-200 dark:border-emerald-900/40">
-        <CardHeader className="pb-3 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-t-lg">
-          <CardTitle className="text-lg font-display flex items-center gap-2 text-white">
-            <TrendingUp className="h-5 w-5 text-white" /> Month Cumulative — Individual
+        <CardHeader className="pb-3 bg-gradient-to-r from-emerald-200 to-teal-200 dark:from-emerald-900/40 dark:to-teal-900/40 rounded-t-lg">
+          <CardTitle className="text-lg font-display flex items-center gap-2 text-emerald-900 dark:text-emerald-100">
+            <TrendingUp className="h-5 w-5" /> Month Cumulative — Individual
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-4">
@@ -165,21 +165,24 @@ const HeroStat = ({ icon: Icon, label, value }: any) => (
 
 const PerfTable = ({ rows, showEnergy, accent }: { rows: any[]; showEnergy?: boolean; accent: "orange" | "emerald" }) => {
   const headBg = accent === "orange"
-    ? "bg-orange-600 hover:bg-orange-600"
-    : "bg-emerald-600 hover:bg-emerald-600";
+    ? "bg-orange-200/70 hover:bg-orange-200/70 dark:bg-orange-900/30"
+    : "bg-emerald-200/70 hover:bg-emerald-200/70 dark:bg-emerald-900/30";
+  const headText = accent === "orange"
+    ? "text-orange-900 dark:text-orange-100"
+    : "text-emerald-900 dark:text-emerald-100";
   return (
     <div className="border rounded-lg overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow className={headBg}>
-            <TableHead className="font-bold text-white">Name</TableHead>
-            <TableHead className="text-center font-bold text-white">Leads</TableHead>
-            <TableHead className="text-center font-bold text-white">Contacted</TableHead>
-            <TableHead className="text-center font-bold text-white">Quotes</TableHead>
-            <TableHead className="text-center font-bold text-white">Closed</TableHead>
-            <TableHead className="text-right font-bold text-white">Revenue (RM)</TableHead>
-            <TableHead className="text-center font-bold text-white">Pcs</TableHead>
-            {showEnergy && <TableHead className="font-bold text-white">Energy</TableHead>}
+            <TableHead className={`font-semibold ${headText}`}>Name</TableHead>
+            <TableHead className={`text-center font-semibold ${headText}`}>Leads</TableHead>
+            <TableHead className={`text-center font-semibold ${headText}`}>Contacted</TableHead>
+            <TableHead className={`text-center font-semibold ${headText}`}>Quotes</TableHead>
+            <TableHead className={`text-center font-semibold ${headText}`}>Closed</TableHead>
+            <TableHead className={`text-right font-semibold ${headText}`}>Revenue (RM)</TableHead>
+            <TableHead className={`text-center font-semibold ${headText}`}>Pcs</TableHead>
+            {showEnergy && <TableHead className={`font-semibold ${headText}`}>Energy</TableHead>}
           </TableRow>
         </TableHeader>
         <TableBody>
