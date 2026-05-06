@@ -1,231 +1,206 @@
+import { useEffect, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Users, Target, Package, FileText, DollarSign, TrendingUp } from "lucide-react";
+import { Target, TrendingUp, Users, DollarSign, Package, Flame, CalendarDays } from "lucide-react";
 
-type UserActivity = {
-  email: string;
-  leads: number;
-  contacts: number;
-  orders: number;
-  quotations: number;
-  totalRevenue: number;
+const SALESPEOPLE = ["JEED", "DIDO", "MUNIR", "ALIFF", "HILMAN", "UMAR"] as const;
+const MONTHLY_TARGET = 55000;
+
+type SalesEntry = {
+  id: string;
+  salesperson: string;
+  entry_date: string;
+  quantity: number | null;
+  new_leads: number;
+  prospects_contacted: number;
+  quotations_sent: number;
+  orders_closed: number;
+  revenue_closed: number;
+  energy_level: string | null;
+};
+
+const todayISO = () => new Date().toISOString().slice(0, 10);
+const monthStart = () => {
+  const d = new Date();
+  return new Date(d.getFullYear(), d.getMonth(), 1).toISOString().slice(0, 10);
+};
+const daysLeftInMonth = () => {
+  const d = new Date();
+  const last = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+  return last - d.getDate();
+};
+
+const aggregate = (rows: SalesEntry[]) =>
+  rows.reduce(
+    (acc, r) => {
+      acc.leads += r.new_leads || 0;
+      acc.contacted += r.prospects_contacted || 0;
+      acc.quotes += r.quotations_sent || 0;
+      acc.closed += r.orders_closed || 0;
+      acc.revenue += Number(r.revenue_closed) || 0;
+      acc.pcs += r.quantity || 0;
+      return acc;
+    },
+    { leads: 0, contacted: 0, quotes: 0, closed: 0, revenue: 0, pcs: 0 }
+  );
+
+const PERSON_COLORS: Record<string, string> = {
+  JEED: "from-pink-500 to-rose-500",
+  DIDO: "from-amber-500 to-orange-500",
+  MUNIR: "from-emerald-500 to-teal-500",
+  ALIFF: "from-sky-500 to-blue-500",
+  HILMAN: "from-violet-500 to-purple-500",
+  UMAR: "from-yellow-500 to-amber-500",
 };
 
 const DashboardTab = () => {
-  const { data: leads = [] } = useQuery({
-    queryKey: ["leads"],
+  const qc = useQueryClient();
+
+  const { data: entries = [] } = useQuery<SalesEntry[]>({
+    queryKey: ["sales_entries"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("leads").select("*");
+      const { data, error } = await supabase
+        .from("sales_entries")
+        .select("id,salesperson,entry_date,quantity,new_leads,prospects_contacted,quotations_sent,orders_closed,revenue_closed,energy_level")
+        .order("entry_date", { ascending: false });
       if (error) throw error;
-      return data;
+      return (data || []) as SalesEntry[];
     },
   });
 
-  const { data: contacts = [] } = useQuery({
-    queryKey: ["contacts"],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("contacts").select("*");
-      if (error) throw error;
-      return data;
-    },
-  });
+  useEffect(() => {
+    const ch = supabase
+      .channel("sales_entries_dashboard_rt")
+      .on("postgres_changes", { event: "*", schema: "public", table: "sales_entries" }, () => {
+        qc.invalidateQueries({ queryKey: ["sales_entries"] });
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [qc]);
 
-  const { data: orders = [] } = useQuery({
-    queryKey: ["orders"],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("orders").select("*");
-      if (error) throw error;
-      return data;
-    },
-  });
+  const today = todayISO();
+  const mStart = monthStart();
+  const monthRows = useMemo(() => entries.filter((e) => e.entry_date >= mStart), [entries, mStart]);
+  const todayRows = useMemo(() => entries.filter((e) => e.entry_date === today), [entries, today]);
 
-  const { data: quotes = [] } = useQuery({
-    queryKey: ["quotations"],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("quotations").select("*");
-      if (error) throw error;
-      return data;
-    },
-  });
+  const monthTotals = aggregate(monthRows);
+  const pctAchieved = (monthTotals.revenue / MONTHLY_TARGET) * 100;
 
-  const { data: authUsers = [] } = useQuery({
-    queryKey: ["auth-users-list"],
-    queryFn: async () => {
-      const res = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/manage-users?action=list`,
-        {
-          headers: {
-            Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
-            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-          },
-        }
-      );
-      if (!res.ok) return [];
-      const json = await res.json();
-      return (json.users ?? []) as { id: string; email: string }[];
-    },
-  });
-
-  // Build user email map
-  const userEmailMap: Record<string, string> = {};
-  authUsers.forEach((u) => { userEmailMap[u.id] = u.email; });
-
-  // Overview stats
-  const totalLeads = leads.length;
-  const totalContacts = contacts.length;
-  const totalOrders = orders.length;
-  const totalQuotes = quotes.length;
-  const totalRevenue = orders.reduce((sum, o) => sum + (Number(o.total_amount) || 0), 0);
-  const leadsByStage = {
-    cold: leads.filter((l) => l.stage === "cold").length,
-    prospect: leads.filter((l) => l.stage === "prospect").length,
-    first_buy: leads.filter((l) => l.stage === "first_buy").length,
-  };
-
-  // Per-user activity
-  const userActivityMap: Record<string, UserActivity> = {};
-  const getOrCreate = (userId: string | null): UserActivity | null => {
-    if (!userId) return null;
-    if (!userActivityMap[userId]) {
-      userActivityMap[userId] = {
-        email: userEmailMap[userId] || userId.slice(0, 8) + "...",
-        leads: 0,
-        contacts: 0,
-        orders: 0,
-        quotations: 0,
-        totalRevenue: 0,
-      };
-    }
-    return userActivityMap[userId];
-  };
-
-  leads.forEach((l) => {
-    const a = getOrCreate((l as any).created_by);
-    if (a) a.leads++;
-  });
-  contacts.forEach((c) => {
-    const a = getOrCreate((c as any).created_by);
-    if (a) a.contacts++;
-  });
-  orders.forEach((o) => {
-    const a = getOrCreate((o as any).created_by);
-    if (a) {
-      a.orders++;
-      a.totalRevenue += Number(o.total_amount) || 0;
-    }
-  });
-  quotes.forEach((q) => {
-    const a = getOrCreate((q as any).created_by);
-    if (a) a.quotations++;
-  });
-
-  const userActivities = Object.values(userActivityMap);
-
-  const statCards = [
-    { label: "Total Leads", value: totalLeads, icon: Target, color: "text-blue-500" },
-    { label: "Contacts", value: totalContacts, icon: Users, color: "text-green-500" },
-    { label: "Orders", value: totalOrders, icon: Package, color: "text-yellow-500" },
-    { label: "Quotations", value: totalQuotes, icon: FileText, color: "text-purple-500" },
-    { label: "Total Revenue", value: `RM ${totalRevenue.toFixed(2)}`, icon: DollarSign, color: "text-emerald-500" },
-  ];
+  const perPersonMonth = SALESPEOPLE.map((sp) => ({
+    name: sp,
+    ...aggregate(monthRows.filter((r) => r.salesperson === sp)),
+  }));
+  const perPersonToday = SALESPEOPLE.map((sp) => ({
+    name: sp,
+    ...aggregate(todayRows.filter((r) => r.salesperson === sp)),
+    energy: todayRows.find((r) => r.salesperson === sp)?.energy_level || "—",
+  }));
 
   return (
     <div className="space-y-6">
-      {/* Overview Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-        {statCards.map((s) => (
-          <Card key={s.label}>
-            <CardContent className="p-4 flex items-center gap-3">
-              <s.icon className={`h-8 w-8 ${s.color} shrink-0`} />
-              <div>
-                <p className="text-xs text-muted-foreground">{s.label}</p>
-                <p className="text-xl font-bold">{s.value}</p>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      {/* Leads Pipeline */}
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-lg font-display flex items-center gap-2">
-            <TrendingUp className="h-5 w-5" /> Leads Pipeline
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-3 gap-4 text-center">
-            <div className="p-4 rounded-lg bg-blue-500/10 border border-blue-500/20">
-              <p className="text-2xl font-bold text-blue-600">{leadsByStage.cold}</p>
-              <p className="text-sm text-muted-foreground">Cold</p>
+      {/* Hero target progress */}
+      <Card className="overflow-hidden border-0 shadow-lg">
+        <div className="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 p-6 text-white">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <p className="text-xs uppercase tracking-widest opacity-80">Monthly Target Progress</p>
+              <h2 className="text-3xl font-display font-bold mt-1">RM {monthTotals.revenue.toLocaleString()} <span className="text-lg opacity-70">/ RM {MONTHLY_TARGET.toLocaleString()}</span></h2>
             </div>
-            <div className="p-4 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
-              <p className="text-2xl font-bold text-yellow-600">{leadsByStage.prospect}</p>
-              <p className="text-sm text-muted-foreground">Prospect</p>
-            </div>
-            <div className="p-4 rounded-lg bg-green-500/10 border border-green-500/20">
-              <p className="text-2xl font-bold text-green-600">{leadsByStage.first_buy}</p>
-              <p className="text-sm text-muted-foreground">First Buy</p>
+            <div className="text-right">
+              <p className="text-5xl font-bold font-display">{pctAchieved.toFixed(1)}%</p>
+              <p className="text-xs opacity-80 mt-1">achieved</p>
             </div>
           </div>
+          <div className="h-3 w-full rounded-full bg-white/20 overflow-hidden">
+            <div
+              className="h-full bg-gradient-to-r from-yellow-300 via-emerald-300 to-cyan-300 transition-all shadow-lg"
+              style={{ width: `${Math.min(100, pctAchieved)}%` }}
+            />
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-5">
+            <HeroStat icon={Package} label="Orders Closed" value={monthTotals.closed} />
+            <HeroStat icon={Users} label="Total Leads" value={monthTotals.leads} />
+            <HeroStat icon={TrendingUp} label="Quotes Sent" value={monthTotals.quotes} />
+            <HeroStat icon={CalendarDays} label="Days Left" value={daysLeftInMonth()} />
+          </div>
+        </div>
+      </Card>
+
+      {/* Today */}
+      <Card className="border-2 border-orange-200 dark:border-orange-900/40">
+        <CardHeader className="pb-3 bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950/30 dark:to-amber-950/30 rounded-t-lg">
+          <CardTitle className="text-lg font-display flex items-center gap-2">
+            <Flame className="h-5 w-5 text-orange-500" /> Team Performance — Today
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="pt-4">
+          <PerfTable rows={perPersonToday} showEnergy accent="orange" />
         </CardContent>
       </Card>
 
-      {/* Per-User Activity */}
-      <Card>
-        <CardHeader className="pb-3">
+      {/* Month cumulative */}
+      <Card className="border-2 border-emerald-200 dark:border-emerald-900/40">
+        <CardHeader className="pb-3 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 rounded-t-lg">
           <CardTitle className="text-lg font-display flex items-center gap-2">
-            <Users className="h-5 w-5" /> Team Activity
+            <TrendingUp className="h-5 w-5 text-emerald-500" /> Month Cumulative — Individual
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          {userActivities.length === 0 ? (
-            <p className="text-muted-foreground text-center py-4 text-sm">
-              No per-user data yet. Activity will appear here as team members create records.
-            </p>
-          ) : (
-            <div className="border rounded-lg overflow-hidden">
-              <Table className="table-fixed w-full">
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[30%]">User</TableHead>
-                    <TableHead className="w-[12%] text-center">Leads</TableHead>
-                    <TableHead className="w-[14%] text-center">Contacts</TableHead>
-                    <TableHead className="w-[12%] text-center">Orders</TableHead>
-                    <TableHead className="w-[12%] text-center">Quotes</TableHead>
-                    <TableHead className="w-[20%] text-right">Revenue</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {userActivities.map((u) => (
-                    <TableRow key={u.email}>
-                      <TableCell className="font-medium truncate">{u.email}</TableCell>
-                      <TableCell className="text-center">
-                        <Badge variant="outline">{u.leads}</Badge>
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <Badge variant="outline">{u.contacts}</Badge>
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <Badge variant="outline">{u.orders}</Badge>
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <Badge variant="outline">{u.quotations}</Badge>
-                      </TableCell>
-                      <TableCell className="text-right font-mono truncate">
-                        RM {u.totalRevenue.toFixed(2)}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          )}
+        <CardContent className="pt-4">
+          <PerfTable rows={perPersonMonth} accent="emerald" />
         </CardContent>
       </Card>
+    </div>
+  );
+};
+
+const HeroStat = ({ icon: Icon, label, value }: any) => (
+  <div className="bg-white/10 backdrop-blur rounded-lg p-3 border border-white/20">
+    <Icon className="h-4 w-4 mb-1 opacity-80" />
+    <p className="text-xs opacity-80">{label}</p>
+    <p className="text-2xl font-bold font-display">{value}</p>
+  </div>
+);
+
+const PerfTable = ({ rows, showEnergy, accent }: { rows: any[]; showEnergy?: boolean; accent: "orange" | "emerald" }) => {
+  const headBg = accent === "orange"
+    ? "bg-orange-100/60 dark:bg-orange-950/40"
+    : "bg-emerald-100/60 dark:bg-emerald-950/40";
+  return (
+    <div className="border rounded-lg overflow-x-auto">
+      <Table>
+        <TableHeader>
+          <TableRow className={headBg}>
+            <TableHead className="font-bold">Name</TableHead>
+            <TableHead className="text-center font-bold">Leads</TableHead>
+            <TableHead className="text-center font-bold">Contacted</TableHead>
+            <TableHead className="text-center font-bold">Quotes</TableHead>
+            <TableHead className="text-center font-bold">Closed</TableHead>
+            <TableHead className="text-right font-bold">Revenue (RM)</TableHead>
+            <TableHead className="text-center font-bold">Pcs</TableHead>
+            {showEnergy && <TableHead className="font-bold">Energy</TableHead>}
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {rows.map((r) => (
+            <TableRow key={r.name} className="hover:bg-muted/40">
+              <TableCell>
+                <span className={`inline-block px-2.5 py-1 rounded-md text-white text-xs font-bold bg-gradient-to-r ${PERSON_COLORS[r.name] || "from-slate-500 to-slate-600"}`}>
+                  {r.name}
+                </span>
+              </TableCell>
+              <TableCell className="text-center font-medium text-blue-600 dark:text-blue-400">{r.leads}</TableCell>
+              <TableCell className="text-center font-medium text-cyan-600 dark:text-cyan-400">{r.contacted}</TableCell>
+              <TableCell className="text-center font-medium text-violet-600 dark:text-violet-400">{r.quotes}</TableCell>
+              <TableCell className="text-center font-bold text-emerald-600 dark:text-emerald-400">{r.closed}</TableCell>
+              <TableCell className="text-right font-mono font-bold text-amber-600 dark:text-amber-400">{r.revenue.toLocaleString()}</TableCell>
+              <TableCell className="text-center font-medium text-pink-600 dark:text-pink-400">{r.pcs}</TableCell>
+              {showEnergy && <TableCell className="text-xs">{r.energy}</TableCell>}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
     </div>
   );
 };
