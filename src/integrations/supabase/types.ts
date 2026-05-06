@@ -401,6 +401,66 @@ export type Database = {
           },
         ]
       }
+      sales_entries: {
+        Row: {
+          activity_today: string | null
+          created_at: string
+          created_by: string | null
+          energy_level: string | null
+          entry_date: string
+          id: string
+          jersey_type: string | null
+          job_name: string | null
+          new_leads: number
+          orders_closed: number
+          price_per_pc: number | null
+          prospects_contacted: number
+          quantity: number | null
+          quotations_sent: number
+          revenue_closed: number
+          salesperson: string
+          updated_at: string
+        }
+        Insert: {
+          activity_today?: string | null
+          created_at?: string
+          created_by?: string | null
+          energy_level?: string | null
+          entry_date: string
+          id?: string
+          jersey_type?: string | null
+          job_name?: string | null
+          new_leads?: number
+          orders_closed?: number
+          price_per_pc?: number | null
+          prospects_contacted?: number
+          quantity?: number | null
+          quotations_sent?: number
+          revenue_closed?: number
+          salesperson: string
+          updated_at?: string
+        }
+        Update: {
+          activity_today?: string | null
+          created_at?: string
+          created_by?: string | null
+          energy_level?: string | null
+          entry_date?: string
+          id?: string
+          jersey_type?: string | null
+          job_name?: string | null
+          new_leads?: number
+          orders_closed?: number
+          price_per_pc?: number | null
+          prospects_contacted?: number
+          quantity?: number | null
+          quotations_sent?: number
+          revenue_closed?: number
+          salesperson?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
