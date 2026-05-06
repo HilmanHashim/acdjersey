@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, CartesianGrid } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, CartesianGrid, LineChart, Line } from "recharts";
 
 const DEFAULT_TARGET = 50000;
 const FIRST_MONTH = { year: 2026, month: 4 }; // April 2026 — first tracked month
@@ -444,7 +444,78 @@ const DashboardTab = () => {
           </ResponsiveContainer>
         </div>
       </section>
+
+      <DailyActivityChart monthRows={monthRows} mStart={mStart} mEnd={mEnd} />
     </div>
+  );
+};
+
+const DailyActivityChart = ({ monthRows, mStart, mEnd }: { monthRows: SalesEntry[]; mStart: string; mEnd: string }) => {
+  const [filter, setFilter] = useState<string>("ALL");
+  const [metric, setMetric] = useState<"leads" | "contacted" | "closed" | "revenue">("leads");
+
+  const data = useMemo(() => {
+    const start = new Date(mStart);
+    const end = new Date(mEnd);
+    const days: { date: string; label: string; leads: number; contacted: number; closed: number; revenue: number }[] = [];
+    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+      const iso = d.toISOString().slice(0, 10);
+      days.push({ date: iso, label: String(d.getDate()), leads: 0, contacted: 0, closed: 0, revenue: 0 });
+    }
+    const map = new Map(days.map((x) => [x.date, x]));
+    for (const r of monthRows) {
+      if (filter !== "ALL" && r.salesperson !== filter) continue;
+      const row = map.get(r.entry_date);
+      if (!row) continue;
+      row.leads += r.new_leads || 0;
+      row.contacted += r.prospects_contacted || 0;
+      row.closed += r.orders_closed || 0;
+      row.revenue += Number(r.revenue_closed) || 0;
+    }
+    return days;
+  }, [monthRows, mStart, mEnd, filter]);
+
+  const metricColor = { leads: C.blue, contacted: C.yellow, closed: C.green, revenue: C.orange }[metric];
+  const metricLabel = { leads: "Leads", contacted: "Contacted", closed: "Closed", revenue: "Revenue (RM)" }[metric];
+
+  return (
+    <section>
+      <div className="flex flex-wrap items-center justify-between gap-2 px-3 py-2 rounded-t-md text-xs font-bold tracking-widest"
+        style={{ background: C.panel, color: C.muted }}>
+        <span>📅  DAILY ACTIVITY — {metricLabel.toUpperCase()}</span>
+        <div className="flex gap-2">
+          <select value={metric} onChange={(e) => setMetric(e.target.value as any)}
+            className="px-2 py-1 rounded text-xs font-bold cursor-pointer focus:outline-none"
+            style={{ background: C.panelStrong, color: C.text, border: `1px solid ${BORDER_COL}` }}>
+            <option value="leads">Leads</option>
+            <option value="contacted">Contacted</option>
+            <option value="closed">Closed</option>
+            <option value="revenue">Revenue</option>
+          </select>
+          <select value={filter} onChange={(e) => setFilter(e.target.value)}
+            className="px-2 py-1 rounded text-xs font-bold cursor-pointer focus:outline-none"
+            style={{ background: C.panelStrong, color: C.yellow, border: `1px solid ${C.yellow}` }}>
+            <option value="ALL">All Agents</option>
+            {PEOPLE.map((p) => <option key={p.key} value={p.key}>{p.label}</option>)}
+          </select>
+        </div>
+      </div>
+      <div className="p-4 rounded-b-md" style={{ background: C.panel }}>
+        <ResponsiveContainer width="100%" height={300}>
+          <LineChart data={data}>
+            <CartesianGrid strokeDasharray="3 3" stroke={BORDER_COL} />
+            <XAxis dataKey="label" tick={{ fill: C.subtle, fontSize: 11 }} stroke={BORDER_COL} />
+            <YAxis tick={{ fill: C.subtle, fontSize: 11 }} stroke={BORDER_COL} allowDecimals={false} />
+            <Tooltip
+              contentStyle={{ background: C.panelStrong, border: `1px solid ${BORDER_COL}`, borderRadius: 6, color: C.text }}
+              labelFormatter={(l) => `Day ${l}`}
+            />
+            <Legend wrapperStyle={{ color: C.text, fontSize: 12 }} />
+            <Line type="monotone" dataKey={metric} name={metricLabel} stroke={metricColor} strokeWidth={2} dot={{ r: 3, fill: metricColor }} activeDot={{ r: 5 }} />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+    </section>
   );
 };
 
