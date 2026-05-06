@@ -362,7 +362,7 @@ const DashboardTab = () => {
             <thead>
               <tr>
                 {[
-                  { h: "NAME", w: "12%" },
+                  { h: "NAME", w: "9%" },
                   { h: "LEADS", w: "7%" },
                   { h: "CONTACTED", w: "9%" },
                   { h: "QUOTES", w: "7%" },
@@ -371,7 +371,7 @@ const DashboardTab = () => {
                   { h: "CLOSE RATE", w: "9%" },
                   { h: "AVG PRICE/PC", w: "11%" },
                   { h: "TOTAL PCS", w: "8%" },
-                  { h: "CONTRIB %", w: "9%" },
+                  { h: "CONTRIBUTION", w: "11%" },
                 ].map((c) => (
                   <th key={c.h} style={{ width: c.w, background: C.yellow, color: "#000", borderColor: "#2A2A30" }}
                     className="px-2 py-2 text-left font-bold text-[11px] tracking-wider border">{c.h}</th>
