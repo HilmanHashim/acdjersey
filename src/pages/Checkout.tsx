@@ -165,6 +165,26 @@ const Checkout = () => {
 
           <div className="space-y-4">
             <h2 className="font-display text-xl">Order Summary</h2>
+
+            {zones.length > 0 && (
+              <div className="space-y-2">
+                <Label>Shipping Zone</Label>
+                <Select value={zoneId} onValueChange={setZoneId}>
+                  <SelectTrigger><SelectValue placeholder="Select zone" /></SelectTrigger>
+                  <SelectContent>
+                    {zones.map((z) => (
+                      <SelectItem key={z.id} value={z.id}>
+                        {z.name} — RM {Number(z.fee).toFixed(2)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {selectedZone && selectedZone.states.length > 0 && (
+                  <p className="text-xs text-muted-foreground">Covers: {selectedZone.states.join(", ")}</p>
+                )}
+              </div>
+            )}
+
             <div className="border border-border rounded-lg divide-y divide-border">
               {items.map((i) => (
                 <div key={i.id} className="p-3 flex gap-3 text-sm">
@@ -185,13 +205,13 @@ const Checkout = () => {
                 <span>Subtotal</span>
                 <span className="text-accent">RM {subtotal.toFixed(2)}</span>
               </div>
-              <div className="p-3 flex justify-between text-sm text-muted-foreground">
-                <span>Shipping</span>
-                <span>To be confirmed</span>
+              <div className="p-3 flex justify-between text-sm">
+                <span className="text-muted-foreground">Shipping {selectedZone ? `(${selectedZone.name})` : ""}</span>
+                <span>RM {shippingFee.toFixed(2)}</span>
               </div>
               <div className="p-3 flex justify-between font-display text-lg">
                 <span>Total</span>
-                <span className="text-accent">RM {subtotal.toFixed(2)}</span>
+                <span className="text-accent">RM {total.toFixed(2)}</span>
               </div>
             </div>
           </div>
