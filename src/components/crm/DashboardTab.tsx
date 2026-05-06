@@ -375,9 +375,9 @@ const DashboardTab = () => {
                   <td className="px-3 py-2 whitespace-nowrap border" style={{ color: C.text, borderColor: "#2A2A30" }}>{p.contacted}</td>
                   <td className="px-3 py-2 whitespace-nowrap border" style={{ color: C.yellow, borderColor: "#2A2A30" }}>{p.quotes}</td>
                   <td className="px-3 py-2 whitespace-nowrap font-bold border" style={{ color: C.green, borderColor: "#2A2A30" }}>{p.closed}</td>
-                  <td className="px-3 py-2 whitespace-nowrap font-bold border" style={{ color: C.yellowBright, borderColor: "#2A2A30" }}>{fmtMoney(p.revenue)}</td>
+                  <td className="px-3 py-2 whitespace-nowrap font-bold border" style={{ color: C.yellowBright, borderColor: "#2A2A30" }}>RM {fmtMoney(p.revenue)}</td>
                   <td className="px-3 py-2 whitespace-nowrap font-bold border" style={{ color: C.blue, borderColor: "#2A2A30" }}>{fmtPct(p.closeRate)}</td>
-                  <td className="px-3 py-2 whitespace-nowrap font-bold border" style={{ color: C.yellow, borderColor: "#2A2A30" }}>{p.avgPrice ? p.avgPrice.toFixed(2) : "—"}</td>
+                  <td className="px-3 py-2 whitespace-nowrap font-bold border" style={{ color: C.yellow, borderColor: "#2A2A30" }}>{p.avgPrice ? `RM ${p.avgPrice.toFixed(2)}` : "—"}</td>
                   <td className="px-3 py-2 whitespace-nowrap border" style={{ color: C.white, borderColor: "#2A2A30" }}>{p.pcs}</td>
                 </tr>
               ))}
