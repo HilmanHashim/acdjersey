@@ -8,12 +8,12 @@ import { useCart } from "@/contexts/CartContext";
 const navLinks = [
   { to: "/", label: "Home" },
   { to: "/catalogue", label: "Catalogue" },
-  { to: "/shop", label: "Shop" },
   // TEMP HIDDEN — uncomment to re-enable Customize page in nav
   // { to: "/customize", label: "Customize" },
   { to: "/enquiry", label: "Enquiry" },
   { to: "/about", label: "About Us" },
   { to: "/agents", label: "Contact Us" },
+  { to: "/shop", label: "Shop" },
 ];
 
 const Navbar = () => {
