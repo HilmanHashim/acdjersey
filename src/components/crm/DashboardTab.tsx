@@ -279,10 +279,22 @@ const DashboardTab = () => {
             <span>PROGRESS</span>
             <span style={{ color: C.text }}>RM {fmtMoney(monthTotals.revenue)} / RM {fmtMoney(monthlyTarget)}</span>
           </div>
-          <div className="h-2.5 w-full rounded-full overflow-hidden" style={{ background: C.panelAlt }}>
-            <div className="h-full transition-all rounded-full"
-              style={{ width: `${Math.min(100, pct * 100)}%`, background: `linear-gradient(90deg, ${C.yellow}, ${C.green})` }} />
+          <div className="h-2.5 w-full rounded-full overflow-hidden relative" style={{ background: C.panelAlt }}>
+            <div className="h-full transition-all rounded-full relative overflow-hidden"
+              style={{ width: `${Math.min(100, pct * 100)}%`, background: `linear-gradient(90deg, ${C.yellow}, ${C.green})` }}>
+              <div className="absolute inset-0 progress-sheen" />
+            </div>
           </div>
+          <style>{`
+            @keyframes progressSheen {
+              0% { transform: translateX(-100%); }
+              100% { transform: translateX(100%); }
+            }
+            .progress-sheen {
+              background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.45) 50%, transparent 100%);
+              animation: progressSheen 1.8s linear infinite;
+            }
+          `}</style>
         </div>
       </section>
 
