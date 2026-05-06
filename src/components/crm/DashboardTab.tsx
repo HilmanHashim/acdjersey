@@ -183,7 +183,7 @@ const DashboardTab = () => {
       ...p,
       ...a,
       energy: rows[0]?.energy_level || "—",
-      avgPrice: a.priceCount ? a.priceSum / a.priceCount : 0,
+      avgPrice: a.pcsForPrice ? a.priceWeighted / a.pcsForPrice : 0,
     };
   });
   const monthPer = PEOPLE.map((p) => {
