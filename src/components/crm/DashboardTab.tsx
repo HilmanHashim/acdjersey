@@ -108,11 +108,25 @@ const DashboardTab = () => {
     },
   });
 
+  const { data: targets = [] } = useQuery<{ year: number; month: number; target_amount: number }[]>({
+    queryKey: ["monthly_targets"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("monthly_targets")
+        .select("year,month,target_amount");
+      if (error) throw error;
+      return (data || []) as any;
+    },
+  });
+
   useEffect(() => {
     const ch = supabase
       .channel("sales_entries_dashboard_rt")
       .on("postgres_changes", { event: "*", schema: "public", table: "sales_entries" }, () => {
         qc.invalidateQueries({ queryKey: ["sales_entries"] });
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "monthly_targets" }, () => {
+        qc.invalidateQueries({ queryKey: ["monthly_targets"] });
       })
       .subscribe();
     return () => { supabase.removeChannel(ch); };
@@ -126,6 +140,23 @@ const DashboardTab = () => {
   const now = new Date();
   const isCurrentMonth = sel.year === now.getFullYear() && sel.month === now.getMonth() + 1;
 
+  const monthlyTarget = useMemo(() => {
+    const t = targets.find((x) => x.year === sel.year && x.month === sel.month);
+    return t ? Number(t.target_amount) : DEFAULT_TARGET;
+  }, [targets, sel.year, sel.month]);
+
+  const [editingTarget, setEditingTarget] = useState(false);
+  const [targetDraft, setTargetDraft] = useState("");
+  const saveTarget = async () => {
+    const val = Number(targetDraft);
+    if (!Number.isFinite(val) || val < 0) { setEditingTarget(false); return; }
+    const { error } = await supabase
+      .from("monthly_targets")
+      .upsert({ year: sel.year, month: sel.month, target_amount: val }, { onConflict: "year,month" });
+    if (!error) qc.invalidateQueries({ queryKey: ["monthly_targets"] });
+    setEditingTarget(false);
+  };
+
   const monthRows = useMemo(
     () => entries.filter((e) => e.entry_date >= mStart && e.entry_date <= mEnd),
     [entries, mStart, mEnd]
@@ -138,7 +169,7 @@ const DashboardTab = () => {
   const todayRows = useMemo(() => monthRows.filter((e) => e.entry_date === focusDate), [monthRows, focusDate]);
 
   const monthTotals = agg(monthRows);
-  const pct = monthTotals.revenue / MONTHLY_TARGET;
+  const pct = monthlyTarget > 0 ? monthTotals.revenue / monthlyTarget : 0;
 
   const todayPer = PEOPLE.map((p) => {
     const rows = todayRows.filter((r) => r.salesperson === p.key);
