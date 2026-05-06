@@ -6,12 +6,12 @@ const MONTHLY_TARGET = 55000;
 
 // Salespeople in display order; key = sheet name in DB
 const PEOPLE: { key: string; label: string }[] = [
-  { key: "MUNIR", label: "🧢 Munir" },
-  { key: "DIDO", label: "📣 Dido" },
-  { key: "JEED", label: "⚡ Najeed" },
-  { key: "UMAR", label: "👑 Umar" },
-  { key: "ALIFF", label: "🔧 Aliff" },
-  { key: "HILMAN", label: "💻 Hilman" },
+  { key: "MUNIR ACD", label: "🧢 Munir" },
+  { key: "DIDO ACD", label: "📣 Dido" },
+  { key: "JEED ACD", label: "⚡ Najeed" },
+  { key: "UMAR ACD", label: "👑 Umar" },
+  { key: "ALYPH ACD", label: "🔧 Alyph" },
+  { key: "HILMAN ACD", label: "💻 Hilman" },
 ];
 
 // Exact palette from Excel

@@ -10,7 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Trash2, Plus } from "lucide-react";
 import { toast } from "sonner";
 
-const SALESPEOPLE = ["JEED", "DIDO", "MUNIR", "ALIFF", "HILMAN", "UMAR"] as const;
+const SALESPEOPLE = ["JEED ACD", "DIDO ACD", "MUNIR ACD", "ALYPH ACD", "HILMAN ACD", "UMAR ACD"] as const;
 const ENERGY_LEVELS = ["🔥 On Fire", "💪🏻 Bring it on", "✊🏻 All Good", "😐 Tough day", "😔 Struggling"];
 
 type SalesEntry = {
