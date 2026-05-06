@@ -224,11 +224,11 @@ const DashboardTab = () => {
         </div>
       </section>
 
-      {/* TEAM PERFORMANCE — TODAY */}
+      {/* TEAM PERFORMANCE — TODAY / focus day */}
       <section>
         <div className="px-3 py-2 whitespace-nowrap rounded-t-md text-xs font-bold tracking-widest"
           style={{ background: C.panel, color: C.muted }}>
-          👤  TEAM PERFORMANCE — TODAY
+          👤  TEAM PERFORMANCE — {isCurrentMonth ? "TODAY" : focusDate.toUpperCase()}
         </div>
         <div className="overflow-hidden">
           <table className="w-full table-auto text-sm border-separate border-spacing-0 [&_td]:border [&_th]:border" style={{ borderColor: "#2A2A30" }}>
