@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-const MONTHLY_TARGET = 55000;
+const DEFAULT_TARGET = 50000;
 const FIRST_MONTH = { year: 2026, month: 4 }; // April 2026 — first tracked month
 const MONTH_NAMES = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 
