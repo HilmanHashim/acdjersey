@@ -19,23 +19,23 @@ const PEOPLE: { key: string; label: string }[] = [
 // Palette aligned to site theme (red/orange on deep navy)
 const C = {
   bg: "hsl(220 25% 6%)",
-  panel: "hsl(220 25% 10%)",
-  panelAlt: "hsl(220 20% 15%)",
-  panelStrong: "hsl(220 20% 18%)",
-  muted: "hsl(220 10% 55%)",
-  text: "hsl(0 0% 95%)",
-  subtle: "hsl(220 10% 70%)",
-  yellow: "hsl(30 70% 50%)",
-  yellowBright: "hsl(30 80% 60%)",
-  green: "hsl(142 60% 45%)",
-  blue: "hsl(210 60% 55%)",
-  orange: "hsl(0 65% 42%)",
+  panel: "hsl(220 22% 12%)",
+  panelAlt: "hsl(220 20% 17%)",
+  panelStrong: "hsl(220 22% 22%)",
+  muted: "hsl(220 12% 72%)",
+  text: "hsl(0 0% 98%)",
+  subtle: "hsl(220 12% 82%)",
+  yellow: "hsl(35 95% 62%)",
+  yellowBright: "hsl(40 100% 70%)",
+  green: "hsl(142 70% 55%)",
+  blue: "hsl(210 90% 70%)",
+  orange: "hsl(0 75% 58%)",
   white: "hsl(0 0% 100%)",
 };
 const HERO_GRADIENT = "linear-gradient(135deg, hsl(0 65% 42%), hsl(30 70% 50%))";
-const BORDER_COL = "hsl(220 20% 22%)";
+const BORDER_COL = "hsl(220 18% 28%)";
 
-const TOTAL_BORDER = `2px solid hsl(30 70% 50%)`;
+const TOTAL_BORDER = `2px solid hsl(35 95% 62%)`;
 
 type SalesEntry = {
   id: string;
