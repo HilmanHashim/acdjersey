@@ -16,24 +16,26 @@ const PEOPLE: { key: string; label: string }[] = [
   { key: "HILMAN ACD", label: "💻 Hilman" },
 ];
 
-// Exact palette from Excel
+// Palette aligned to site theme (red/orange on deep navy)
 const C = {
-  bg: "#0C0C0E",
-  panel: "#131316",
-  panelAlt: "#1C1C21",
-  panelStrong: "#252529",
-  muted: "#55555E",
-  text: "#F0F0F2",
-  subtle: "#9999A8",
-  yellow: "#F0FF44",
-  yellowBright: "#FFFF00",
-  green: "#2DDF8A",
-  blue: "#4D9FFF",
-  orange: "#FF5C3A",
-  white: "#FFFFFF",
+  bg: "hsl(220 25% 6%)",
+  panel: "hsl(220 25% 10%)",
+  panelAlt: "hsl(220 20% 15%)",
+  panelStrong: "hsl(220 20% 18%)",
+  muted: "hsl(220 10% 55%)",
+  text: "hsl(0 0% 95%)",
+  subtle: "hsl(220 10% 70%)",
+  yellow: "hsl(30 70% 50%)",
+  yellowBright: "hsl(30 80% 60%)",
+  green: "hsl(142 60% 45%)",
+  blue: "hsl(210 60% 55%)",
+  orange: "hsl(0 65% 42%)",
+  white: "hsl(0 0% 100%)",
 };
+const HERO_GRADIENT = "linear-gradient(135deg, hsl(0 65% 42%), hsl(30 70% 50%))";
+const BORDER_COL = "hsl(220 20% 22%)";
 
-const TOTAL_BORDER = `2px solid ${C.yellow}`;
+const TOTAL_BORDER = `2px solid hsl(30 70% 50%)`;
 
 type SalesEntry = {
   id: string;
