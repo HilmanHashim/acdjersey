@@ -209,17 +209,17 @@ const DashboardTab = () => {
                 </tr>
               ))}
               <tr style={{ background: C.panelStrong }}>
-                <td className="px-3 py-2 font-bold" style={{ color: C.yellow, borderTop: `2px solid ${C.yellow}`, borderBottom: `1px solid ${C.yellow}`, borderLeft: `1px solid ${C.yellow}`, borderRight: `1px solid ${C.yellow}` }}>TOTAL</td>
-                <td className="px-3 py-2 font-bold" style={{ color: C.yellow, borderTop: `2px solid ${C.yellow}`, borderBottom: `1px solid ${C.yellow}`, borderLeft: `1px solid ${C.yellow}`, borderRight: `1px solid ${C.yellow}` }}>{todayTotals.leads}</td>
-                <td className="px-3 py-2 font-bold" style={{ color: C.yellow, borderTop: `2px solid ${C.yellow}`, borderBottom: `1px solid ${C.yellow}`, borderLeft: `1px solid ${C.yellow}`, borderRight: `1px solid ${C.yellow}` }}>{todayTotals.contacted}</td>
-                <td className="px-3 py-2 font-bold" style={{ color: C.yellow, borderTop: `2px solid ${C.yellow}`, borderBottom: `1px solid ${C.yellow}`, borderLeft: `1px solid ${C.yellow}`, borderRight: `1px solid ${C.yellow}` }}>{todayTotals.quotes}</td>
-                <td className="px-3 py-2 font-bold" style={{ color: C.yellow, borderTop: `2px solid ${C.yellow}`, borderBottom: `1px solid ${C.yellow}`, borderLeft: `1px solid ${C.yellow}`, borderRight: `1px solid ${C.yellow}` }}>{todayTotals.closed}</td>
-                <td className="px-3 py-2 font-bold" style={{ color: C.yellow, borderTop: `2px solid ${C.yellow}`, borderBottom: `1px solid ${C.yellow}`, borderLeft: `1px solid ${C.yellow}`, borderRight: `1px solid ${C.yellow}` }}>{fmtMoney(todayTotals.revenue)}</td>
-                <td className="px-3 py-2" style={{ color: C.subtle, borderTop: `2px solid ${C.yellow}`, borderBottom: `1px solid ${C.yellow}`, borderLeft: `1px solid ${C.yellow}`, borderRight: `1px solid ${C.yellow}` }}>—</td>
-                <td className="px-3 py-2 font-bold" style={{ color: C.yellow, borderTop: `2px solid ${C.yellow}`, borderBottom: `1px solid ${C.yellow}`, borderLeft: `1px solid ${C.yellow}`, borderRight: `1px solid ${C.yellow}` }}>
+                <td className="px-3 py-2 font-bold" style={{ color: C.yellow, border: `1px solid ${C.yellow}` }}>TOTAL</td>
+                <td className="px-3 py-2 font-bold" style={{ color: C.yellow, border: `1px solid ${C.yellow}` }}>{todayTotals.leads}</td>
+                <td className="px-3 py-2 font-bold" style={{ color: C.yellow, border: `1px solid ${C.yellow}` }}>{todayTotals.contacted}</td>
+                <td className="px-3 py-2 font-bold" style={{ color: C.yellow, border: `1px solid ${C.yellow}` }}>{todayTotals.quotes}</td>
+                <td className="px-3 py-2 font-bold" style={{ color: C.yellow, border: `1px solid ${C.yellow}` }}>{todayTotals.closed}</td>
+                <td className="px-3 py-2 font-bold" style={{ color: C.yellow, border: `1px solid ${C.yellow}` }}>{fmtMoney(todayTotals.revenue)}</td>
+                <td className="px-3 py-2" style={{ color: C.subtle, border: `1px solid ${C.yellow}` }}>—</td>
+                <td className="px-3 py-2 font-bold" style={{ color: C.yellow, border: `1px solid ${C.yellow}` }}>
                   {todayTotals.priceCount ? (todayTotals.priceSum / todayTotals.priceCount).toFixed(2) : "—"}
                 </td>
-                <td className="px-3 py-2 font-bold" style={{ color: C.white, borderTop: `2px solid ${C.yellow}`, borderBottom: `1px solid ${C.yellow}`, borderLeft: `1px solid ${C.yellow}`, borderRight: `1px solid ${C.yellow}` }}>{todayTotals.pcs}</td>
+                <td className="px-3 py-2 font-bold" style={{ color: C.white, border: `1px solid ${C.yellow}` }}>{todayTotals.pcs}</td>
               </tr>
             </tbody>
           </table>
@@ -257,19 +257,19 @@ const DashboardTab = () => {
                 </tr>
               ))}
               <tr style={{ background: C.panelStrong }}>
-                <td className="px-3 py-2 font-bold" style={{ color: C.yellow, borderTop: `2px solid ${C.yellow}`, borderBottom: `1px solid ${C.yellow}`, borderLeft: `1px solid ${C.yellow}`, borderRight: `1px solid ${C.yellow}` }}>TOTAL</td>
-                <td className="px-3 py-2 font-bold" style={{ color: C.yellow, borderTop: `2px solid ${C.yellow}`, borderBottom: `1px solid ${C.yellow}`, borderLeft: `1px solid ${C.yellow}`, borderRight: `1px solid ${C.yellow}` }}>{monthTotals.leads}</td>
-                <td className="px-3 py-2 font-bold" style={{ color: C.yellow, borderTop: `2px solid ${C.yellow}`, borderBottom: `1px solid ${C.yellow}`, borderLeft: `1px solid ${C.yellow}`, borderRight: `1px solid ${C.yellow}` }}>{monthTotals.contacted}</td>
-                <td className="px-3 py-2 font-bold" style={{ color: C.yellow, borderTop: `2px solid ${C.yellow}`, borderBottom: `1px solid ${C.yellow}`, borderLeft: `1px solid ${C.yellow}`, borderRight: `1px solid ${C.yellow}` }}>{monthTotals.quotes}</td>
-                <td className="px-3 py-2 font-bold" style={{ color: C.yellow, borderTop: `2px solid ${C.yellow}`, borderBottom: `1px solid ${C.yellow}`, borderLeft: `1px solid ${C.yellow}`, borderRight: `1px solid ${C.yellow}` }}>{monthTotals.closed}</td>
-                <td className="px-3 py-2 font-bold" style={{ color: C.yellow, borderTop: `2px solid ${C.yellow}`, borderBottom: `1px solid ${C.yellow}`, borderLeft: `1px solid ${C.yellow}`, borderRight: `1px solid ${C.yellow}` }}>{fmtMoney(monthTotals.revenue)}</td>
-                <td className="px-3 py-2 font-bold" style={{ color: C.blue, borderTop: `2px solid ${C.yellow}`, borderBottom: `1px solid ${C.yellow}`, borderLeft: `1px solid ${C.yellow}`, borderRight: `1px solid ${C.yellow}` }}>
+                <td className="px-3 py-2 font-bold" style={{ color: C.yellow, border: `1px solid ${C.yellow}` }}>TOTAL</td>
+                <td className="px-3 py-2 font-bold" style={{ color: C.yellow, border: `1px solid ${C.yellow}` }}>{monthTotals.leads}</td>
+                <td className="px-3 py-2 font-bold" style={{ color: C.yellow, border: `1px solid ${C.yellow}` }}>{monthTotals.contacted}</td>
+                <td className="px-3 py-2 font-bold" style={{ color: C.yellow, border: `1px solid ${C.yellow}` }}>{monthTotals.quotes}</td>
+                <td className="px-3 py-2 font-bold" style={{ color: C.yellow, border: `1px solid ${C.yellow}` }}>{monthTotals.closed}</td>
+                <td className="px-3 py-2 font-bold" style={{ color: C.yellow, border: `1px solid ${C.yellow}` }}>{fmtMoney(monthTotals.revenue)}</td>
+                <td className="px-3 py-2 font-bold" style={{ color: C.blue, border: `1px solid ${C.yellow}` }}>
                   {monthTotals.leads ? fmtPct(monthTotals.closed / monthTotals.leads) : "0.0%"}
                 </td>
-                <td className="px-3 py-2 font-bold" style={{ color: C.yellow, borderTop: `2px solid ${C.yellow}`, borderBottom: `1px solid ${C.yellow}`, borderLeft: `1px solid ${C.yellow}`, borderRight: `1px solid ${C.yellow}` }}>
+                <td className="px-3 py-2 font-bold" style={{ color: C.yellow, border: `1px solid ${C.yellow}` }}>
                   {monthTotals.priceCount ? (monthTotals.priceSum / monthTotals.priceCount).toFixed(2) : "—"}
                 </td>
-                <td className="px-3 py-2 font-bold" style={{ color: C.white, borderTop: `2px solid ${C.yellow}`, borderBottom: `1px solid ${C.yellow}`, borderLeft: `1px solid ${C.yellow}`, borderRight: `1px solid ${C.yellow}` }}>{monthTotals.pcs}</td>
+                <td className="px-3 py-2 font-bold" style={{ color: C.white, border: `1px solid ${C.yellow}` }}>{monthTotals.pcs}</td>
               </tr>
             </tbody>
           </table>
