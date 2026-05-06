@@ -310,6 +310,33 @@ export type Database = {
         }
         Relationships: []
       }
+      monthly_targets: {
+        Row: {
+          created_at: string
+          id: string
+          month: number
+          target_amount: number
+          updated_at: string
+          year: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          month: number
+          target_amount?: number
+          updated_at?: string
+          year: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          month?: number
+          target_amount?: number
+          updated_at?: string
+          year?: number
+        }
+        Relationships: []
+      }
       orders: {
         Row: {
           contact_id: string

@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-const MONTHLY_TARGET = 55000;
+const DEFAULT_TARGET = 50000;
 const FIRST_MONTH = { year: 2026, month: 4 }; // April 2026 — first tracked month
 const MONTH_NAMES = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 
@@ -108,11 +108,25 @@ const DashboardTab = () => {
     },
   });
 
+  const { data: targets = [] } = useQuery<{ year: number; month: number; target_amount: number }[]>({
+    queryKey: ["monthly_targets"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("monthly_targets")
+        .select("year,month,target_amount");
+      if (error) throw error;
+      return (data || []) as any;
+    },
+  });
+
   useEffect(() => {
     const ch = supabase
       .channel("sales_entries_dashboard_rt")
       .on("postgres_changes", { event: "*", schema: "public", table: "sales_entries" }, () => {
         qc.invalidateQueries({ queryKey: ["sales_entries"] });
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "monthly_targets" }, () => {
+        qc.invalidateQueries({ queryKey: ["monthly_targets"] });
       })
       .subscribe();
     return () => { supabase.removeChannel(ch); };
@@ -126,6 +140,23 @@ const DashboardTab = () => {
   const now = new Date();
   const isCurrentMonth = sel.year === now.getFullYear() && sel.month === now.getMonth() + 1;
 
+  const monthlyTarget = useMemo(() => {
+    const t = targets.find((x) => x.year === sel.year && x.month === sel.month);
+    return t ? Number(t.target_amount) : DEFAULT_TARGET;
+  }, [targets, sel.year, sel.month]);
+
+  const [editingTarget, setEditingTarget] = useState(false);
+  const [targetDraft, setTargetDraft] = useState("");
+  const saveTarget = async () => {
+    const val = Number(targetDraft);
+    if (!Number.isFinite(val) || val < 0) { setEditingTarget(false); return; }
+    const { error } = await supabase
+      .from("monthly_targets")
+      .upsert({ year: sel.year, month: sel.month, target_amount: val }, { onConflict: "year,month" });
+    if (!error) qc.invalidateQueries({ queryKey: ["monthly_targets"] });
+    setEditingTarget(false);
+  };
+
   const monthRows = useMemo(
     () => entries.filter((e) => e.entry_date >= mStart && e.entry_date <= mEnd),
     [entries, mStart, mEnd]
@@ -138,7 +169,7 @@ const DashboardTab = () => {
   const todayRows = useMemo(() => monthRows.filter((e) => e.entry_date === focusDate), [monthRows, focusDate]);
 
   const monthTotals = agg(monthRows);
-  const pct = monthTotals.revenue / MONTHLY_TARGET;
+  const pct = monthlyTarget > 0 ? monthTotals.revenue / monthlyTarget : 0;
 
   const todayPer = PEOPLE.map((p) => {
     const rows = todayRows.filter((r) => r.salesperson === p.key);
@@ -193,8 +224,39 @@ const DashboardTab = () => {
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 p-3 rounded-b-md"
           style={{ background: C.panel }}>
+          {/* Editable Monthly Target card */}
+          <div className="rounded-lg p-3 transition-transform hover:scale-[1.02]"
+            style={{ background: C.panelStrong, borderLeft: `3px solid ${C.subtle}` }}>
+            <div className="flex items-center justify-between mb-1.5">
+              <div className="text-[10px] font-bold tracking-wider" style={{ color: C.muted }}>MONTHLY TARGET</div>
+              <span className="text-sm opacity-70">🎯</span>
+            </div>
+            {editingTarget ? (
+              <input
+                autoFocus
+                type="number"
+                value={targetDraft}
+                onChange={(e) => setTargetDraft(e.target.value)}
+                onBlur={saveTarget}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") saveTarget();
+                  if (e.key === "Escape") setEditingTarget(false);
+                }}
+                className="w-full bg-transparent text-xl font-bold leading-tight focus:outline-none"
+                style={{ color: C.subtle, borderBottom: `1px solid ${C.yellow}` }}
+              />
+            ) : (
+              <button
+                onClick={() => { setTargetDraft(String(monthlyTarget)); setEditingTarget(true); }}
+                title="Click to edit monthly target"
+                className="text-xl font-bold leading-tight text-left w-full hover:opacity-80"
+                style={{ color: C.subtle }}
+              >
+                RM {fmtMoney(monthlyTarget)} <span className="text-[10px] opacity-60">✏️</span>
+              </button>
+            )}
+          </div>
           {[
-            { l: "MONTHLY TARGET", v: `RM ${fmtMoney(MONTHLY_TARGET)}`, color: C.subtle, icon: "🎯" },
             { l: "TOTAL REVENUE", v: `RM ${fmtMoney(monthTotals.revenue)}`, color: C.yellow, icon: "💰" },
             { l: "% ACHIEVED", v: fmtPct(pct), color: C.green, icon: "📈" },
             { l: "ORDERS CLOSED", v: monthTotals.closed, color: C.blue, icon: "✅" },
@@ -215,7 +277,7 @@ const DashboardTab = () => {
         <div className="mt-3 space-y-1">
           <div className="flex justify-between text-[10px] font-bold tracking-wider" style={{ color: C.muted }}>
             <span>PROGRESS</span>
-            <span style={{ color: C.text }}>RM {fmtMoney(monthTotals.revenue)} / RM {fmtMoney(MONTHLY_TARGET)}</span>
+            <span style={{ color: C.text }}>RM {fmtMoney(monthTotals.revenue)} / RM {fmtMoney(monthlyTarget)}</span>
           </div>
           <div className="h-2.5 w-full rounded-full overflow-hidden" style={{ background: C.panelAlt }}>
             <div className="h-full transition-all rounded-full"
