@@ -47,14 +47,6 @@ const Shop = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      {/* Promo strip */}
-      <div className="bg-muted/40 border-b border-border py-3 text-center">
-        <p className="text-xs md:text-sm text-foreground">
-          Free shipping on orders over RM200.{" "}
-          <Link to="/enquiry" className="underline underline-offset-2 hover:text-accent">Need bulk pricing?</Link>
-        </p>
-      </div>
-
       {/* Hero banner — Nike-style full-bleed with massive headline */}
       <section className="relative bg-gradient-to-br from-primary via-primary/90 to-accent overflow-hidden">
         <div className="absolute inset-0 opacity-20 [background-image:radial-gradient(circle_at_30%_20%,white_1px,transparent_1px)] [background-size:32px_32px]" />
