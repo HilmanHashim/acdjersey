@@ -205,7 +205,7 @@ const DashboardTab = () => {
     <div className="rounded-xl p-4 md:p-6 space-y-6" style={{ background: C.bg }}>
       {/* TITLE + MONTH SWITCHER */}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-2xl md:text-3xl font-bold tracking-wide" style={{ color: C.yellow }}>
+        <h2 className="text-2xl md:text-3xl font-display tracking-wide text-gradient">
           ACD JERSEY — SALES DASHBOARD
         </h2>
         <select
