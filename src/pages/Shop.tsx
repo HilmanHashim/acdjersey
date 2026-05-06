@@ -48,7 +48,7 @@ const Shop = () => {
 
       <section className="py-16 text-center space-y-4">
         <p className="font-display text-accent uppercase tracking-[0.3em] text-sm">Shop</p>
-        <h1 className="text-4xl md:text-6xl font-display text-gradient inline-block">Ready to Order</h1>
+        <h1 className="text-4xl md:text-6xl font-display text-gradient inline-block">ACD Merch</h1>
         <p className="text-muted-foreground max-w-lg mx-auto text-sm">
           Browse our selection of premium jerseys and apparel — order online and we'll be in touch.
         </p>
