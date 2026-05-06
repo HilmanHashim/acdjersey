@@ -212,42 +212,101 @@ const SalespersonForm = ({ salesperson, entries }: { salesperson: string; entrie
         <Plus className="h-4 w-4" /> Add Entry
       </Button>
 
-      <div>
-        <h4 className="text-sm font-semibold mb-2">Recent entries</h4>
-        <div className="border rounded-lg overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Date</TableHead>
-                <TableHead>Job</TableHead>
-                <TableHead className="text-center">Leads</TableHead>
-                <TableHead className="text-center">Closed</TableHead>
-                <TableHead className="text-right">Revenue</TableHead>
-                <TableHead className="text-center">Energy</TableHead>
-                <TableHead></TableHead>
+      <RecentEntries entries={entries} onRemove={remove} />
+    </div>
+  );
+};
+
+const MONTH_NAMES = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+const FIRST_MONTH = { year: 2026, month: 4 };
+
+const RecentEntries = ({ entries, onRemove }: { entries: SalesEntry[]; onRemove: (id: string) => void }) => {
+  const monthOptions = (() => {
+    const now = new Date();
+    const out: { value: string; label: string }[] = [];
+    let y = FIRST_MONTH.year, m = FIRST_MONTH.month;
+    const ny = now.getFullYear(), nm = now.getMonth() + 1;
+    while (y < ny || (y === ny && m <= nm)) {
+      out.push({ value: `${y}-${String(m).padStart(2,"0")}`, label: `${MONTH_NAMES[m-1]} ${y}` });
+      m++; if (m > 12) { m = 1; y++; }
+    }
+    return out.reverse();
+  })();
+
+  const [month, setMonth] = useState<string>(monthOptions[0]?.value || "");
+  const [pageSize, setPageSize] = useState<number>(10);
+  const [page, setPage] = useState<number>(1);
+
+  const filtered = entries.filter((e) => e.entry_date.startsWith(month));
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const safePage = Math.min(page, totalPages);
+  const pageRows = filtered.slice((safePage - 1) * pageSize, safePage * pageSize);
+
+  // reset to page 1 when filter/page-size changes
+  useEffect(() => { setPage(1); }, [month, pageSize]);
+
+  return (
+    <div>
+      <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+        <h4 className="text-sm font-semibold">Recent entries</h4>
+        <div className="flex items-center gap-2">
+          <Select value={month} onValueChange={setMonth}>
+            <SelectTrigger className="h-8 w-[160px] text-xs"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {monthOptions.map((m) => <SelectItem key={m.value} value={m.value}>{m.label}</SelectItem>)}
+            </SelectContent>
+          </Select>
+          <Select value={String(pageSize)} onValueChange={(v) => setPageSize(Number(v))}>
+            <SelectTrigger className="h-8 w-[110px] text-xs"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {[5, 10, 25, 50, 100].map((n) => <SelectItem key={n} value={String(n)}>{n} / page</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+      <div className="border rounded-lg overflow-x-auto">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Date</TableHead>
+              <TableHead>Job</TableHead>
+              <TableHead className="text-center">Leads</TableHead>
+              <TableHead className="text-center">Closed</TableHead>
+              <TableHead className="text-right">Revenue (RM)</TableHead>
+              <TableHead className="text-center">Energy</TableHead>
+              <TableHead></TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {pageRows.map((e) => (
+              <TableRow key={e.id}>
+                <TableCell className="text-xs">{e.entry_date}</TableCell>
+                <TableCell className="text-xs truncate max-w-[140px]">{e.job_name || "—"}</TableCell>
+                <TableCell className="text-center">{e.new_leads}</TableCell>
+                <TableCell className="text-center">{e.orders_closed}</TableCell>
+                <TableCell className="text-right font-mono">RM {Number(e.revenue_closed).toLocaleString()}</TableCell>
+                <TableCell className="text-center text-xs">{e.energy_level || "—"}</TableCell>
+                <TableCell>
+                  <Button size="icon" variant="ghost" onClick={() => onRemove(e.id)}>
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </Button>
+                </TableCell>
               </TableRow>
-            </TableHeader>
-            <TableBody>
-              {entries.slice(0, 15).map((e) => (
-                <TableRow key={e.id}>
-                  <TableCell className="text-xs">{e.entry_date}</TableCell>
-                  <TableCell className="text-xs truncate max-w-[140px]">{e.job_name || "—"}</TableCell>
-                  <TableCell className="text-center">{e.new_leads}</TableCell>
-                  <TableCell className="text-center">{e.orders_closed}</TableCell>
-                  <TableCell className="text-right font-mono">{Number(e.revenue_closed).toLocaleString()}</TableCell>
-                  <TableCell className="text-center text-xs">{e.energy_level || "—"}</TableCell>
-                  <TableCell>
-                    <Button size="icon" variant="ghost" onClick={() => remove(e.id)}>
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-              {entries.length === 0 && (
-                <TableRow><TableCell colSpan={7} className="text-center text-sm text-muted-foreground py-4">No entries yet</TableCell></TableRow>
-              )}
-            </TableBody>
-          </Table>
+            ))}
+            {filtered.length === 0 && (
+              <TableRow><TableCell colSpan={7} className="text-center text-sm text-muted-foreground py-4">No entries for this month</TableCell></TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
+      <div className="flex items-center justify-between mt-2 text-xs text-muted-foreground">
+        <span>
+          {filtered.length === 0 ? "0 entries" : `Showing ${(safePage - 1) * pageSize + 1}–${Math.min(safePage * pageSize, filtered.length)} of ${filtered.length}`}
+        </span>
+        <div className="flex items-center gap-1">
+          <Button size="sm" variant="outline" disabled={safePage <= 1} onClick={() => setPage(safePage - 1)}>Prev</Button>
+          <span className="px-2">Page {safePage} / {totalPages}</span>
+          <Button size="sm" variant="outline" disabled={safePage >= totalPages} onClick={() => setPage(safePage + 1)}>Next</Button>
         </div>
       </div>
     </div>
