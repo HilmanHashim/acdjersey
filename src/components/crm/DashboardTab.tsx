@@ -165,10 +165,24 @@ const DashboardTab = () => {
 
   return (
     <div className="rounded-xl p-4 md:p-6 space-y-6" style={{ background: C.bg }}>
-      {/* TITLE */}
-      <h2 className="text-2xl md:text-3xl font-bold tracking-wide" style={{ color: C.yellow }}>
-        ACD JERSEY — SALES DASHBOARD
-      </h2>
+      {/* TITLE + MONTH SWITCHER */}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 className="text-2xl md:text-3xl font-bold tracking-wide" style={{ color: C.yellow }}>
+          ACD JERSEY — SALES DASHBOARD
+        </h2>
+        <select
+          value={selected}
+          onChange={(e) => setSelected(e.target.value)}
+          className="px-3 py-2 rounded-md text-sm font-bold tracking-wider focus:outline-none cursor-pointer"
+          style={{ background: C.panelStrong, color: C.yellow, border: `1px solid ${C.yellow}` }}
+        >
+          {monthOptions.map((m) => (
+            <option key={m.value} value={m.value} style={{ background: C.panelStrong, color: C.text }}>
+              {m.label}
+            </option>
+          ))}
+        </select>
+      </div>
 
       {/* MONTHLY TARGET PROGRESS */}
       <section>
