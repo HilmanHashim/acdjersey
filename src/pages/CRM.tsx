@@ -188,7 +188,7 @@ const CRM = () => {
           <Button variant="ghost" size="icon" onClick={handleLogout}><LogOut className="h-4 w-4" /></Button>
         </div>
       </header>
-      <main className="container py-6 max-w-7xl">
+      <main className="w-full max-w-[1500px] mx-auto px-4 py-6">
         <Tabs defaultValue="dashboard" className="relative">
           <TabsList className="grid w-full grid-cols-7 mb-6">
             <TabsTrigger value="dashboard" className="gap-1.5 text-xs"><LayoutDashboard className="h-4 w-4" /><span className="hidden sm:inline">Dashboard</span></TabsTrigger>
