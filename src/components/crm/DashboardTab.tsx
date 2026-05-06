@@ -1,8 +1,10 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 const MONTHLY_TARGET = 55000;
+const FIRST_MONTH = { year: 2026, month: 4 }; // April 2026 — first tracked month
+const MONTH_NAMES = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 
 // Salespeople in display order; key = sheet name in DB
 const PEOPLE: { key: string; label: string }[] = [
@@ -48,14 +50,28 @@ type SalesEntry = {
 };
 
 const todayISO = () => new Date().toISOString().slice(0, 10);
-const monthStart = () => {
-  const d = new Date();
-  return new Date(d.getFullYear(), d.getMonth(), 1).toISOString().slice(0, 10);
+const pad2 = (n: number) => String(n).padStart(2, "0");
+const monthBounds = (y: number, m: number) => {
+  const start = `${y}-${pad2(m)}-01`;
+  const end = new Date(y, m, 0); // last day of month m (1-indexed)
+  return { start, end: `${y}-${pad2(m)}-${pad2(end.getDate())}` };
 };
-const daysLeftInMonth = () => {
-  const d = new Date();
-  const last = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
-  return last - d.getDate();
+const buildMonthOptions = () => {
+  const now = new Date();
+  const out: { year: number; month: number; label: string; value: string }[] = [];
+  let y = FIRST_MONTH.year, m = FIRST_MONTH.month;
+  const ny = now.getFullYear(), nm = now.getMonth() + 1;
+  while (y < ny || (y === ny && m <= nm)) {
+    out.push({ year: y, month: m, label: `${MONTH_NAMES[m - 1]} ${y}`, value: `${y}-${pad2(m)}` });
+    m++; if (m > 12) { m = 1; y++; }
+  }
+  return out;
+};
+const daysLeftInMonthFor = (y: number, m: number) => {
+  const now = new Date();
+  if (y !== now.getFullYear() || m !== now.getMonth() + 1) return 0;
+  const last = new Date(y, m, 0).getDate();
+  return last - now.getDate();
 };
 
 const agg = (rows: SalesEntry[]) =>
@@ -102,10 +118,24 @@ const DashboardTab = () => {
     return () => { supabase.removeChannel(ch); };
   }, [qc]);
 
+  const monthOptions = useMemo(() => buildMonthOptions(), []);
+  const [selected, setSelected] = useState<string>(monthOptions[monthOptions.length - 1]?.value || "");
+  const sel = monthOptions.find((m) => m.value === selected) || monthOptions[monthOptions.length - 1];
+  const { start: mStart, end: mEnd } = monthBounds(sel.year, sel.month);
   const today = todayISO();
-  const mStart = monthStart();
-  const monthRows = useMemo(() => entries.filter((e) => e.entry_date >= mStart), [entries, mStart]);
-  const todayRows = useMemo(() => entries.filter((e) => e.entry_date === today), [entries, today]);
+  const now = new Date();
+  const isCurrentMonth = sel.year === now.getFullYear() && sel.month === now.getMonth() + 1;
+
+  const monthRows = useMemo(
+    () => entries.filter((e) => e.entry_date >= mStart && e.entry_date <= mEnd),
+    [entries, mStart, mEnd]
+  );
+  const focusDate = useMemo(() => {
+    if (isCurrentMonth) return today;
+    const dates = monthRows.map((r) => r.entry_date).sort();
+    return dates[dates.length - 1] || mEnd;
+  }, [isCurrentMonth, today, monthRows, mEnd]);
+  const todayRows = useMemo(() => monthRows.filter((e) => e.entry_date === focusDate), [monthRows, focusDate]);
 
   const monthTotals = agg(monthRows);
   const pct = monthTotals.revenue / MONTHLY_TARGET;
@@ -135,10 +165,24 @@ const DashboardTab = () => {
 
   return (
     <div className="rounded-xl p-4 md:p-6 space-y-6" style={{ background: C.bg }}>
-      {/* TITLE */}
-      <h2 className="text-2xl md:text-3xl font-bold tracking-wide" style={{ color: C.yellow }}>
-        ACD JERSEY — SALES DASHBOARD
-      </h2>
+      {/* TITLE + MONTH SWITCHER */}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 className="text-2xl md:text-3xl font-bold tracking-wide" style={{ color: C.yellow }}>
+          ACD JERSEY — SALES DASHBOARD
+        </h2>
+        <select
+          value={selected}
+          onChange={(e) => setSelected(e.target.value)}
+          className="px-3 py-2 rounded-md text-sm font-bold tracking-wider focus:outline-none cursor-pointer"
+          style={{ background: C.panelStrong, color: C.yellow, border: `1px solid ${C.yellow}` }}
+        >
+          {monthOptions.map((m) => (
+            <option key={m.value} value={m.value} style={{ background: C.panelStrong, color: C.text }}>
+              {m.label}
+            </option>
+          ))}
+        </select>
+      </div>
 
       {/* MONTHLY TARGET PROGRESS */}
       <section>
@@ -155,7 +199,7 @@ const DashboardTab = () => {
             { l: "% ACHIEVED", v: fmtPct(pct), color: C.green, icon: "📈" },
             { l: "ORDERS CLOSED", v: monthTotals.closed, color: C.blue, icon: "✅" },
             { l: "TOTAL LEADS", v: monthTotals.leads, color: C.text, icon: "👥" },
-            { l: "DAYS LEFT IN MONTH", v: daysLeftInMonth(), color: C.orange, icon: "⏳" },
+            { l: "DAYS LEFT IN MONTH", v: daysLeftInMonthFor(sel.year, sel.month), color: C.orange, icon: "⏳" },
           ].map((s) => (
             <div key={s.l} className="rounded-lg p-3 transition-transform hover:scale-[1.02]"
               style={{ background: C.panelStrong, borderLeft: `3px solid ${s.color}` }}>
@@ -180,11 +224,11 @@ const DashboardTab = () => {
         </div>
       </section>
 
-      {/* TEAM PERFORMANCE — TODAY */}
+      {/* TEAM PERFORMANCE — TODAY / focus day */}
       <section>
         <div className="px-3 py-2 whitespace-nowrap rounded-t-md text-xs font-bold tracking-widest"
           style={{ background: C.panel, color: C.muted }}>
-          👤  TEAM PERFORMANCE — TODAY
+          👤  TEAM PERFORMANCE — {isCurrentMonth ? "TODAY" : focusDate.toUpperCase()}
         </div>
         <div className="overflow-hidden">
           <table className="w-full table-auto text-sm border-separate border-spacing-0 [&_td]:border [&_th]:border" style={{ borderColor: "#2A2A30" }}>
