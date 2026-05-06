@@ -50,14 +50,28 @@ type SalesEntry = {
 };
 
 const todayISO = () => new Date().toISOString().slice(0, 10);
-const monthStart = () => {
-  const d = new Date();
-  return new Date(d.getFullYear(), d.getMonth(), 1).toISOString().slice(0, 10);
+const pad2 = (n: number) => String(n).padStart(2, "0");
+const monthBounds = (y: number, m: number) => {
+  const start = `${y}-${pad2(m)}-01`;
+  const end = new Date(y, m, 0); // last day of month m (1-indexed)
+  return { start, end: `${y}-${pad2(m)}-${pad2(end.getDate())}` };
 };
-const daysLeftInMonth = () => {
-  const d = new Date();
-  const last = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
-  return last - d.getDate();
+const buildMonthOptions = () => {
+  const now = new Date();
+  const out: { year: number; month: number; label: string; value: string }[] = [];
+  let y = FIRST_MONTH.year, m = FIRST_MONTH.month;
+  const ny = now.getFullYear(), nm = now.getMonth() + 1;
+  while (y < ny || (y === ny && m <= nm)) {
+    out.push({ year: y, month: m, label: `${MONTH_NAMES[m - 1]} ${y}`, value: `${y}-${pad2(m)}` });
+    m++; if (m > 12) { m = 1; y++; }
+  }
+  return out;
+};
+const daysLeftInMonthFor = (y: number, m: number) => {
+  const now = new Date();
+  if (y !== now.getFullYear() || m !== now.getMonth() + 1) return 0;
+  const last = new Date(y, m, 0).getDate();
+  return last - now.getDate();
 };
 
 const agg = (rows: SalesEntry[]) =>
