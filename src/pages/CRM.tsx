@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, LogOut, Shield, Target, LayoutDashboard, FileText, ClipboardList, Inbox, BarChart3, ShoppingBag, Package } from "lucide-react";
+import { ArrowLeft, LogOut, Shield, Target, LayoutDashboard, FileText, ClipboardList, Inbox, BarChart3, ShoppingBag, Package, Truck } from "lucide-react";
 import { toast } from "sonner";
 import UsersTab from "@/components/crm/UsersTab";
 import LeadsTab from "@/components/crm/LeadsTab";
@@ -15,6 +15,7 @@ import EnquiryTab from "@/components/crm/EnquiryTab";
 import SalesTrackerTab from "@/components/crm/SalesTrackerTab";
 import ShopProductsTab from "@/components/crm/ShopProductsTab";
 import ShopOrdersTab from "@/components/crm/ShopOrdersTab";
+import ShippingZonesTab from "@/components/crm/ShippingZonesTab";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const CRM = () => {
@@ -192,7 +193,7 @@ const CRM = () => {
       </header>
       <main className="w-full max-w-[1500px] mx-auto px-4 py-6">
         <Tabs defaultValue="dashboard" className="relative">
-          <TabsList className="grid w-full grid-cols-9 mb-6">
+          <TabsList className="grid w-full grid-cols-10 mb-6">
             <TabsTrigger value="dashboard" className="gap-1.5 text-xs"><LayoutDashboard className="h-4 w-4" /><span className="hidden sm:inline">Dashboard</span></TabsTrigger>
             <TabsTrigger value="sales" className="gap-1.5 text-xs"><BarChart3 className="h-4 w-4" /><span className="hidden sm:inline">Sales</span></TabsTrigger>
             <TabsTrigger value="enquiry" className="gap-1.5 text-xs"><Inbox className="h-4 w-4" /><span className="hidden sm:inline">Follow Up</span></TabsTrigger>
@@ -201,6 +202,7 @@ const CRM = () => {
             <TabsTrigger value="jobsheet" className="gap-1.5 text-xs"><ClipboardList className="h-4 w-4" /><span className="hidden sm:inline">Jobsheet</span></TabsTrigger>
             <TabsTrigger value="shop-products" className="gap-1.5 text-xs"><Package className="h-4 w-4" /><span className="hidden sm:inline">Products</span></TabsTrigger>
             <TabsTrigger value="shop-orders" className="gap-1.5 text-xs"><ShoppingBag className="h-4 w-4" /><span className="hidden sm:inline">Orders</span></TabsTrigger>
+            <TabsTrigger value="shipping" className="gap-1.5 text-xs"><Truck className="h-4 w-4" /><span className="hidden sm:inline">Shipping</span></TabsTrigger>
             <TabsTrigger value="users" className="gap-1.5 text-xs"><Shield className="h-4 w-4" /><span className="hidden sm:inline">Users</span></TabsTrigger>
           </TabsList>
           <TabsContent value="dashboard" forceMount className="data-[state=inactive]:hidden"><DashboardTab /></TabsContent>
@@ -211,6 +213,7 @@ const CRM = () => {
           <TabsContent value="jobsheet" forceMount className="data-[state=inactive]:hidden"><JobsheetTab /></TabsContent>
           <TabsContent value="shop-products" forceMount className="data-[state=inactive]:hidden"><ShopProductsTab /></TabsContent>
           <TabsContent value="shop-orders" forceMount className="data-[state=inactive]:hidden"><ShopOrdersTab /></TabsContent>
+          <TabsContent value="shipping" forceMount className="data-[state=inactive]:hidden"><ShippingZonesTab /></TabsContent>
           <TabsContent value="users" forceMount className="data-[state=inactive]:hidden"><UsersTab currentUserId={user.id} /></TabsContent>
         </Tabs>
       </main>

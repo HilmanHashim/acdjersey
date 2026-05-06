@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/landing/Footer";
@@ -6,10 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useCart } from "@/contexts/CartContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
+
+type Zone = { id: string; name: string; fee: number; states: string[]; is_default: boolean };
 
 const schema = z.object({
   customer_name: z.string().trim().min(1, "Name required").max(100),
@@ -23,6 +26,8 @@ const Checkout = () => {
   const { items, subtotal, clear } = useCart();
   const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
+  const [zones, setZones] = useState<Zone[]>([]);
+  const [zoneId, setZoneId] = useState<string>("");
   const [form, setForm] = useState({
     customer_name: "",
     customer_phone: "",
@@ -32,6 +37,24 @@ const Checkout = () => {
   });
 
   useEffect(() => { document.title = "Checkout – ACD Jersey"; }, []);
+
+  useEffect(() => {
+    (async () => {
+      const { data } = await supabase
+        .from("shipping_zones")
+        .select("id,name,fee,states,is_default")
+        .eq("is_active", true)
+        .order("display_order", { ascending: true });
+      const list = (data || []) as Zone[];
+      setZones(list);
+      const def = list.find((z) => z.is_default) || list[0];
+      if (def) setZoneId(def.id);
+    })();
+  }, []);
+
+  const selectedZone = useMemo(() => zones.find((z) => z.id === zoneId), [zones, zoneId]);
+  const shippingFee = selectedZone?.fee ?? 0;
+  const total = subtotal + shippingFee;
 
   const setField = (k: keyof typeof form, v: string) => setForm((f) => ({ ...f, [k]: v }));
 
@@ -61,10 +84,10 @@ const Checkout = () => {
           customer_phone: parsed.data.customer_phone,
           customer_email: parsed.data.customer_email || null,
           shipping_address: parsed.data.shipping_address,
-          notes: parsed.data.notes || null,
+          notes: [parsed.data.notes || null, selectedZone ? `Shipping zone: ${selectedZone.name}` : null].filter(Boolean).join(" | ") || null,
           subtotal,
-          shipping_fee: 0,
-          total_amount: subtotal,
+          shipping_fee: shippingFee,
+          total_amount: total,
         })
         .select()
         .single();
@@ -142,6 +165,26 @@ const Checkout = () => {
 
           <div className="space-y-4">
             <h2 className="font-display text-xl">Order Summary</h2>
+
+            {zones.length > 0 && (
+              <div className="space-y-2">
+                <Label>Shipping Zone</Label>
+                <Select value={zoneId} onValueChange={setZoneId}>
+                  <SelectTrigger><SelectValue placeholder="Select zone" /></SelectTrigger>
+                  <SelectContent>
+                    {zones.map((z) => (
+                      <SelectItem key={z.id} value={z.id}>
+                        {z.name} — RM {Number(z.fee).toFixed(2)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {selectedZone && selectedZone.states.length > 0 && (
+                  <p className="text-xs text-muted-foreground">Covers: {selectedZone.states.join(", ")}</p>
+                )}
+              </div>
+            )}
+
             <div className="border border-border rounded-lg divide-y divide-border">
               {items.map((i) => (
                 <div key={i.id} className="p-3 flex gap-3 text-sm">
@@ -162,13 +205,13 @@ const Checkout = () => {
                 <span>Subtotal</span>
                 <span className="text-accent">RM {subtotal.toFixed(2)}</span>
               </div>
-              <div className="p-3 flex justify-between text-sm text-muted-foreground">
-                <span>Shipping</span>
-                <span>To be confirmed</span>
+              <div className="p-3 flex justify-between text-sm">
+                <span className="text-muted-foreground">Shipping {selectedZone ? `(${selectedZone.name})` : ""}</span>
+                <span>RM {shippingFee.toFixed(2)}</span>
               </div>
               <div className="p-3 flex justify-between font-display text-lg">
                 <span>Total</span>
-                <span className="text-accent">RM {subtotal.toFixed(2)}</span>
+                <span className="text-accent">RM {total.toFixed(2)}</span>
               </div>
             </div>
           </div>
