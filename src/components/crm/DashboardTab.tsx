@@ -193,7 +193,7 @@ const DashboardTab = () => {
       ...p,
       ...a,
       closeRate: a.leads ? a.closed / a.leads : 0,
-      avgPrice: a.priceCount ? a.priceSum / a.priceCount : 0,
+      avgPrice: a.pcsForPrice ? a.priceWeighted / a.pcsForPrice : 0,
     };
   });
 
