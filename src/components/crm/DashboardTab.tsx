@@ -185,7 +185,7 @@ const DashboardTab = () => {
             { l: "% ACHIEVED", v: fmtPct(pct), color: C.green, icon: "📈" },
             { l: "ORDERS CLOSED", v: monthTotals.closed, color: C.blue, icon: "✅" },
             { l: "TOTAL LEADS", v: monthTotals.leads, color: C.text, icon: "👥" },
-            { l: "DAYS LEFT IN MONTH", v: daysLeftInMonth(), color: C.orange, icon: "⏳" },
+            { l: "DAYS LEFT IN MONTH", v: daysLeftInMonthFor(sel.year, sel.month), color: C.orange, icon: "⏳" },
           ].map((s) => (
             <div key={s.l} className="rounded-lg p-3 transition-transform hover:scale-[1.02]"
               style={{ background: C.panelStrong, borderLeft: `3px solid ${s.color}` }}>
