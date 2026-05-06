@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/landing/Footer";
@@ -6,10 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useCart } from "@/contexts/CartContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
+
+type Zone = { id: string; name: string; fee: number; states: string[]; is_default: boolean };
 
 const schema = z.object({
   customer_name: z.string().trim().min(1, "Name required").max(100),
@@ -23,6 +26,8 @@ const Checkout = () => {
   const { items, subtotal, clear } = useCart();
   const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
+  const [zones, setZones] = useState<Zone[]>([]);
+  const [zoneId, setZoneId] = useState<string>("");
   const [form, setForm] = useState({
     customer_name: "",
     customer_phone: "",
@@ -32,6 +37,24 @@ const Checkout = () => {
   });
 
   useEffect(() => { document.title = "Checkout – ACD Jersey"; }, []);
+
+  useEffect(() => {
+    (async () => {
+      const { data } = await supabase
+        .from("shipping_zones")
+        .select("id,name,fee,states,is_default")
+        .eq("is_active", true)
+        .order("display_order", { ascending: true });
+      const list = (data || []) as Zone[];
+      setZones(list);
+      const def = list.find((z) => z.is_default) || list[0];
+      if (def) setZoneId(def.id);
+    })();
+  }, []);
+
+  const selectedZone = useMemo(() => zones.find((z) => z.id === zoneId), [zones, zoneId]);
+  const shippingFee = selectedZone?.fee ?? 0;
+  const total = subtotal + shippingFee;
 
   const setField = (k: keyof typeof form, v: string) => setForm((f) => ({ ...f, [k]: v }));
 
@@ -63,8 +86,9 @@ const Checkout = () => {
           shipping_address: parsed.data.shipping_address,
           notes: parsed.data.notes || null,
           subtotal,
-          shipping_fee: 0,
-          total_amount: subtotal,
+          shipping_fee: shippingFee,
+          total_amount: total,
+          notes: [parsed.data.notes, selectedZone ? `Shipping zone: ${selectedZone.name}` : null].filter(Boolean).join(" | ") || null,
         })
         .select()
         .single();
