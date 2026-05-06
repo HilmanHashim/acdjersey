@@ -419,6 +419,31 @@ const DashboardTab = () => {
           </table>
         </div>
       </section>
+
+      {/* PERFORMANCE CHART — LEADS / CONTACTED / CLOSED */}
+      <section>
+        <div className="px-3 py-2 rounded-t-md text-xs font-bold tracking-widest"
+          style={{ background: C.panel, color: C.muted }}>
+          📊  PERFORMANCE — LEADS vs CONTACTED vs CLOSED
+        </div>
+        <div className="p-4 rounded-b-md" style={{ background: C.panel }}>
+          <ResponsiveContainer width="100%" height={320}>
+            <BarChart data={monthPer.map((p) => ({ name: p.label, Leads: p.leads, Contacted: p.contacted, Closed: p.closed }))}>
+              <CartesianGrid strokeDasharray="3 3" stroke={BORDER_COL} />
+              <XAxis dataKey="name" tick={{ fill: C.subtle, fontSize: 11 }} stroke={BORDER_COL} />
+              <YAxis tick={{ fill: C.subtle, fontSize: 11 }} stroke={BORDER_COL} allowDecimals={false} />
+              <Tooltip
+                contentStyle={{ background: C.panelStrong, border: `1px solid ${BORDER_COL}`, borderRadius: 6, color: C.text }}
+                cursor={{ fill: "hsl(220 20% 25% / 0.3)" }}
+              />
+              <Legend wrapperStyle={{ color: C.text, fontSize: 12 }} />
+              <Bar dataKey="Leads" fill={C.blue} radius={[4, 4, 0, 0]} />
+              <Bar dataKey="Contacted" fill={C.yellow} radius={[4, 4, 0, 0]} />
+              <Bar dataKey="Closed" fill={C.green} radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </section>
     </div>
   );
 };
