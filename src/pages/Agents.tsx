@@ -18,7 +18,7 @@ const agents = [
     phone: "019-339 6681",
     whatsapp: "https://wa.me/60193396681",
     role: "Sales Executive",
-    bio: "With over 10 years of experience in sublimation apparel, I lead our team with dedication to uphold quality and customer satisfaction.",
+    bio: "With over 4 years of experience in sublimation apparel, I lead our team with dedication to uphold quality and customer satisfaction.",
     image: umarImg,
     imageClass: "object-[center_20%]",
   },
