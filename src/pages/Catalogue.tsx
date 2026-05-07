@@ -377,12 +377,6 @@ const Catalogue = () => {
 
         <div className="relative container max-w-6xl py-20 md:py-32">
           <div className="space-y-6 max-w-3xl animate-slide-up">
-            <div className="flex items-center gap-3">
-              <Sparkles className="h-4 w-4 text-accent" />
-              <span className="font-display text-xs uppercase tracking-[0.4em] text-accent">
-                The 2026 Catalogue
-              </span>
-            </div>
             <h1 className="font-display text-foreground leading-[0.9] text-5xl md:text-7xl lg:text-8xl">
               Built to <span className="text-gradient">order.</span>
               <br />
