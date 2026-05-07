@@ -87,10 +87,9 @@ const Gallery = () => {
 
   return (
     <section className="py-14 md:py-20 bg-background relative overflow-hidden border-t border-border/40">
-      <div aria-hidden className="pointer-events-none absolute -top-10 -left-10 font-display uppercase text-[16vw] leading-none text-foreground/[0.03] select-none">DROP 03</div>
       <div ref={ref} className="container relative space-y-8">
         <div className="space-y-3">
-          <div className="inline-flex items-center gap-2 bg-foreground text-background px-3 py-1 font-display uppercase tracking-[0.3em] text-[10px]">◆ Featured / 03</div>
+          <div className="inline-flex items-center gap-2 bg-foreground text-background px-3 py-1 font-display uppercase tracking-[0.3em] text-[10px]">◆ Featured</div>
           <h2 className={`font-display uppercase text-foreground leading-[0.9] text-5xl md:text-7xl reveal ${inView ? "in-view" : ""}`} style={{ animationDelay: "0.1s" }}>
             Recent <span className="text-gradient">Projects</span>
           </h2>
