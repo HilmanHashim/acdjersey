@@ -1,12 +1,16 @@
 import { ArrowUpRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useInView } from "@/hooks/use-in-view";
+import imgJersey from "@/assets/catalogue/standard/img-001.jpg";
+import imgDesign from "@/assets/catalogue/collared/img-001.jpg";
+import imgCorporate from "@/assets/catalogue/longsleeve/img-001.jpg";
+import imgSports from "@/assets/catalogue/singlet/img-001.jpg";
 
 const services = [
-  { title: "Custom Jerseys", desc: "Full sublimation kits with your designs, logos and colours.", to: "/catalogue" },
-  { title: "Design Services", desc: "Professional in-house design team to bring your vision to life.", to: "/enquiry" },
-  { title: "Corporate Wear", desc: "Branded apparel for teams, events and companies.", to: "/enquiry" },
-  { title: "Sports Teams", desc: "Complete kits for football, futsal, badminton and more.", to: "/catalogue" },
+  { title: "Custom Jerseys", desc: "Full sublimation kits with your designs, logos and colours.", to: "/catalogue", image: imgJersey },
+  { title: "Design Services", desc: "Professional in-house design team to bring your vision to life.", to: "/enquiry", image: imgDesign },
+  { title: "Corporate Wear", desc: "Branded apparel for teams, events and companies.", to: "/enquiry", image: imgCorporate },
+  { title: "Sports Teams", desc: "Complete kits for football, futsal, badminton and more.", to: "/catalogue", image: imgSports },
 ];
 
 const Services = () => {
@@ -44,17 +48,23 @@ const Services = () => {
               className={`group relative aspect-[3/4] overflow-hidden bg-card border border-border/60 hover:border-accent transition-all duration-500 reveal ${inView ? "in-view" : ""}`}
               style={{ animationDelay: `${0.3 + i * 0.08}s` }}
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-accent/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <div className="absolute inset-0 p-6 flex flex-col justify-between">
-                <span className="font-display uppercase tracking-[0.25em] text-xs text-muted-foreground">
+              <img
+                src={s.image}
+                alt={s.title}
+                loading="lazy"
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/10" />
+              <div className="relative z-10 h-full p-6 flex flex-col justify-between">
+                <span className="font-display uppercase tracking-[0.25em] text-xs text-white/80">
                   0{i + 1}
                 </span>
                 <div className="space-y-3">
-                  <h3 className="font-display uppercase text-2xl md:text-3xl text-foreground leading-tight">
+                  <h3 className="font-display uppercase text-2xl md:text-3xl text-white leading-tight">
                     {s.title}
                   </h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed">{s.desc}</p>
-                  <span className="inline-flex items-center gap-2 text-foreground font-display uppercase tracking-[0.25em] text-xs pt-2">
+                  <p className="text-white/80 text-sm leading-relaxed">{s.desc}</p>
+                  <span className="inline-flex items-center gap-2 text-white font-display uppercase tracking-[0.25em] text-xs pt-2">
                     Explore
                     <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
                   </span>
