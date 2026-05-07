@@ -261,6 +261,7 @@ const UsersTab = ({ currentUserId }: { currentUserId: string }) => {
               <TableRow>
                 <TableHead className="min-w-[200px]">Email</TableHead>
                 <TableHead className="min-w-[120px]">Role</TableHead>
+                <TableHead className="min-w-[150px]">Salesperson</TableHead>
                 <TableHead className="min-w-[120px]">Created</TableHead>
                 <TableHead className="min-w-[160px]">Last Sign In</TableHead>
                 <TableHead className="min-w-[150px]">Actions</TableHead>
