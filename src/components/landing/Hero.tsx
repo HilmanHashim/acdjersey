@@ -44,15 +44,6 @@ const slides: Slide[] = [
     primary: { label: "Start Your Order", to: "/enquiry" },
     secondary: { label: "Meet The Team", to: "/about" },
   },
-  {
-    image: slide4,
-    eyebrow: "Premium Sublimation",
-    title: "GO BIG.",
-    highlight: "GO BOLD.",
-    subtitle: "Vivid prints that don't crack, don't fade, don't quit.",
-    primary: { label: "Get A Quote", to: "/enquiry" },
-    secondary: { label: "Talk To An Agent", to: "/agents" },
-  },
 ];
 
 const Hero = () => {
