@@ -430,19 +430,13 @@ const Catalogue = () => {
           subtitle="Each category is a starting point — not a limit. Tap any tile to see every design we've produced."
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5 auto-rows-fr">
-          {/* Feature: Long sleeve (tall) */}
-          <div id={categories[0].slug} className="md:col-span-2 md:row-span-2 scroll-mt-32">
-            <CategoryTile category={categories[0]} feature />
-          </div>
-          {/* Singlet */}
-          <div id={categories[1].slug} className="md:col-span-1 scroll-mt-32">
-            <CategoryTile category={categories[1]} />
-          </div>
-          {/* Collared */}
-          <div id={categories[2].slug} className="md:col-span-1 scroll-mt-32">
-            <CategoryTile category={categories[2]} />
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
+          {categories.map((cat) => (
+            <div key={cat.slug} id={cat.slug} className="scroll-mt-32">
+              <CategoryTile category={cat} />
+            </div>
+          ))}
+        </div>
           {/* Standard (wide) */}
           <div id={categories[3].slug} className="md:col-span-3 scroll-mt-32">
             <CategoryTile category={categories[3]} />
