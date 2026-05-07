@@ -113,13 +113,6 @@ const CategoryTile = ({
       {/* Bottom gradient for label legibility */}
       <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-background via-background/80 to-transparent pointer-events-none" />
 
-      {/* Index badge */}
-      <div className="absolute top-5 left-5 z-10">
-        <span className="font-display text-xs uppercase tracking-[0.3em] text-foreground/80">
-          {category.index} / 04
-        </span>
-      </div>
-
       {/* Count pill */}
       <div className="absolute top-5 right-5 z-10">
         <span className="font-display text-[10px] uppercase tracking-[0.2em] bg-foreground/10 backdrop-blur-md border border-foreground/20 text-foreground px-3 py-1.5 rounded-full">
@@ -128,32 +121,19 @@ const CategoryTile = ({
       </div>
 
       {/* Bottom content */}
-      <div className="absolute inset-x-0 bottom-0 p-6 md:p-8 z-10">
+      <div className="absolute inset-x-0 bottom-0 p-5 md:p-6 z-10">
         <h3 className={`font-display text-foreground leading-none mb-2 ${feature ? "text-3xl md:text-5xl" : "text-2xl md:text-3xl"}`}>
           {category.title}
         </h3>
-        <p className="text-muted-foreground text-sm max-w-md mb-4">
+        <p className="text-muted-foreground text-sm max-w-md mb-3">
           {category.description}
         </p>
         <span className="inline-flex items-center gap-2 font-display text-xs uppercase tracking-[0.25em] text-accent">
           Explore the range
           <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
         </span>
-
-        {/* Thumbnail strip — visible on hover (desktop) */}
-        <div className="hidden md:flex gap-2 mt-5 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500">
-          {category.images.slice(0, 4).map((src, i) => (
-            <div
-              key={i}
-              className={`w-14 h-14 rounded-lg overflow-hidden border-2 transition-all ${
-                i === current ? "border-accent" : "border-foreground/20"
-              }`}
-            >
-              <img src={src} alt="" className="w-full h-full object-cover" />
-            </div>
-          ))}
-        </div>
       </div>
+
 
       {/* Dots indicator */}
       {total > 1 && (
