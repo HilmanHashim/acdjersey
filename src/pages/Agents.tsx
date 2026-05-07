@@ -1,5 +1,5 @@
-import { Phone, MessageCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Phone, MessageCircle, ArrowUpRight, MapPin, Clock } from "lucide-react";
+import Footer from "@/components/landing/Footer";
 import aliffImg from "@/assets/aliff-acd-new.png";
 import faizImg from "@/assets/faiz-acd.jfif";
 import imanImg from "@/assets/iman-acd.jfif";
@@ -9,7 +9,6 @@ import adamImg from "@/assets/adam-acd.png";
 import hilmanImg from "@/assets/hilman-acd.png";
 import harithImg from "@/assets/harith-acd.jpeg";
 import didoImg from "@/assets/dido-acd.png";
-import { Card, CardContent } from "@/components/ui/card";
 import Navbar from "@/components/Navbar";
 import teamBg from "@/assets/team-bg.jpeg";
 
@@ -57,16 +56,16 @@ const agents = [
     role: "Sales Executive",
     bio: "Passionate about connecting clients with the perfect apparel solutions, ensuring satisfaction from enquiry to delivery.",
     image: didoImg,
-    imageClass: "scale-[1.8] object-[center_55%]", // zoom + move up
+    imageClass: "scale-[1.8] object-[center_55%]",
   },
   {
     name: "HILMAN ACD",
     phone: "011-5929 4190",
     whatsapp: "https://wa.me/601159294190",
-    role: "Sales Executive / Web and Data Engineer",
+    role: "Sales Executive / Web & Data Engineer",
     bio: "Ready to help you find the perfect apparel for your team, event, or brand 👕✨ Always here to make the process smooth from start to finish 🙌",
     image: hilmanImg,
-    imageClass: "scale-[2.8] object-[center_110%]", // zoom + move up
+    imageClass: "scale-[2.8] object-[center_110%]",
   },
 ];
 
@@ -76,7 +75,7 @@ const designers = [
     phone: "017-280 9232",
     whatsapp: "https://wa.me/60172809232",
     role: "Creative Director",
-    bio: "Graphic Designer with 8+ years of experience, specializing in jersey, apparel, and print design. Known for delivering clean, elevated visuals with a strong attention to detail and premium finish.",
+    bio: "Graphic Designer with 8+ years of experience, specializing in jersey, apparel, and print design. Known for delivering clean, elevated visuals with strong attention to detail and a premium finish.",
     image: faizImg,
     imageClass: "object-[center_40%]",
   },
@@ -96,115 +95,173 @@ const designers = [
   },
 ];
 
+/* ──────────────────────────────────────────────────────────── */
+/* Roster card — split layout, image left + info right          */
+/* ──────────────────────────────────────────────────────────── */
+type Person = {
+  name: string;
+  role: string;
+  bio: string;
+  image: string;
+  imageClass?: string;
+  phone?: string;
+  whatsapp?: string;
+};
+
+const RosterCard = ({ person, index }: { person: Person; index: number }) => (
+  <article className="group relative flex gap-4 sm:gap-6 rounded-2xl border border-border bg-card hover:border-accent/40 transition-all duration-500 p-4 sm:p-6 overflow-hidden">
+    {/* Index */}
+    <span className="absolute top-3 right-4 font-display text-[10px] tabular-nums tracking-[0.25em] text-muted-foreground/60">
+      {String(index + 1).padStart(2, "0")}
+    </span>
+
+    {/* Portrait */}
+    <div className="relative flex-shrink-0 w-24 h-32 sm:w-28 sm:h-36 rounded-xl overflow-hidden bg-secondary">
+      <img
+        src={person.image}
+        alt={person.name}
+        className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${person.imageClass || ""}`}
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-background/40 to-transparent pointer-events-none" />
+    </div>
+
+    {/* Info */}
+    <div className="flex-1 min-w-0 flex flex-col">
+      <div className="flex-1 space-y-1.5">
+        <h3 className="font-display text-base sm:text-lg text-foreground leading-tight pr-8">
+          {person.name}
+        </h3>
+        <p className="font-display text-[10px] uppercase tracking-[0.2em] text-accent">
+          {person.role}
+        </p>
+        <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed line-clamp-3 pt-1">
+          {person.bio}
+        </p>
+      </div>
+
+      {/* Contact */}
+      {person.whatsapp && (
+        <div className="mt-4 flex flex-col gap-2">
+          {person.phone && (
+            <span className="inline-flex items-center gap-2 text-muted-foreground text-xs font-display tabular-nums">
+              <Phone className="h-3 w-3 text-accent" />
+              {person.phone}
+            </span>
+          )}
+          <a
+            href={person.whatsapp}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 bg-foreground text-background font-display text-[11px] uppercase tracking-[0.2em] px-4 py-2.5 rounded-full hover:bg-accent hover:text-accent-foreground transition-all duration-300"
+          >
+            <MessageCircle className="h-3.5 w-3.5" />
+            WhatsApp
+            <ArrowUpRight className="h-3 w-3 opacity-60" />
+          </a>
+        </div>
+      )}
+    </div>
+  </article>
+);
+
 const Agents = () => (
   <div className="min-h-screen bg-background">
     <Navbar />
 
-    <div className="relative py-20 animate-slide-up overflow-hidden">
+    {/* ───── Hero ───── */}
+    <section className="relative py-20 md:py-24 animate-slide-up overflow-hidden border-b border-border">
       <div className="absolute inset-0">
         <img src={teamBg} alt="" className="w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
+        <div className="absolute inset-0 bg-background/85 backdrop-blur-sm" />
       </div>
 
-      <div className="container relative z-10">
-        <h1 className="text-4xl md:text-5xl font-display text-gradient title-glow inline-block mb-3">Contact Our Team</h1>
-        <p className="text-foreground/70 max-w-lg">
-          Reach out to any of our agents directly via WhatsApp for enquiries, quotations, or orders.
+      <div className="container max-w-5xl relative z-10 space-y-5">
+        <p className="font-display text-accent uppercase tracking-[0.3em] text-xs">
+          The Team
+        </p>
+        <h1 className="text-4xl md:text-6xl font-display text-gradient title-glow inline-block">
+          Talk to a real human.
+        </h1>
+        <p className="text-foreground/70 max-w-xl text-base md:text-lg leading-relaxed">
+          No bots, no call centres. Tap any name below to WhatsApp them directly — they'll handle your enquiry, quote, and order from start to finish.
+        </p>
+
+        {/* Quick info badges */}
+        <div className="flex flex-wrap gap-3 pt-4">
+          <span className="inline-flex items-center gap-2 bg-card/60 backdrop-blur-sm border border-border rounded-full px-4 py-2 font-display text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+            <Clock className="h-3.5 w-3.5 text-accent" />
+            Mon–Sat · 9am–6pm
+          </span>
+          <span className="inline-flex items-center gap-2 bg-card/60 backdrop-blur-sm border border-border rounded-full px-4 py-2 font-display text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+            <MapPin className="h-3.5 w-3.5 text-accent" />
+            Based in Malaysia
+          </span>
+        </div>
+      </div>
+    </section>
+
+    {/* ───── Sales executives ───── */}
+    <section className="container max-w-6xl py-16 md:py-20">
+      <div className="flex items-end justify-between gap-4 mb-10 flex-wrap">
+        <div className="space-y-2">
+          <p className="font-display text-[11px] uppercase tracking-[0.3em] text-accent">
+            01 — Sales
+          </p>
+          <h2 className="text-3xl md:text-4xl font-display text-foreground leading-tight">
+            Pick your point of contact.
+          </h2>
+        </div>
+        <p className="text-muted-foreground text-sm max-w-xs">
+          {agents.length} executives ready to help. Any of them can take your order from enquiry to delivery.
         </p>
       </div>
-    </div>
 
-    <section className="py-16">
-      <div className="container">
-        <h2
-          className="text-3xl md:text-4xl font-display text-gradient mb-10 text-center animate-slide-up"
-          style={{ animationDelay: "0.15s" }}
-        >
-          Our Sales Executive
-        </h2>
-
-        <div className="flex flex-wrap justify-center gap-8 max-w-5xl mx-auto">
-          {agents.map((agent, i) => (
-            <Card
-              key={agent.name}
-              className="bg-card border-border hover:border-primary/50 transition-colors animate-slide-up hover-scale w-full sm:w-[calc(50%-16px)] lg:w-[calc(33.333%-22px)]"
-              style={{ animationDelay: `${0.3 + i * 0.15}s` }}
-            >
-              <CardContent className="p-6 flex flex-col items-center text-center gap-5">
-                <div className="w-32 h-32 rounded-full bg-secondary flex items-center justify-center overflow-hidden">
-                  {agent.image ? (
-                    <img
-                      src={agent.image}
-                      alt={agent.name}
-                      className={`w-full h-full object-cover ${agent.imageClass || ""}`}
-                    />
-                  ) : (
-                    <span className="text-4xl font-display text-foreground">{agent.name.charAt(0)}</span>
-                  )}
-                </div>
-
-                <div className="space-y-1">
-                  <h3 className="font-display text-xl text-foreground">{agent.name}</h3>
-                  <p className="text-primary text-sm font-medium">{agent.role}</p>
-                </div>
-
-                <p className="text-muted-foreground text-sm leading-relaxed">{agent.bio}</p>
-
-                <div className="flex items-center gap-2 text-muted-foreground text-sm">
-                  <Phone className="h-4 w-4" />
-                  <span>{agent.phone}</span>
-                </div>
-
-                <Button variant="hero" size="lg" className="w-full" asChild>
-                  <a href={agent.whatsapp} target="_blank" rel="noopener noreferrer">
-                    <MessageCircle className="mr-2 h-4 w-4" />
-                    WhatsApp
-                  </a>
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
+        {agents.map((a, i) => (
+          <RosterCard key={a.name} person={a} index={i} />
+        ))}
       </div>
     </section>
 
-    <section className="py-16 border-t border-border">
-      <div className="container">
-        <h2
-          className="text-3xl md:text-4xl font-display text-gradient mb-10 text-center animate-slide-up"
-          style={{ animationDelay: "0.75s" }}
-        >
-          Our Designers
-        </h2>
+    {/* ───── Designers ───── */}
+    <section className="border-t border-border bg-card/30">
+      <div className="container max-w-6xl py-16 md:py-20">
+        <div className="flex items-end justify-between gap-4 mb-10 flex-wrap">
+          <div className="space-y-2">
+            <p className="font-display text-[11px] uppercase tracking-[0.3em] text-accent">
+              02 — Studio
+            </p>
+            <h2 className="text-3xl md:text-4xl font-display text-foreground leading-tight">
+              The hands behind every design.
+            </h2>
+          </div>
+          <p className="text-muted-foreground text-sm max-w-xs">
+            Our in-house design team works with you from sketch to final print.
+          </p>
+        </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
           {designers.map((d, i) => (
-            <Card
-              key={d.name}
-              className="bg-card border-border hover:border-primary/50 transition-colors animate-slide-up hover-scale"
-              style={{ animationDelay: `${0.9 + i * 0.15}s` }}
-            >
-              <CardContent className="p-6 flex flex-col items-center text-center gap-5">
-                <div className="w-32 h-32 rounded-full bg-secondary flex items-center justify-center overflow-hidden">
-                  {d.image ? (
-                    <img src={d.image} alt={d.name} className={`w-full h-full object-cover ${d.imageClass || ""}`} />
-                  ) : (
-                    <span className="text-4xl font-display text-foreground">{d.name.charAt(0)}</span>
-                  )}
-                </div>
-
-                <div className="space-y-1">
-                  <h3 className="font-display text-xl text-foreground">{d.name}</h3>
-                  <p className="text-primary text-sm font-medium">{d.role}</p>
-                </div>
-
-                <p className="text-muted-foreground text-sm leading-relaxed">{d.bio}</p>
-              </CardContent>
-            </Card>
+            <RosterCard key={d.name} person={d} index={i} />
           ))}
         </div>
       </div>
     </section>
+
+    {/* ───── Closing band ───── */}
+    <section className="container max-w-4xl py-20 text-center space-y-5">
+      <p className="font-display text-[11px] uppercase tracking-[0.3em] text-accent">
+        Not sure who to message?
+      </p>
+      <h2 className="font-display text-3xl md:text-4xl text-foreground leading-tight">
+        Just message anyone — we share notes.
+      </h2>
+      <p className="text-muted-foreground max-w-md mx-auto text-sm">
+        Whoever picks up first will own your enquiry. No bouncing between people.
+      </p>
+    </section>
+
+    <Footer />
   </div>
 );
 
