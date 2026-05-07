@@ -16,6 +16,7 @@ import SalesTrackerTab from "@/components/crm/SalesTrackerTab";
 import ShopProductsTab from "@/components/crm/ShopProductsTab";
 import ShopOrdersTab from "@/components/crm/ShopOrdersTab";
 import ShippingZonesTab from "@/components/crm/ShippingZonesTab";
+import MyKpiTab from "@/components/crm/MyKpiTab";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const CRM = () => {
