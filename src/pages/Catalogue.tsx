@@ -377,12 +377,6 @@ const Catalogue = () => {
 
         <div className="relative container max-w-6xl py-20 md:py-32">
           <div className="space-y-6 max-w-3xl animate-slide-up">
-            <div className="flex items-center gap-3">
-              <Sparkles className="h-4 w-4 text-accent" />
-              <span className="font-display text-xs uppercase tracking-[0.4em] text-accent">
-                The 2026 Catalogue
-              </span>
-            </div>
             <h1 className="font-display text-foreground leading-[0.9] text-5xl md:text-7xl lg:text-8xl">
               Built to <span className="text-gradient">order.</span>
               <br />
@@ -436,23 +430,12 @@ const Catalogue = () => {
           subtitle="Each category is a starting point — not a limit. Tap any tile to see every design we've produced."
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5 auto-rows-fr">
-          {/* Feature: Long sleeve (tall) */}
-          <div id={categories[0].slug} className="md:col-span-2 md:row-span-2 scroll-mt-32">
-            <CategoryTile category={categories[0]} feature />
-          </div>
-          {/* Singlet */}
-          <div id={categories[1].slug} className="md:col-span-1 scroll-mt-32">
-            <CategoryTile category={categories[1]} />
-          </div>
-          {/* Collared */}
-          <div id={categories[2].slug} className="md:col-span-1 scroll-mt-32">
-            <CategoryTile category={categories[2]} />
-          </div>
-          {/* Standard (wide) */}
-          <div id={categories[3].slug} className="md:col-span-3 scroll-mt-32">
-            <CategoryTile category={categories[3]} />
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
+          {categories.map((cat) => (
+            <div key={cat.slug} id={cat.slug} className="scroll-mt-32">
+              <CategoryTile category={cat} />
+            </div>
+          ))}
         </div>
       </section>
 
@@ -465,12 +448,15 @@ const Catalogue = () => {
             title="Pick the fabric. Feel the difference."
             subtitle="From breathable mesh to premium lycra — choose what fits your sport, climate, and budget."
           />
-          <SwatchGrid items={FABRICS} onOpen={() => setLightbox("fabric")} />
           <button
             onClick={() => setLightbox("fabric")}
-            className="mt-6 inline-flex items-center gap-2 font-display text-xs uppercase tracking-[0.25em] text-accent hover:gap-3 transition-all"
+            className="block w-full overflow-hidden rounded-2xl border border-border bg-card hover:border-accent/50 transition-all duration-300 group"
           >
-            View full fabric reference <ArrowUpRight className="h-4 w-4" />
+            <img
+              src={fabricTypes}
+              alt="Fabric types reference"
+              className="w-full h-auto object-contain group-hover:scale-[1.01] transition-transform duration-500"
+            />
           </button>
         </div>
       </section>
@@ -484,12 +470,15 @@ const Catalogue = () => {
             title="Every neckline, dialled in."
             subtitle="Eleven collar styles — from clean roundneck to mandarin zip. Tap any to view the reference sheet."
           />
-          <SwatchGrid items={COLLARS} onOpen={() => setLightbox("collar")} />
           <button
             onClick={() => setLightbox("collar")}
-            className="mt-6 inline-flex items-center gap-2 font-display text-xs uppercase tracking-[0.25em] text-accent hover:gap-3 transition-all"
+            className="block w-full overflow-hidden rounded-2xl border border-border bg-card hover:border-accent/50 transition-all duration-300 group"
           >
-            View full collar reference <ArrowUpRight className="h-4 w-4" />
+            <img
+              src={collarTypes}
+              alt="Collar types reference"
+              className="w-full h-auto object-contain group-hover:scale-[1.01] transition-transform duration-500"
+            />
           </button>
         </div>
       </section>
@@ -508,10 +497,10 @@ const Catalogue = () => {
                 04 / Want More?
               </span>
               <h2 className="font-display text-3xl md:text-5xl text-foreground leading-[0.95]">
-                500+ designs live on our Telegram.
+                More designs live on our Telegram.
               </h2>
               <p className="text-muted-foreground text-sm md:text-base max-w-md">
-                New drops every week. Or skip the scroll and tell us exactly what you need — we'll design it from scratch.
+                Browse our latest drops on Telegram — or skip the scroll and tell us exactly what you need. We'll design it from scratch.
               </p>
             </div>
 
