@@ -439,7 +439,7 @@ const DashboardTab = () => {
                   <td className="px-2 py-2 text-center font-bold border" style={{ color: C.blue, borderColor: BORDER_COL }}>{fmtPct(p.closeRate)}</td>
                   <td className="px-2 py-2 font-bold border" style={{ color: C.yellow, borderColor: BORDER_COL }}>{p.avgPrice ? `RM ${p.avgPrice.toFixed(2)}` : "—"}</td>
                   <td className="px-2 py-2 text-center border" style={{ color: C.white, borderColor: BORDER_COL }}>{p.pcs}</td>
-                  <td className="px-2 py-2 font-bold border" style={{ color: C.green, borderColor: BORDER_COL }}>{fmtPct(contrib)}</td>
+                  <td className="px-2 py-2 text-center font-bold border" style={{ color: C.green, borderColor: BORDER_COL }}>{fmtPct(contrib)}</td>
                 </tr>
                 );
               })}
