@@ -273,7 +273,7 @@ const AboutUs = () => (
           className="inline-flex items-center gap-2 bg-card border border-border text-foreground font-display text-sm uppercase tracking-wider px-6 py-3 rounded-full hover:border-accent hover:text-accent transition-all"
         >
           <MessageCircle className="h-4 w-4" />
-          DM on Telegram
+          Updates on our Telegram
         </a>
       </div>
     </section>
