@@ -437,11 +437,6 @@ const Catalogue = () => {
             </div>
           ))}
         </div>
-          {/* Standard (wide) */}
-          <div id={categories[3].slug} className="md:col-span-3 scroll-mt-32">
-            <CategoryTile category={categories[3]} />
-          </div>
-        </div>
       </section>
 
       {/* ───── Fabrics ───── */}
