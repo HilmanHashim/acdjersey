@@ -1,17 +1,7 @@
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/landing/Footer";
-import {
-  Shield,
-  Zap,
-  Palette,
-  Award,
-  DollarSign,
-  ArrowUpRight,
-  MessageCircle,
-  Target,
-  Compass,
-} from "lucide-react";
+import { Shield, Zap, Palette, Award, DollarSign, ArrowUpRight, MessageCircle, Target, Compass } from "lucide-react";
 import whoWeAreBg from "@/assets/who-we-are-bg.jpeg";
 import whyChooseUsBg from "@/assets/why-choose-us-bg.jpeg";
 
@@ -43,10 +33,18 @@ const clientLogos = [
 ];
 
 const whyChooseUs = [
-  { icon: Shield, title: "Superior Quality", desc: "Bulk orders delivered in 7-14 days. No drawn-out lead times." },
-  { icon: Zap, title: "Fast Turnaround", desc: "Bulk orders delivered in 7 days. No drawn-out lead times." },
-  { icon: Palette, title: "Custom Designs", desc: "Our designers work hand-in-hand with you to create something unmistakable." },
-  { icon: Award, title: "Trusted by Top Brands", desc: "From Volvo Ingress Swede to Malaysian government bodies — we deliver." },
+  { icon: Shield, title: "Superior Quality", desc: "Variety of materials with premium quality to pick from." },
+  { icon: Zap, title: "Fast Turnaround", desc: "Bulk orders delivered in 7-14 days. No drawn-out lead times." },
+  {
+    icon: Palette,
+    title: "Custom Designs",
+    desc: "Our designers work hand-in-hand with you to create something unmistakable.",
+  },
+  {
+    icon: Award,
+    title: "Trusted by Top Brands",
+    desc: "From Volvo Ingress Swede to Malaysian government bodies — we deliver.",
+  },
   { icon: DollarSign, title: "Competitive Pricing", desc: "Premium quality, honest pricing. No hidden costs." },
 ];
 
@@ -61,11 +59,7 @@ const products = [
   },
   {
     title: "Muslimah Running Shirts",
-    details: [
-      "Shariah-compliant design",
-      "Longer cuts for better coverage",
-      "Fabric: Ultron Superlite 115GSM",
-    ],
+    details: ["Shariah-compliant design", "Longer cuts for better coverage", "Fabric: Ultron Superlite 115GSM"],
   },
   {
     title: "Event Jerseys",
@@ -78,7 +72,10 @@ const products = [
 ];
 
 const clientTypes = [
-  { category: "Corporate Partners", items: ["GLC Agencies", "Government Agencies", "Government Schools", "Private & International Schools"] },
+  {
+    category: "Corporate Partners",
+    items: ["GLC Agencies", "Government Agencies", "Government Schools", "Private & International Schools"],
+  },
   { category: "Community Partners", items: ["Running Groups Across Malaysia", "Sports Clubs", "Fitness Enthusiasts"] },
 ];
 
@@ -94,7 +91,10 @@ const AboutUs = () => (
         <p className="font-display text-accent uppercase tracking-[0.3em] text-sm">About Us</p>
         <h1 className="text-4xl md:text-6xl font-display text-gradient title-glow inline-block">Who We Are</h1>
         <p className="text-foreground/80 text-lg leading-relaxed">
-          ACD is a premium sublimation clothing service provider specializing in sport fashion apparel. We pride ourselves on delivering top-notch quality and customization to meet the needs of our clients. With a focus on innovation, we cater to running groups, events, and organizations seeking lightweight, comfortable, and stylish apparel.
+          ACD is a premium sublimation clothing service provider specializing in sport fashion apparel. We pride
+          ourselves on delivering top-notch quality and customization to meet the needs of our clients. With a focus on
+          innovation, we cater to running groups, events, and organizations seeking lightweight, comfortable, and
+          stylish apparel.
         </p>
       </div>
     </section>
@@ -172,9 +172,7 @@ const AboutUs = () => (
       <div className="container space-y-12 max-w-5xl">
         <div className="text-center space-y-3">
           <p className="font-display text-accent uppercase tracking-[0.3em] text-sm">Our Products</p>
-          <h2 className="text-3xl md:text-5xl font-display text-gradient title-glow inline-block">
-            Three core lines.
-          </h2>
+          <h2 className="text-3xl md:text-5xl font-display text-gradient title-glow inline-block">Three core lines.</h2>
         </div>
         <div className="grid md:grid-cols-3 gap-6">
           {products.map((product) => (
@@ -257,9 +255,7 @@ const AboutUs = () => (
 
     {/* ───── CTA — minimal centered band ───── */}
     <section className="container max-w-3xl pb-24 text-center space-y-6">
-      <h2 className="font-display text-3xl md:text-5xl text-foreground leading-tight">
-        Got a team to dress?
-      </h2>
+      <h2 className="font-display text-3xl md:text-5xl text-foreground leading-tight">Got a team to dress?</h2>
       <p className="text-muted-foreground max-w-lg mx-auto">
         Tell us what you need — quantity, fabric, deadline. We'll come back with a quote and design ideas.
       </p>
