@@ -331,3 +331,25 @@ const RecentEntries = ({ entries, onRemove }: { entries: SalesEntry[]; onRemove:
 };
 
 export default SalesTrackerTab;
+
+const OutcomeCell = ({ entry }: { entry: SalesEntry }) => {
+  const qc = useQueryClient();
+  const value = entry.lead_outcome || "Pending";
+  const color =
+    value === "Bought" ? "text-green-500" :
+    value === "Not Bought" ? "text-red-500" :
+    "text-muted-foreground";
+  const onChange = async (v: string) => {
+    const { error } = await supabase.from("sales_entries").update({ lead_outcome: v }).eq("id", entry.id);
+    if (error) return toast.error(error.message);
+    qc.invalidateQueries({ queryKey: ["sales_entries"] });
+  };
+  return (
+    <Select value={value} onValueChange={onChange}>
+      <SelectTrigger className={`h-7 w-[110px] text-xs mx-auto ${color}`}><SelectValue /></SelectTrigger>
+      <SelectContent>
+        {LEAD_OUTCOMES.map((o) => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+      </SelectContent>
+    </Select>
+  );
+};
