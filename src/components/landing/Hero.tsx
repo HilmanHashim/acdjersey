@@ -134,8 +134,8 @@ const Hero = () => {
         </div>
       </section>
 
-      {/* Marquee strip */}
-      <div className="bg-primary text-primary-foreground overflow-hidden border-y border-primary/40">
+      {/* Marquee strip — Nike-style: black background, crisp white type */}
+      <div className="bg-black text-white overflow-hidden border-y border-white/10">
         <div className="flex whitespace-nowrap py-3 animate-marquee">
           {Array.from({ length: 2 }).map((_, dup) => (
             <div key={dup} className="flex items-center shrink-0">
@@ -149,7 +149,7 @@ const Hero = () => {
               ].map((t, i) => (
                 <span
                   key={`${dup}-${i}`}
-                  className="font-display uppercase tracking-[0.25em] text-sm px-8 flex items-center gap-8"
+                  className="font-display uppercase tracking-[0.3em] text-sm px-8 flex items-center gap-8"
                 >
                   {t}
                   <span className="text-accent">★</span>
