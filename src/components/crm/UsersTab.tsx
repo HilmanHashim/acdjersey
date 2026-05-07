@@ -292,6 +292,22 @@ const UsersTab = ({ currentUserId }: { currentUserId: string }) => {
                       </Badge>
                     )}
                   </TableCell>
+                  <TableCell>
+                    {isAdmin ? (
+                      <Select
+                        value={profileByUser[u.id] || "__none__"}
+                        onValueChange={(v) => setSalespersonMutation.mutate({ userId: u.id, key: v === "__none__" ? null : v })}
+                      >
+                        <SelectTrigger className="h-8 w-[150px] text-xs"><SelectValue placeholder="Unassigned" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="__none__">— Unassigned —</SelectItem>
+                          {SALESPEOPLE_KEYS.map((k) => <SelectItem key={k} value={k}>{k}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <span className="text-xs text-muted-foreground">{profileByUser[u.id] || "—"}</span>
+                    )}
+                  </TableCell>
                   <TableCell className="text-sm truncate">{format(new Date(u.created_at), "MMM d, yyyy")}</TableCell>
                   <TableCell className="text-sm truncate">{u.last_sign_in_at ? format(new Date(u.last_sign_in_at), "MMM d, yyyy h:mm a") : "Never"}</TableCell>
                   <TableCell>
