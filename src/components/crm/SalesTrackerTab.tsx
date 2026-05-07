@@ -111,6 +111,7 @@ const SalespersonForm = ({ salesperson, entries }: { salesperson: string; entrie
     revenue_closed: "",
     activity_today: "",
     energy_level: "🔥 On Fire",
+    lead_outcome: "Pending",
   });
 
   const update = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }));
@@ -130,6 +131,7 @@ const SalespersonForm = ({ salesperson, entries }: { salesperson: string; entrie
       revenue_closed: Number(form.revenue_closed) || 0,
       activity_today: form.activity_today || null,
       energy_level: form.energy_level || null,
+      lead_outcome: form.lead_outcome || null,
     };
     const { error } = await supabase.from("sales_entries").insert(payload);
     if (error) {
@@ -141,7 +143,7 @@ const SalespersonForm = ({ salesperson, entries }: { salesperson: string; entrie
       ...f,
       job_name: "", jersey_type: "", quantity: "", price_per_pc: "",
       new_leads: "", prospects_contacted: "", quotations_sent: "", orders_closed: "", revenue_closed: "",
-      activity_today: "",
+      activity_today: "", lead_outcome: "Pending",
     }));
     qc.invalidateQueries({ queryKey: ["sales_entries"] });
   };
