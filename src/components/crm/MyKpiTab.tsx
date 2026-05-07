@@ -321,19 +321,51 @@ const MyKpiTab = () => {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 p-3 rounded-b-md" style={{ background: C.panel }}>
           {[
             { l: "MY REVENUE", v: `RM ${fmtMoney(totals.revenue)}`, color: C.yellow, icon: "💰" },
-            { l: "PERSONAL TARGET", v: `RM ${fmtMoney(personalTarget)}`, color: C.subtle, icon: "🎯" },
+            { l: "PERSONAL TARGET", v: personalTarget ? `RM ${fmtMoney(personalTarget)}` : "—", color: C.subtle, icon: "🎯", editable: true },
             { l: "% ACHIEVED", v: fmtPct(pct), color: C.green, icon: "📈" },
             { l: "ORDERS CLOSED", v: totals.closed, color: C.blue, icon: "✅" },
             { l: "TOTAL PCS", v: totals.pcs, color: C.text, icon: "👕" },
             { l: "AVG PRICE / PC", v: avgPrice ? `RM ${avgPrice.toFixed(2)}` : "—", color: C.yellowBright, icon: "🏷️" },
-          ].map((s) => (
+          ].map((s: any) => (
             <div key={s.l} className="rounded-lg p-3 transition-transform hover:scale-[1.02]"
               style={{ background: C.panelStrong, borderLeft: `3px solid ${s.color}` }}>
               <div className="flex items-center justify-between mb-1.5">
                 <div className="text-[10px] font-bold tracking-wider" style={{ color: C.muted }}>{s.l}</div>
-                <span className="text-sm opacity-70">{s.icon}</span>
+                <div className="flex items-center gap-1">
+                  {s.editable && canEditTarget && !editingTarget && (
+                    <button
+                      onClick={() => setEditingTarget(true)}
+                      className="opacity-70 hover:opacity-100 transition-opacity"
+                      style={{ color: C.muted }}
+                      title="Edit personal target"
+                    >
+                      <Pencil className="w-3 h-3" />
+                    </button>
+                  )}
+                  <span className="text-sm opacity-70">{s.icon}</span>
+                </div>
               </div>
-              <div className="text-xl font-bold leading-tight" style={{ color: s.color }}>{s.v}</div>
+              {s.editable && editingTarget ? (
+                <div className="flex items-center gap-1">
+                  <input
+                    type="number"
+                    value={targetDraft}
+                    onChange={(e) => setTargetDraft(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === "Enter") saveTarget(); if (e.key === "Escape") setEditingTarget(false); }}
+                    autoFocus
+                    className="w-full px-2 py-1 rounded text-sm font-bold focus:outline-none"
+                    style={{ background: C.bg, color: C.text, border: `1px solid ${C.yellow}` }}
+                  />
+                  <button onClick={saveTarget} className="p-1 rounded" style={{ color: C.green }} title="Save">
+                    <Check className="w-4 h-4" />
+                  </button>
+                  <button onClick={() => setEditingTarget(false)} className="p-1 rounded" style={{ color: C.orange }} title="Cancel">
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ) : (
+                <div className="text-xl font-bold leading-tight" style={{ color: s.color }}>{s.v}</div>
+              )}
             </div>
           ))}
         </div>
