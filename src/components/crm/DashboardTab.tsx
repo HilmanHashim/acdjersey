@@ -89,14 +89,16 @@ const agg = (rows: SalesEntry[]) =>
       a.pcs += r.quantity || 0;
       a.priceSum += Number(r.price_per_pc) || 0;
       a.priceCount += r.price_per_pc ? 1 : 0;
-      // Weighted avg price = Σ(qty × price) / Σ(qty where price set)
       if (r.price_per_pc && r.quantity) {
         a.priceWeighted += Number(r.price_per_pc) * r.quantity;
         a.pcsForPrice += r.quantity;
       }
+      if (r.lead_outcome === "Bought") a.bought += 1;
+      else if (r.lead_outcome === "Not Bought") a.notBought += 1;
+      else a.pending += 1;
       return a;
     },
-    { leads: 0, contacted: 0, quotes: 0, closed: 0, revenue: 0, pcs: 0, priceSum: 0, priceCount: 0, priceWeighted: 0, pcsForPrice: 0 }
+    { leads: 0, contacted: 0, quotes: 0, closed: 0, revenue: 0, pcs: 0, priceSum: 0, priceCount: 0, priceWeighted: 0, pcsForPrice: 0, bought: 0, notBought: 0, pending: 0 }
   );
 
 const fmtMoney = (n: number) => n.toLocaleString(undefined, { maximumFractionDigits: 0 });
