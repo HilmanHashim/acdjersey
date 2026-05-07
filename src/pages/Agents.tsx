@@ -166,7 +166,7 @@ const Agents = () => (
           Get in touch <br /> with us
         </h1>
         <p className="text-foreground/70 max-w-xl text-base md:text-lg leading-relaxed">
-          No bots, no call centres. Contact our team directly — they'll handle your enquiry, quote, and order from start to finish.
+          Contact our team directly — they'll handle your enquiry, quote, and order from start to finish.
         </p>
 
         <div className="flex flex-wrap gap-3 pt-4">
