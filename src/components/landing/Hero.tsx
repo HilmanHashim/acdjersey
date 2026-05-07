@@ -3,9 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight, Send } from "lucide-react";
 import slide1 from "@/assets/hero-team.jpg";
-import slide2 from "@/assets/hero-slide-3.jpg";
-import slide3 from "@/assets/hero-slide-2.jpg";
-import slide4 from "@/assets/hero-slide-1.jpg";
+import slide2 from "@/assets/hero-track-motion.jpg";
+import slide3 from "@/assets/hero-jersey-flatlay.jpg";
+import slide4 from "@/assets/hero-slide-3.jpg";
+import slide5 from "@/assets/hero-slide-2.jpg";
+import slide6 from "@/assets/hero-slide-1.jpg";
 
 type Slide = {
   image: string;
@@ -29,6 +31,24 @@ const slides: Slide[] = [
   },
   {
     image: slide2,
+    eyebrow: "Built To Move",
+    title: "RUN WITH",
+    highlight: "PURPOSE",
+    subtitle: "Engineered fabrics that move as fast as you do.",
+    primary: { label: "Start Your Order", to: "/enquiry" },
+    secondary: { label: "View Catalogue", to: "/catalogue" },
+  },
+  {
+    image: slide3,
+    eyebrow: "Crafted In Detail",
+    title: "EVERY",
+    highlight: "STITCH",
+    subtitle: "Premium sublimation finishes built to last beyond the final whistle.",
+    primary: { label: "Get A Quote", to: "/enquiry" },
+    secondary: { label: "Browse Designs", to: "/catalogue" },
+  },
+  {
+    image: slide4,
     eyebrow: "Custom Team Apparel",
     title: "DESIGNED",
     highlight: "FOR YOU",
@@ -37,7 +57,7 @@ const slides: Slide[] = [
     secondary: { label: "Browse Designs", to: "/catalogue" },
   },
   {
-    image: slide3,
+    image: slide5,
     eyebrow: "Trusted By Champions",
     title: "WORN BY",
     highlight: "THE BEST",
@@ -46,7 +66,7 @@ const slides: Slide[] = [
     secondary: { label: "Meet The Team", to: "/about" },
   },
   {
-    image: slide4,
+    image: slide6,
     eyebrow: "Trusted By Champions",
     title: "WORN BY",
     highlight: "THE BEST",
