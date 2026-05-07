@@ -486,7 +486,7 @@ const DailyActivityChart = ({ monthRows, mStart, mEnd }: { monthRows: SalesEntry
           <LineChart data={data}>
             <CartesianGrid strokeDasharray="3 3" stroke={BORDER_COL} />
             <XAxis dataKey="label" tick={{ fill: C.subtle, fontSize: 11 }} stroke={BORDER_COL} />
-            <YAxis tick={{ fill: C.subtle, fontSize: 11 }} stroke={BORDER_COL} allowDecimals={false} />
+            <YAxis tick={{ fill: C.subtle, fontSize: 11 }} stroke={BORDER_COL} allowDecimals={false} domain={[0, yMax === "auto" || !yMax ? "auto" : Number(yMax)]} />
             <Tooltip
               contentStyle={{ background: C.panelStrong, border: `1px solid ${BORDER_COL}`, borderRadius: 6, color: C.text }}
               labelFormatter={(l) => `Day ${l}`}
