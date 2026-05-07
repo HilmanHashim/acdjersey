@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useInView } from "@/hooks/use-in-view";
 import imgJersey from "@/assets/catalogue/standard/img-001.jpg";
 import imgDesign from "@/assets/design-services.jpg";
-import imgCorporate from "@/assets/catalogue/longsleeve/img-001.jpg";
+import imgCorporate from "@/assets/corporate-wear.jpg";
 import imgSports from "@/assets/sports-team.jpg";
 
 const services = [
