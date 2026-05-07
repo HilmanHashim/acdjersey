@@ -4,7 +4,7 @@ import { useInView } from "@/hooks/use-in-view";
 import imgJersey from "@/assets/catalogue/standard/img-001.jpg";
 import imgDesign from "@/assets/design-services.jpg";
 import imgCorporate from "@/assets/catalogue/longsleeve/img-001.jpg";
-import imgSports from "@/assets/catalogue/singlet/img-001.jpg";
+import imgSports from "@/assets/sports-team.jpg";
 
 const services = [
   { title: "Custom Jerseys", desc: "Full sublimation kits with your designs, logos and colours.", to: "/catalogue", image: imgJersey },
