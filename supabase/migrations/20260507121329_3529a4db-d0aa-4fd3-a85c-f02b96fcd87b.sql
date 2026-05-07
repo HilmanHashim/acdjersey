@@ -1,0 +1,1 @@
+ALTER TABLE public.sales_entries ADD COLUMN IF NOT EXISTS lead_outcome text;
