@@ -42,7 +42,7 @@ const getSizesForCategory = (category: string): string[] => {
   if (category === "FLAG") return flagSizes;
   if (category.includes("MUSLIMAH")) return muslimahSizes;
   if (category.startsWith("KIDS")) return kidsSizes;
-  if (category.startsWith("LADIES")) return femaleSizes;
+  if (category.startsWith("LADIES") || category.startsWith("FEMALE")) return femaleSizes;
   return unisexSizes;
 };
 
