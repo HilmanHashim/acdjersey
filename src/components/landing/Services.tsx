@@ -1,33 +1,66 @@
-import { Shirt, Palette, Users, Trophy } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
+import { Link } from "react-router-dom";
 import { useInView } from "@/hooks/use-in-view";
 
 const services = [
-  { icon: Shirt, title: "Custom Jerseys", desc: "Full sublimation jerseys with your designs, logos, and colors." },
-  { icon: Palette, title: "Design Services", desc: "Professional in-house design team to bring your vision to life." },
-  { icon: Users, title: "Corporate Wear", desc: "Branded corporate apparel for teams, events, and companies." },
-  { icon: Trophy, title: "Sports Teams", desc: "Complete team kits for football, futsal, badminton, and more." },
+  { title: "Custom Jerseys", desc: "Full sublimation kits with your designs, logos and colours.", to: "/catalogue" },
+  { title: "Design Services", desc: "Professional in-house design team to bring your vision to life.", to: "/enquiry" },
+  { title: "Corporate Wear", desc: "Branded apparel for teams, events and companies.", to: "/enquiry" },
+  { title: "Sports Teams", desc: "Complete kits for football, futsal, badminton and more.", to: "/catalogue" },
 ];
 
 const Services = () => {
   const { ref, inView } = useInView<HTMLDivElement>();
   return (
-    <section className="py-20 bg-background">
-      <div ref={ref} className="container">
-        <h2 className={`text-4xl font-display text-center mb-12 reveal ${inView ? "in-view" : ""}`}>
-          <span className="text-foreground">Our </span>
-          <span className="text-gradient">Services</span>
-        </h2>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {services.map((s, i) => (
-            <div
-              key={s.title}
-              className={`group p-6 rounded-xl bg-card border border-border hover:border-primary/50 card-lift reveal ${inView ? "in-view" : ""}`}
-              style={{ animationDelay: `${0.15 + i * 0.1}s` }}
+    <section className="py-24 md:py-32 bg-background">
+      <div ref={ref} className="container space-y-12">
+        <div className="flex items-end justify-between gap-6 flex-wrap">
+          <div className="space-y-3">
+            <p className={`font-display text-accent uppercase tracking-[0.35em] text-xs reveal ${inView ? "in-view" : ""}`}>
+              What We Do
+            </p>
+            <h2
+              className={`font-display uppercase text-foreground leading-[0.95] text-5xl md:text-7xl reveal ${inView ? "in-view" : ""}`}
+              style={{ animationDelay: "0.1s" }}
             >
-              <s.icon className="h-10 w-10 text-accent mb-4 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300" />
-              <h3 className="font-display text-lg text-foreground mb-2">{s.title}</h3>
-              <p className="text-muted-foreground text-sm">{s.desc}</p>
-            </div>
+              The <span className="text-gradient">Lineup</span>
+            </h2>
+          </div>
+          <Link
+            to="/catalogue"
+            className={`group inline-flex items-center gap-2 font-display uppercase tracking-[0.25em] text-sm text-foreground reveal ${inView ? "in-view" : ""}`}
+            style={{ animationDelay: "0.2s" }}
+          >
+            View All
+            <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
+          </Link>
+        </div>
+
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {services.map((s, i) => (
+            <Link
+              key={s.title}
+              to={s.to}
+              className={`group relative aspect-[3/4] overflow-hidden bg-card border border-border/60 hover:border-accent transition-all duration-500 reveal ${inView ? "in-view" : ""}`}
+              style={{ animationDelay: `${0.3 + i * 0.08}s` }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-accent/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="absolute inset-0 p-6 flex flex-col justify-between">
+                <span className="font-display uppercase tracking-[0.25em] text-xs text-muted-foreground">
+                  0{i + 1}
+                </span>
+                <div className="space-y-3">
+                  <h3 className="font-display uppercase text-2xl md:text-3xl text-foreground leading-tight">
+                    {s.title}
+                  </h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed">{s.desc}</p>
+                  <span className="inline-flex items-center gap-2 text-foreground font-display uppercase tracking-[0.25em] text-xs pt-2">
+                    Explore
+                    <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
+                  </span>
+                </div>
+              </div>
+            </Link>
           ))}
         </div>
       </div>
