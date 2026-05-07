@@ -209,6 +209,7 @@ const CRM = () => {
             <TabsTrigger value="users" className="gap-1.5 text-xs"><Shield className="h-4 w-4" /><span className="hidden sm:inline">Users</span></TabsTrigger>
           </TabsList>
           <TabsContent value="dashboard" forceMount className="data-[state=inactive]:hidden"><DashboardTab /></TabsContent>
+          <TabsContent value="my-kpi" forceMount className="data-[state=inactive]:hidden"><MyKpiTab /></TabsContent>
           <TabsContent value="sales" forceMount className="data-[state=inactive]:hidden"><SalesTrackerTab /></TabsContent>
           <TabsContent value="enquiry" forceMount className="data-[state=inactive]:hidden"><EnquiryTab /></TabsContent>
           <TabsContent value="leads" forceMount className="data-[state=inactive]:hidden"><LeadsTab /></TabsContent>
