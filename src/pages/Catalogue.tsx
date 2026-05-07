@@ -272,7 +272,7 @@ const ChipNav = () => {
   }, []);
 
   return (
-    <div className="sticky top-16 z-30 bg-background/80 backdrop-blur-md border-y border-border">
+    <div className="sticky top-12 z-30 bg-background/80 backdrop-blur-md border-y border-border">
       <div className="container max-w-6xl flex gap-2 overflow-x-auto py-3 scrollbar-hide" style={{ scrollbarWidth: "none" }}>
         {SECTIONS.map((s) => (
           <a
