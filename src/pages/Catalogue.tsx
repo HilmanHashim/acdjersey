@@ -448,12 +448,15 @@ const Catalogue = () => {
             title="Pick the fabric. Feel the difference."
             subtitle="From breathable mesh to premium lycra — choose what fits your sport, climate, and budget."
           />
-          <SwatchGrid items={FABRICS} onOpen={() => setLightbox("fabric")} />
           <button
             onClick={() => setLightbox("fabric")}
-            className="mt-6 inline-flex items-center gap-2 font-display text-xs uppercase tracking-[0.25em] text-accent hover:gap-3 transition-all"
+            className="block w-full overflow-hidden rounded-2xl border border-border bg-card hover:border-accent/50 transition-all duration-300 group"
           >
-            View full fabric reference <ArrowUpRight className="h-4 w-4" />
+            <img
+              src={fabricTypes}
+              alt="Fabric types reference"
+              className="w-full h-auto object-contain group-hover:scale-[1.01] transition-transform duration-500"
+            />
           </button>
         </div>
       </section>
