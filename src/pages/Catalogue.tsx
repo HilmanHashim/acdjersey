@@ -383,7 +383,7 @@ const Catalogue = () => {
               Made to <span className="text-gradient">last.</span>
             </h1>
             <p className="text-muted-foreground text-base md:text-lg max-w-xl">
-              Every jersey on this page is fully customizable — your colours, your fabric, your collar, your name. Pick a category to start exploring.
+              Every jersey on this page is fully customizable — your colours, your fabric, your collar, your name.
             </p>
             <div className="flex flex-wrap gap-3 pt-2">
               <a
