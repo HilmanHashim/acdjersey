@@ -1,9 +1,10 @@
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, ShoppingCart } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import logo from "@/assets/logo-white.png";
-import { useCart } from "@/contexts/CartContext";
+// TEMP HIDDEN — cart hook (shop disabled)
+// import { useCart } from "@/contexts/CartContext";
 
 const navLinks = [
   { to: "/", label: "Home" },
