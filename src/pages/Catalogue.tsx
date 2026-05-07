@@ -470,12 +470,15 @@ const Catalogue = () => {
             title="Every neckline, dialled in."
             subtitle="Eleven collar styles — from clean roundneck to mandarin zip. Tap any to view the reference sheet."
           />
-          <SwatchGrid items={COLLARS} onOpen={() => setLightbox("collar")} />
           <button
             onClick={() => setLightbox("collar")}
-            className="mt-6 inline-flex items-center gap-2 font-display text-xs uppercase tracking-[0.25em] text-accent hover:gap-3 transition-all"
+            className="block w-full overflow-hidden rounded-2xl border border-border bg-card hover:border-accent/50 transition-all duration-300 group"
           >
-            View full collar reference <ArrowUpRight className="h-4 w-4" />
+            <img
+              src={collarTypes}
+              alt="Collar types reference"
+              className="w-full h-auto object-contain group-hover:scale-[1.01] transition-transform duration-500"
+            />
           </button>
         </div>
       </section>
