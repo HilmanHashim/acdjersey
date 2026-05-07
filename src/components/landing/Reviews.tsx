@@ -58,18 +58,23 @@ const reviews = [
 const Reviews = () => {
   const { ref, inView } = useInView<HTMLDivElement>();
   return (
-    <section className="py-20 surface-dark">
+    <section className="py-24 md:py-32 surface-dark">
       <div ref={ref} className="container">
-        <div className="text-center mb-12">
-          <h2 className={`text-4xl font-display text-gradient mb-3 reveal ${inView ? "in-view" : ""}`}>What Our Customers Say</h2>
-          <div className={`flex items-center justify-center gap-2 reveal ${inView ? "in-view" : ""}`} style={{ animationDelay: "0.15s" }}>
+        <div className="mb-12 flex items-end justify-between gap-6 flex-wrap">
+          <div className="space-y-3">
+            <p className={`font-display text-accent uppercase tracking-[0.35em] text-xs reveal ${inView ? "in-view" : ""}`}>Word On The Street</p>
+            <h2 className={`font-display uppercase leading-[0.95] text-5xl md:text-7xl text-white reveal ${inView ? "in-view" : ""}`} style={{ animationDelay: "0.1s" }}>
+              The <span className="text-gradient">Verdict</span>
+            </h2>
+          </div>
+          <div className={`flex items-center gap-2 reveal ${inView ? "in-view" : ""}`} style={{ animationDelay: "0.2s" }}>
             <div className="flex">
               {[...Array(5)].map((_, i) => (
                 <Star key={i} className="h-5 w-5 fill-accent text-accent" />
               ))}
             </div>
-            <span className="font-display text-lg text-foreground">4.9</span>
-            <span className="text-muted-foreground text-sm">on Google Reviews</span>
+            <span className="font-display text-lg text-white">4.9</span>
+            <span className="text-white/60 text-sm">on Google Reviews</span>
           </div>
         </div>
 
