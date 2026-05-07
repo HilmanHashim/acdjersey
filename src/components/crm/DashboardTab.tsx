@@ -112,7 +112,7 @@ const DashboardTab = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("sales_entries")
-        .select("id,salesperson,entry_date,quantity,price_per_pc,new_leads,prospects_contacted,quotations_sent,orders_closed,revenue_closed,energy_level")
+        .select("id,salesperson,entry_date,quantity,price_per_pc,new_leads,prospects_contacted,quotations_sent,orders_closed,revenue_closed,energy_level,lead_outcome")
         .order("entry_date", { ascending: false });
       if (error) throw error;
       return (data || []) as SalesEntry[];
