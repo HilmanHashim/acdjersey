@@ -486,7 +486,7 @@ const DailyActivityChart = ({ monthRows, mStart, mEnd }: { monthRows: SalesEntry
           <LineChart data={data}>
             <CartesianGrid strokeDasharray="3 3" stroke={BORDER_COL} />
             <XAxis dataKey="label" tick={{ fill: C.subtle, fontSize: 11 }} stroke={BORDER_COL} />
-            <YAxis tick={{ fill: C.subtle, fontSize: 11 }} stroke={BORDER_COL} allowDecimals={false} domain={[0, yMax === "auto" || !yMax ? "auto" : Number(yMax)]} />
+            <YAxis tick={{ fill: C.subtle, fontSize: 11 }} stroke={BORDER_COL} allowDecimals={false} domain={[0, yMax === "auto" ? "auto" : Number(yMax)]} allowDataOverflow={yMax !== "auto"} />
             <Tooltip
               contentStyle={{ background: C.panelStrong, border: `1px solid ${BORDER_COL}`, borderRadius: 6, color: C.text }}
               labelFormatter={(l) => `Day ${l}`}
@@ -541,7 +541,7 @@ const PerformanceChart = ({ monthPer }: { monthPer: PerfRow[] }) => {
           <BarChart data={monthPer.map((p) => ({ name: p.label, Leads: p.leads, Contacted: p.contacted, Closed: p.closed }))}>
             <CartesianGrid strokeDasharray="3 3" stroke={BORDER_COL} />
             <XAxis dataKey="name" tick={{ fill: C.subtle, fontSize: 11 }} stroke={BORDER_COL} />
-            <YAxis tick={{ fill: C.subtle, fontSize: 11 }} stroke={BORDER_COL} allowDecimals={false} domain={[0, yMax === "auto" || !yMax ? "auto" : Number(yMax)]} />
+            <YAxis tick={{ fill: C.subtle, fontSize: 11 }} stroke={BORDER_COL} allowDecimals={false} domain={[0, yMax === "auto" ? "auto" : Number(yMax)]} allowDataOverflow={yMax !== "auto"} />
             <Tooltip
               contentStyle={{ background: C.panelStrong, border: `1px solid ${BORDER_COL}`, borderRadius: 6, color: C.text }}
               cursor={{ fill: "hsl(220 20% 25% / 0.3)" }}
