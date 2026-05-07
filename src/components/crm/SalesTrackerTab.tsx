@@ -282,10 +282,11 @@ const RecentEntries = ({ entries, onRemove }: { entries: SalesEntry[]; onRemove:
           <TableHeader>
             <TableRow>
               <TableHead>Date</TableHead>
-              <TableHead>Job</TableHead>
+              <TableHead>Job / Client</TableHead>
               <TableHead className="text-center">Leads</TableHead>
               <TableHead className="text-center">Closed</TableHead>
               <TableHead className="text-right">Revenue (RM)</TableHead>
+              <TableHead className="text-center">Outcome</TableHead>
               <TableHead className="text-center">Energy</TableHead>
               <TableHead></TableHead>
             </TableRow>
@@ -298,6 +299,9 @@ const RecentEntries = ({ entries, onRemove }: { entries: SalesEntry[]; onRemove:
                 <TableCell className="text-center">{e.new_leads}</TableCell>
                 <TableCell className="text-center">{e.orders_closed}</TableCell>
                 <TableCell className="text-right font-mono">RM {Number(e.revenue_closed).toLocaleString()}</TableCell>
+                <TableCell className="text-center">
+                  <OutcomeCell entry={e} />
+                </TableCell>
                 <TableCell className="text-center text-xs">{e.energy_level || "—"}</TableCell>
                 <TableCell>
                   <Button size="icon" variant="ghost" onClick={() => onRemove(e.id)}>
@@ -307,7 +311,7 @@ const RecentEntries = ({ entries, onRemove }: { entries: SalesEntry[]; onRemove:
               </TableRow>
             ))}
             {filtered.length === 0 && (
-              <TableRow><TableCell colSpan={7} className="text-center text-sm text-muted-foreground py-4">No entries for this month</TableCell></TableRow>
+              <TableRow><TableCell colSpan={8} className="text-center text-sm text-muted-foreground py-4">No entries for this month</TableCell></TableRow>
             )}
           </TableBody>
         </Table>
