@@ -175,18 +175,17 @@ const Agents = () => (
         <div className="absolute inset-0 bg-background/85 backdrop-blur-sm" />
       </div>
 
-      <div className="container max-w-5xl relative z-10 space-y-5">
+      <div className="container max-w-5xl relative z-10 space-y-6">
         <p className="font-display text-accent uppercase tracking-[0.3em] text-xs">
           The Team
         </p>
-        <h1 className="text-4xl md:text-6xl font-display text-gradient title-glow inline-block">
-          Talk to a real human.
+        <h1 className="text-4xl md:text-6xl font-display text-foreground uppercase tracking-tight leading-[0.9]">
+          Get in touch <br /> with us
         </h1>
         <p className="text-foreground/70 max-w-xl text-base md:text-lg leading-relaxed">
-          No bots, no call centres. Tap any name below to WhatsApp them directly — they'll handle your enquiry, quote, and order from start to finish.
+          No bots, no call centres. Contact our team directly — they'll handle your enquiry, quote, and order from start to finish.
         </p>
 
-        {/* Quick info badges */}
         <div className="flex flex-wrap gap-3 pt-4">
           <span className="inline-flex items-center gap-2 bg-card/60 backdrop-blur-sm border border-border rounded-full px-4 py-2 font-display text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
             <Clock className="h-3.5 w-3.5 text-accent" />
