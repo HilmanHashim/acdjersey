@@ -20,15 +20,6 @@ type Slide = {
 
 const slides: Slide[] = [
   {
-    image: slide1,
-    eyebrow: "Built For The Game",
-    title: "OWN THE",
-    highlight: "FIELD",
-    subtitle: "Tournament-ready sublimation jerseys engineered in Malaysia.",
-    primary: { label: "Get A Quote", to: "/enquiry" },
-    secondary: { label: "View Catalogue", to: "/catalogue" },
-  },
-  {
     image: slide2,
     eyebrow: "Built To Move",
     title: "RUN WITH",
