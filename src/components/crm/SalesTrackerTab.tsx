@@ -281,14 +281,14 @@ const RecentEntries = ({ entries, onRemove }: { entries: SalesEntry[]; onRemove:
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Date</TableHead>
+              <TableHead className="w-[100px]">Date</TableHead>
               <TableHead>Job / Client</TableHead>
-              <TableHead className="text-center">Leads</TableHead>
-              <TableHead className="text-center">Closed</TableHead>
-              <TableHead className="text-right">Revenue (RM)</TableHead>
-              <TableHead className="text-center">Outcome</TableHead>
-              <TableHead className="text-center">Energy</TableHead>
-              <TableHead></TableHead>
+              <TableHead className="text-center w-[70px]">Leads</TableHead>
+              <TableHead className="text-center w-[70px]">Closed</TableHead>
+              <TableHead className="text-right w-[140px]">Revenue (RM)</TableHead>
+              <TableHead className="text-center w-[140px]">Outcome</TableHead>
+              <TableHead className="text-center w-[120px]">Energy</TableHead>
+              <TableHead className="w-[50px]"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

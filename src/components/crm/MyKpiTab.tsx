@@ -75,6 +75,7 @@ type SalesEntry = {
   orders_closed: number;
   revenue_closed: number;
   energy_level: string | null;
+  lead_outcome: string | null;
 };
 
 const MyKpiTab = () => {
@@ -133,7 +134,7 @@ const MyKpiTab = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("sales_entries")
-        .select("id,salesperson,entry_date,job_name,quantity,price_per_pc,new_leads,prospects_contacted,quotations_sent,orders_closed,revenue_closed,energy_level")
+        .select("id,salesperson,entry_date,job_name,quantity,price_per_pc,new_leads,prospects_contacted,quotations_sent,orders_closed,revenue_closed,energy_level,lead_outcome")
         .eq("salesperson", selectedKey!)
         .gte("entry_date", mStart)
         .lte("entry_date", mEnd)
@@ -462,25 +463,30 @@ const MyKpiTab = () => {
             <table className="w-full text-sm border-separate border-spacing-0 [&_td]:border [&_th]:border" style={{ borderColor: BORDER_COL }}>
               <thead>
                 <tr>
-                  {["DATE", "JOB", "QTY", "PRICE/PC", "REVENUE", "CLOSED"].map((h) => (
+                  {["DATE", "JOB / CLIENT", "QTY", "PRICE/PC", "REVENUE", "CLOSED", "OUTCOME"].map((h) => (
                     <th key={h} className="px-3 py-2 text-left text-xs tracking-wider" style={{ background: HERO_GRADIENT, color: C.white, borderColor: BORDER_COL }}>{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {entries.length === 0 && (
-                  <tr><td colSpan={6} className="px-3 py-4 text-center text-xs" style={{ color: C.muted, borderColor: BORDER_COL }}>No entries this month.</td></tr>
+                  <tr><td colSpan={7} className="px-3 py-4 text-center text-xs" style={{ color: C.muted, borderColor: BORDER_COL }}>No entries this month.</td></tr>
                 )}
-                {entries.slice(0, 20).map((e, i) => (
+                {entries.slice(0, 20).map((e, i) => {
+                  const outcome = e.lead_outcome || "Pending";
+                  const oColor = outcome === "Bought" ? C.green : outcome === "Not Bought" ? C.orange : C.muted;
+                  return (
                   <tr key={e.id} style={{ background: i % 2 === 0 ? C.panel : C.panelAlt }}>
                     <td className="px-3 py-2 text-xs" style={{ color: C.subtle, borderColor: BORDER_COL }}>{e.entry_date}</td>
                     <td className="px-3 py-2 text-xs" style={{ color: C.text, borderColor: BORDER_COL }}>{e.job_name || "—"}</td>
-                    <td className="px-3 py-2 text-xs" style={{ color: C.text, borderColor: BORDER_COL }}>{e.quantity ?? "—"}</td>
+                    <td className="px-3 py-2 text-xs text-center" style={{ color: C.text, borderColor: BORDER_COL }}>{e.quantity ?? "—"}</td>
                     <td className="px-3 py-2 text-xs" style={{ color: C.yellow, borderColor: BORDER_COL }}>{e.price_per_pc ? `RM ${Number(e.price_per_pc).toFixed(2)}` : "—"}</td>
                     <td className="px-3 py-2 text-xs font-bold" style={{ color: C.yellowBright, borderColor: BORDER_COL }}>RM {fmtMoney(Number(e.revenue_closed) || 0)}</td>
-                    <td className="px-3 py-2 text-xs" style={{ color: C.green, borderColor: BORDER_COL }}>{e.orders_closed}</td>
+                    <td className="px-3 py-2 text-xs text-center" style={{ color: C.green, borderColor: BORDER_COL }}>{e.orders_closed}</td>
+                    <td className="px-3 py-2 text-xs text-center font-bold" style={{ color: oColor, borderColor: BORDER_COL }}>{outcome}</td>
                   </tr>
-                ))}
+                  );
+                })}
               </tbody>
             </table>
           </div>
