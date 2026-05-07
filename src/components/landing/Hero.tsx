@@ -136,20 +136,20 @@ const Hero = () => {
 
       {/* Marquee strip — Nike-style: black background, crisp white type */}
       <div className="bg-black text-white overflow-hidden border-y border-white/10">
-        <div className="flex whitespace-nowrap py-3 animate-marquee">
+        <div className="flex w-max py-3 animate-marquee will-change-transform">
           {Array.from({ length: 2 }).map((_, dup) => (
-            <div key={dup} className="flex items-center shrink-0">
+            <div key={dup} className="flex items-center shrink-0" aria-hidden={dup === 1}>
               {[
                 "Custom Sublimation Jerseys",
                 "Fast Turnaround",
                 "Free Design Consultation",
                 "Trusted Across Malaysia",
                 "Bulk Orders Welcome",
-                "Premium Flowmotion Fabric",
+                "Premium Performance Fabric",
               ].map((t, i) => (
                 <span
                   key={`${dup}-${i}`}
-                  className="font-display uppercase tracking-[0.3em] text-sm px-8 flex items-center gap-8"
+                  className="font-display uppercase tracking-[0.3em] text-sm px-8 flex items-center gap-8 whitespace-nowrap"
                 >
                   {t}
                   <span className="text-accent">★</span>
