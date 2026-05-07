@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, LogOut, Shield, Target, LayoutDashboard, FileText, ClipboardList, Inbox, BarChart3, ShoppingBag, Package, Truck } from "lucide-react";
+import { ArrowLeft, LogOut, Shield, Target, LayoutDashboard, FileText, ClipboardList, Inbox, BarChart3, ShoppingBag, Package, Truck, User } from "lucide-react";
 import { toast } from "sonner";
 import UsersTab from "@/components/crm/UsersTab";
 import LeadsTab from "@/components/crm/LeadsTab";
