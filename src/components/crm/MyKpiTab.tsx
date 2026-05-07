@@ -143,20 +143,60 @@ const MyKpiTab = () => {
     },
   });
 
-  // monthly target
-  const { data: targets = [] } = useQuery<{ year: number; month: number; target_amount: number }[]>({
-    queryKey: ["monthly_targets"],
+  // resolve which user owns the selected salesperson key
+  const selectedProfile = useMemo(
+    () => profiles.find((p: any) => p.salesperson_key === selectedKey),
+    [profiles, selectedKey]
+  );
+  const selectedUserId: string | null = selectedProfile?.user_id ?? null;
+
+  // personal target for selected user + month (editable per user)
+  const { data: personalTargetRow } = useQuery({
+    queryKey: ["personal_target", selectedUserId, sel.year, sel.month],
+    enabled: !!selectedUserId,
     queryFn: async () => {
-      const { data, error } = await supabase.from("monthly_targets").select("year,month,target_amount");
+      const { data, error } = await supabase
+        .from("personal_targets")
+        .select("id,user_id,year,month,target_amount")
+        .eq("user_id", selectedUserId!)
+        .eq("year", sel.year)
+        .eq("month", sel.month)
+        .maybeSingle();
       if (error) throw error;
-      return (data || []) as any;
+      return data;
     },
   });
-  const teamTarget = useMemo(() => {
-    const t = targets.find((x) => x.year === sel.year && x.month === sel.month);
-    return t ? Number(t.target_amount) : DEFAULT_TARGET;
-  }, [targets, sel.year, sel.month]);
-  const personalTarget = teamTarget / TEAM_SIZE;
+  const personalTarget = personalTargetRow ? Number(personalTargetRow.target_amount) : 0;
+  const canEditTarget = !!selectedUserId && (selectedUserId === userId || isAdmin);
+
+  const [editingTarget, setEditingTarget] = useState(false);
+  const [targetDraft, setTargetDraft] = useState<string>("");
+  useEffect(() => {
+    setTargetDraft(String(personalTarget || ""));
+    setEditingTarget(false);
+  }, [personalTarget, selectedUserId, sel.year, sel.month]);
+
+  const saveTarget = async () => {
+    if (!selectedUserId) return;
+    const amt = Number(targetDraft);
+    if (!Number.isFinite(amt) || amt < 0) {
+      toast({ title: "Invalid amount", variant: "destructive" });
+      return;
+    }
+    const { error } = await supabase
+      .from("personal_targets")
+      .upsert(
+        { user_id: selectedUserId, year: sel.year, month: sel.month, target_amount: amt },
+        { onConflict: "user_id,year,month" }
+      );
+    if (error) {
+      toast({ title: "Failed to save target", description: error.message, variant: "destructive" });
+      return;
+    }
+    toast({ title: "Personal target saved" });
+    setEditingTarget(false);
+    qc.invalidateQueries({ queryKey: ["personal_target", selectedUserId, sel.year, sel.month] });
+  };
 
   useEffect(() => {
     const ch = supabase
