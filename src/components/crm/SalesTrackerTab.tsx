@@ -12,6 +12,7 @@ import { toast } from "sonner";
 
 const SALESPEOPLE = ["JEED ACD", "DIDO ACD", "MUNIR ACD", "ALYPH ACD", "HILMAN ACD", "UMAR ACD"] as const;
 const ENERGY_LEVELS = ["🔥 On Fire", "💪🏻 Bring it on", "✊🏻 All Good", "😐 Tough day", "😔 Struggling"];
+const LEAD_OUTCOMES = ["Pending", "Bought", "Not Bought"] as const;
 
 type SalesEntry = {
   id: string;
@@ -28,6 +29,7 @@ type SalesEntry = {
   revenue_closed: number;
   activity_today: string | null;
   energy_level: string | null;
+  lead_outcome: string | null;
 };
 
 const todayISO = () => new Date().toISOString().slice(0, 10);
