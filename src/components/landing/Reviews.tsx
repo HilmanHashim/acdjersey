@@ -58,12 +58,13 @@ const reviews = [
 const Reviews = () => {
   const { ref, inView } = useInView<HTMLDivElement>();
   return (
-    <section className="py-24 md:py-32 surface-dark">
-      <div ref={ref} className="container">
-        <div className="mb-12 flex items-end justify-between gap-6 flex-wrap">
+    <section className="py-14 md:py-20 surface-dark relative overflow-hidden">
+      <div aria-hidden className="pointer-events-none absolute -top-10 -right-10 font-display uppercase text-[16vw] leading-none text-white/[0.04] select-none">VERDICT</div>
+      <div ref={ref} className="container relative">
+        <div className="mb-8 flex items-end justify-between gap-6 flex-wrap">
           <div className="space-y-3">
-            <p className={`font-display text-accent uppercase tracking-[0.35em] text-xs reveal ${inView ? "in-view" : ""}`}>Word On The Street</p>
-            <h2 className={`font-display uppercase leading-[0.95] text-5xl md:text-7xl text-white reveal ${inView ? "in-view" : ""}`} style={{ animationDelay: "0.1s" }}>
+            <div className="inline-flex items-center gap-2 bg-accent text-accent-foreground px-3 py-1 font-display uppercase tracking-[0.3em] text-[10px] -rotate-1">▲ Word On The Street / 05</div>
+            <h2 className={`font-display uppercase leading-[0.9] text-5xl md:text-7xl text-white reveal ${inView ? "in-view" : ""}`} style={{ animationDelay: "0.1s" }}>
               The <span className="text-gradient">Verdict</span>
             </h2>
           </div>
