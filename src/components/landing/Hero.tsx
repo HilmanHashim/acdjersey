@@ -76,26 +76,26 @@ const Hero = () => {
         ))}
 
         <div className="container relative z-10 h-full flex items-end pb-24 md:pb-28">
-          <div key={index} className="max-w-3xl space-y-5">
+          <div className="max-w-3xl space-y-5">
             <p
               className="font-display text-accent uppercase tracking-[0.35em] text-xs md:text-sm opacity-0 animate-fade-in-up"
               style={{ animationDelay: "0.1s" }}
             >
-              {slides[index].eyebrow}
+              Fly The Flag · Feel The Pride
             </p>
             <h1
               className="font-display text-white leading-[0.9] text-6xl md:text-8xl lg:text-9xl uppercase opacity-0 animate-fade-in-up"
               style={{ animationDelay: "0.25s" }}
             >
-              {slides[index].title}
+              OWN THE
               <br />
-              <span className="text-gradient">{slides[index].highlight}</span>
+              <span className="text-gradient">FIELD</span>
             </h1>
             <p
               className="text-base md:text-lg text-white/80 font-body max-w-xl opacity-0 animate-fade-in-up"
               style={{ animationDelay: "0.45s" }}
             >
-              {slides[index].subtitle}
+              Premium sublimation jerseys engineered in Malaysia for teams that play to win.
             </p>
             <div
               className="flex flex-wrap gap-3 pt-3 opacity-0 animate-fade-in-up"
@@ -106,8 +106,8 @@ const Hero = () => {
                 size="lg"
                 className="rounded-full bg-white text-black hover:bg-white/90 font-display uppercase tracking-wider px-7 transition-transform hover:scale-105"
               >
-                <Link to={slides[index].primary.to}>
-                  <Send className="mr-2 h-4 w-4" /> {slides[index].primary.label}
+                <Link to="/enquiry">
+                  <Send className="mr-2 h-4 w-4" /> Get A Quote
                 </Link>
               </Button>
               <Button
@@ -116,8 +116,8 @@ const Hero = () => {
                 variant="outline"
                 className="rounded-full border-white/40 bg-transparent text-white hover:bg-white hover:text-black font-display uppercase tracking-wider px-7 transition-transform hover:scale-105"
               >
-                <Link to={slides[index].secondary.to}>
-                  {slides[index].secondary.label}
+                <Link to="/catalogue">
+                  View Catalogue
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
