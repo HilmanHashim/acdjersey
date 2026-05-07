@@ -21,7 +21,8 @@ const navLinks = [
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const { pathname } = useLocation();
-  const { count, setOpen: setCartOpen } = useCart();
+  // TEMP HIDDEN — cart state (shop disabled)
+  // const { count, setOpen: setCartOpen } = useCart();
 
   return (
     <nav className="sticky top-0 z-50 border-b border-primary/20 bg-gradient-to-r from-background via-card to-background backdrop-blur-md">
