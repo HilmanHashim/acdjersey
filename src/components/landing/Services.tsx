@@ -2,7 +2,7 @@ import { ArrowUpRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useInView } from "@/hooks/use-in-view";
 import imgJersey from "@/assets/catalogue/standard/img-001.jpg";
-import imgDesign from "@/assets/catalogue/collared/img-001.jpg";
+import imgDesign from "@/assets/design-services.jpg";
 import imgCorporate from "@/assets/catalogue/longsleeve/img-001.jpg";
 import imgSports from "@/assets/catalogue/singlet/img-001.jpg";
 
