@@ -36,7 +36,7 @@ const Navbar = () => {
       <div
         className={cn(
           "container flex items-center justify-between transition-all duration-300",
-          scrolled ? "h-16" : "h-20"
+          scrolled ? "h-12" : "h-16"
         )}
       >
         {/* Logo */}
@@ -46,7 +46,7 @@ const Navbar = () => {
             alt="ACD Jersey"
             className={cn(
               "transition-all duration-300 group-hover:scale-105",
-              scrolled ? "h-8" : "h-10"
+              scrolled ? "h-7" : "h-9"
             )}
           />
         </Link>

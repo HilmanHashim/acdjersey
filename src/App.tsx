@@ -23,6 +23,7 @@ import NotFound from "./pages/NotFound.tsx";
 import ScrollToTop from "./components/ScrollToTop";
 import ScrollToTopButton from "./components/ScrollToTopButton";
 import FacebookPixel from "./components/FacebookPixel";
+import PageTransition from "./components/PageTransition";
 // TEMP HIDDEN — uncomment to re-enable cart drawer
 // import CartDrawer from "./components/shop/CartDrawer";
 
@@ -39,6 +40,7 @@ const App = () => (
           <ScrollToTopButton />
           <FacebookPixel />
           {/* TEMP HIDDEN — <CartDrawer /> */}
+          <PageTransition>
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/crm" element={<CRM />} />
@@ -57,6 +59,7 @@ const App = () => (
             <Route path="/enquiry-submitted" element={<EnquirySubmitted />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
+          </PageTransition>
         </BrowserRouter>
       </CartProvider>
     </TooltipProvider>
