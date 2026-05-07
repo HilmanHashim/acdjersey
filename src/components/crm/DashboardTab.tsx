@@ -431,14 +431,14 @@ const DashboardTab = () => {
                 return (
                 <tr key={p.key} style={{ background: i % 2 === 0 ? C.panel : C.panelAlt }}>
                   <td className="px-2 py-2 truncate font-bold border" style={{ color: C.text, borderColor: BORDER_COL }}>{p.label}</td>
-                  <td className="px-2 py-2 border" style={{ color: C.text, borderColor: BORDER_COL }}>{p.leads}</td>
-                  <td className="px-2 py-2 border" style={{ color: C.text, borderColor: BORDER_COL }}>{p.contacted}</td>
-                  <td className="px-2 py-2 border" style={{ color: C.yellow, borderColor: BORDER_COL }}>{p.quotes}</td>
-                  <td className="px-2 py-2 font-bold border" style={{ color: C.green, borderColor: BORDER_COL }}>{p.closed}</td>
+                  <td className="px-2 py-2 text-center border" style={{ color: C.text, borderColor: BORDER_COL }}>{p.leads}</td>
+                  <td className="px-2 py-2 text-center border" style={{ color: C.text, borderColor: BORDER_COL }}>{p.contacted}</td>
+                  <td className="px-2 py-2 text-center border" style={{ color: C.yellow, borderColor: BORDER_COL }}>{p.quotes}</td>
+                  <td className="px-2 py-2 text-center font-bold border" style={{ color: C.green, borderColor: BORDER_COL }}>{p.closed}</td>
                   <td className="px-2 py-2 font-bold border" style={{ color: C.yellowBright, borderColor: BORDER_COL }}>RM {fmtMoney(p.revenue)}</td>
-                  <td className="px-2 py-2 font-bold border" style={{ color: C.blue, borderColor: BORDER_COL }}>{fmtPct(p.closeRate)}</td>
+                  <td className="px-2 py-2 text-center font-bold border" style={{ color: C.blue, borderColor: BORDER_COL }}>{fmtPct(p.closeRate)}</td>
                   <td className="px-2 py-2 font-bold border" style={{ color: C.yellow, borderColor: BORDER_COL }}>{p.avgPrice ? `RM ${p.avgPrice.toFixed(2)}` : "—"}</td>
-                  <td className="px-2 py-2 border" style={{ color: C.white, borderColor: BORDER_COL }}>{p.pcs}</td>
+                  <td className="px-2 py-2 text-center border" style={{ color: C.white, borderColor: BORDER_COL }}>{p.pcs}</td>
                   <td className="px-2 py-2 font-bold border" style={{ color: C.green, borderColor: BORDER_COL }}>{fmtPct(contrib)}</td>
                 </tr>
                 );
