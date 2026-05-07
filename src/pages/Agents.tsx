@@ -110,60 +110,41 @@ type Person = {
   whatsapp?: string;
 };
 
-const RosterCard = ({ person, index }: { person: Person; index: number }) => (
-  <article className="group relative flex gap-4 sm:gap-6 rounded-2xl border border-border bg-card hover:border-accent/40 transition-all duration-500 p-4 sm:p-6 overflow-hidden">
-    {/* Index */}
-    <span className="absolute top-3 right-4 font-display text-[10px] tabular-nums tracking-[0.25em] text-muted-foreground/60">
-      {String(index + 1).padStart(2, "0")}
-    </span>
-
-    {/* Portrait */}
-    <div className="relative flex-shrink-0 w-24 h-32 sm:w-28 sm:h-36 rounded-xl overflow-hidden bg-secondary">
-      <img
-        src={person.image}
-        alt={person.name}
-        className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${person.imageClass || ""}`}
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-background/40 to-transparent pointer-events-none" />
-    </div>
-
-    {/* Info */}
-    <div className="flex-1 min-w-0 flex flex-col">
-      <div className="flex-1 space-y-1.5">
-        <h3 className="font-display text-base sm:text-lg text-foreground leading-tight pr-8">
-          {person.name}
-        </h3>
-        <p className="font-display text-[10px] uppercase tracking-[0.2em] text-accent">
-          {person.role}
-        </p>
-        <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed line-clamp-3 pt-1">
-          {person.bio}
-        </p>
+const RosterCard = ({ person }: { person: Person }) => (
+  <Card className="bg-card border-border hover:border-primary/50 transition-colors hover-scale">
+    <CardContent className="p-6 flex flex-col items-center text-center gap-5">
+      <div className="w-32 h-32 rounded-full bg-secondary flex items-center justify-center overflow-hidden">
+        <img
+          src={person.image}
+          alt={person.name}
+          className={`w-full h-full object-cover ${person.imageClass || ""}`}
+        />
       </div>
 
-      {/* Contact */}
-      {person.whatsapp && (
-        <div className="mt-4 flex flex-col gap-2">
-          {person.phone && (
-            <span className="inline-flex items-center gap-2 text-muted-foreground text-xs font-display tabular-nums">
-              <Phone className="h-3 w-3 text-accent" />
-              {person.phone}
-            </span>
-          )}
-          <a
-            href={person.whatsapp}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 bg-foreground text-background font-display text-[11px] uppercase tracking-[0.2em] px-4 py-2.5 rounded-full hover:bg-accent hover:text-accent-foreground transition-all duration-300"
-          >
-            <MessageCircle className="h-3.5 w-3.5" />
-            WhatsApp
-            <ArrowUpRight className="h-3 w-3 opacity-60" />
-          </a>
+      <div className="space-y-1">
+        <h3 className="font-display text-xl text-foreground">{person.name}</h3>
+        <p className="text-primary text-sm font-medium">{person.role}</p>
+      </div>
+
+      <p className="text-muted-foreground text-sm leading-relaxed">{person.bio}</p>
+
+      {person.phone && (
+        <div className="flex items-center gap-2 text-muted-foreground text-sm">
+          <Phone className="h-4 w-4" />
+          <span>{person.phone}</span>
         </div>
       )}
-    </div>
-  </article>
+
+      {person.whatsapp && (
+        <Button variant="hero" size="lg" className="w-full" asChild>
+          <a href={person.whatsapp} target="_blank" rel="noopener noreferrer">
+            <MessageCircle className="mr-2 h-4 w-4" />
+            WhatsApp
+          </a>
+        </Button>
+      )}
+    </CardContent>
+  </Card>
 );
 
 const Agents = () => (
