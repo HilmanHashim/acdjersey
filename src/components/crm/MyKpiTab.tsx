@@ -134,7 +134,7 @@ const MyKpiTab = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("sales_entries")
-        .select("id,salesperson,entry_date,job_name,quantity,price_per_pc,new_leads,prospects_contacted,quotations_sent,orders_closed,revenue_closed,energy_level")
+        .select("id,salesperson,entry_date,job_name,quantity,price_per_pc,new_leads,prospects_contacted,quotations_sent,orders_closed,revenue_closed,energy_level,lead_outcome")
         .eq("salesperson", selectedKey!)
         .gte("entry_date", mStart)
         .lte("entry_date", mEnd)
