@@ -38,7 +38,7 @@ const Clients = () => {
       <div ref={ref} className="container relative">
         <div className="mb-8 flex items-end justify-between flex-wrap gap-4">
           <div className="space-y-3">
-            <div className="inline-flex items-center gap-2 bg-foreground text-background px-3 py-1 font-display uppercase tracking-[0.3em] text-[10px]">★ Trusted By Many</div>
+            <div className="inline-flex items-center gap-2 bg-foreground text-background px-3 py-1 font-display uppercase tracking-[0.3em] text-[10px] rotate-[2deg]">★ Trusted By Many</div>
             <h2 className={`font-display uppercase text-foreground leading-[0.9] text-5xl md:text-7xl reveal ${inView ? "in-view" : ""}`} style={{ animationDelay: "0.1s" }}>
               Worn By <span className="text-gradient">Champions</span>
             </h2>
