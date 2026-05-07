@@ -66,13 +66,29 @@ const slides: Slide[] = [
   },
 ];
 
+const SLIDE_DURATION = 6000;
+
 const Hero = () => {
   const [index, setIndex] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [progress, setProgress] = useState(0);
+  const startRef = useRef<number>(Date.now());
 
   useEffect(() => {
-    const t = setInterval(() => setIndex((i) => (i + 1) % slides.length), 6000);
-    return () => clearInterval(t);
-  }, []);
+    startRef.current = Date.now();
+    setProgress(0);
+    if (!isPlaying) return;
+    const tick = setInterval(() => {
+      const elapsed = Date.now() - startRef.current;
+      const p = Math.min(elapsed / SLIDE_DURATION, 1);
+      setProgress(p);
+      if (p >= 1) setIndex((i) => (i + 1) % slides.length);
+    }, 50);
+    return () => clearInterval(tick);
+  }, [index, isPlaying]);
+
+  const next = () => setIndex((i) => (i + 1) % slides.length);
+  const prev = () => setIndex((i) => (i - 1 + slides.length) % slides.length);
 
   return (
     <>
