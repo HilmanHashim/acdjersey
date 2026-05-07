@@ -28,7 +28,7 @@ const About = () => {
 
           <div className="md:col-span-5 space-y-3">
             {[
-              { icon: MapPin, label: "Visit", value: "Aman Putri, Shah Alam, Selangor" },
+              { icon: MapPin, label: "Visit", value: "U17, H, Aman Putri, 6-17-1A, Jalan Aman Damai, Aman Putri, 40160 Shah Alam, Selangor" },
               { icon: Phone, label: "Call", value: "019-339 6681" },
               { icon: Clock, label: "Hours", value: "10 AM – 6 PM (Mon–Sat)" },
             ].map((item, i) => (
