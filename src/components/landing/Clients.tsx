@@ -34,14 +34,14 @@ const clientImages = [
 const Clients = () => {
   const { ref, inView } = useInView<HTMLDivElement>();
   return (
-    <section className="py-20 bg-background">
+    <section className="py-24 md:py-32 bg-background">
       <div ref={ref} className="container">
-        <div className="text-center mb-12">
-          <p className={`font-display text-accent uppercase tracking-[0.3em] text-sm mb-3 reveal ${inView ? "in-view" : ""}`}>
+        <div className="mb-12 space-y-3">
+          <p className={`font-display text-accent uppercase tracking-[0.35em] text-xs reveal ${inView ? "in-view" : ""}`}>
             Trusted By Many
           </p>
-          <h2 className={`text-3xl md:text-5xl font-display text-foreground reveal ${inView ? "in-view" : ""}`} style={{ animationDelay: "0.15s" }}>
-            Our <span className="text-gradient">Clients</span>
+          <h2 className={`font-display uppercase text-foreground leading-[0.95] text-5xl md:text-7xl reveal ${inView ? "in-view" : ""}`} style={{ animationDelay: "0.1s" }}>
+            Worn By <span className="text-gradient">Champions</span>
           </h2>
         </div>
 
