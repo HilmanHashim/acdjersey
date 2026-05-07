@@ -446,7 +446,7 @@ const Catalogue = () => {
             index="02"
             eyebrow="Materials"
             title="Pick the fabric. Feel the difference."
-            subtitle="From breathable mesh to premium lycra — choose what fits your sport, climate, and budget."
+            subtitle="From breathable mesh to premium lycra — choose what fits your sport and budget."
           />
           <button
             onClick={() => setLightbox("fabric")}
