@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
+import { toast } from "@/hooks/use-toast";
+import { Pencil, Check, X } from "lucide-react";
 
 const SALESPEOPLE_KEYS = ["MUNIR ACD", "DIDO ACD", "JEED ACD", "UMAR ACD", "ALYPH ACD", "HILMAN ACD"] as const;
 const PEOPLE_LABEL: Record<string, string> = {
@@ -141,20 +143,60 @@ const MyKpiTab = () => {
     },
   });
 
-  // monthly target
-  const { data: targets = [] } = useQuery<{ year: number; month: number; target_amount: number }[]>({
-    queryKey: ["monthly_targets"],
+  // resolve which user owns the selected salesperson key
+  const selectedProfile = useMemo(
+    () => profiles.find((p: any) => p.salesperson_key === selectedKey),
+    [profiles, selectedKey]
+  );
+  const selectedUserId: string | null = selectedProfile?.user_id ?? null;
+
+  // personal target for selected user + month (editable per user)
+  const { data: personalTargetRow } = useQuery({
+    queryKey: ["personal_target", selectedUserId, sel.year, sel.month],
+    enabled: !!selectedUserId,
     queryFn: async () => {
-      const { data, error } = await supabase.from("monthly_targets").select("year,month,target_amount");
+      const { data, error } = await supabase
+        .from("personal_targets")
+        .select("id,user_id,year,month,target_amount")
+        .eq("user_id", selectedUserId!)
+        .eq("year", sel.year)
+        .eq("month", sel.month)
+        .maybeSingle();
       if (error) throw error;
-      return (data || []) as any;
+      return data;
     },
   });
-  const teamTarget = useMemo(() => {
-    const t = targets.find((x) => x.year === sel.year && x.month === sel.month);
-    return t ? Number(t.target_amount) : DEFAULT_TARGET;
-  }, [targets, sel.year, sel.month]);
-  const personalTarget = teamTarget / TEAM_SIZE;
+  const personalTarget = personalTargetRow ? Number(personalTargetRow.target_amount) : 0;
+  const canEditTarget = !!selectedUserId && (selectedUserId === userId || isAdmin);
+
+  const [editingTarget, setEditingTarget] = useState(false);
+  const [targetDraft, setTargetDraft] = useState<string>("");
+  useEffect(() => {
+    setTargetDraft(String(personalTarget || ""));
+    setEditingTarget(false);
+  }, [personalTarget, selectedUserId, sel.year, sel.month]);
+
+  const saveTarget = async () => {
+    if (!selectedUserId) return;
+    const amt = Number(targetDraft);
+    if (!Number.isFinite(amt) || amt < 0) {
+      toast({ title: "Invalid amount", variant: "destructive" });
+      return;
+    }
+    const { error } = await supabase
+      .from("personal_targets")
+      .upsert(
+        { user_id: selectedUserId, year: sel.year, month: sel.month, target_amount: amt },
+        { onConflict: "user_id,year,month" }
+      );
+    if (error) {
+      toast({ title: "Failed to save target", description: error.message, variant: "destructive" });
+      return;
+    }
+    toast({ title: "Personal target saved" });
+    setEditingTarget(false);
+    qc.invalidateQueries({ queryKey: ["personal_target", selectedUserId, sel.year, sel.month] });
+  };
 
   useEffect(() => {
     const ch = supabase
@@ -279,19 +321,51 @@ const MyKpiTab = () => {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 p-3 rounded-b-md" style={{ background: C.panel }}>
           {[
             { l: "MY REVENUE", v: `RM ${fmtMoney(totals.revenue)}`, color: C.yellow, icon: "💰" },
-            { l: "PERSONAL TARGET", v: `RM ${fmtMoney(personalTarget)}`, color: C.subtle, icon: "🎯" },
+            { l: "PERSONAL TARGET", v: personalTarget ? `RM ${fmtMoney(personalTarget)}` : "—", color: C.subtle, icon: "🎯", editable: true },
             { l: "% ACHIEVED", v: fmtPct(pct), color: C.green, icon: "📈" },
             { l: "ORDERS CLOSED", v: totals.closed, color: C.blue, icon: "✅" },
             { l: "TOTAL PCS", v: totals.pcs, color: C.text, icon: "👕" },
             { l: "AVG PRICE / PC", v: avgPrice ? `RM ${avgPrice.toFixed(2)}` : "—", color: C.yellowBright, icon: "🏷️" },
-          ].map((s) => (
+          ].map((s: any) => (
             <div key={s.l} className="rounded-lg p-3 transition-transform hover:scale-[1.02]"
               style={{ background: C.panelStrong, borderLeft: `3px solid ${s.color}` }}>
               <div className="flex items-center justify-between mb-1.5">
                 <div className="text-[10px] font-bold tracking-wider" style={{ color: C.muted }}>{s.l}</div>
-                <span className="text-sm opacity-70">{s.icon}</span>
+                <div className="flex items-center gap-1">
+                  {s.editable && canEditTarget && !editingTarget && (
+                    <button
+                      onClick={() => setEditingTarget(true)}
+                      className="opacity-70 hover:opacity-100 transition-opacity"
+                      style={{ color: C.muted }}
+                      title="Edit personal target"
+                    >
+                      <Pencil className="w-3 h-3" />
+                    </button>
+                  )}
+                  <span className="text-sm opacity-70">{s.icon}</span>
+                </div>
               </div>
-              <div className="text-xl font-bold leading-tight" style={{ color: s.color }}>{s.v}</div>
+              {s.editable && editingTarget ? (
+                <div className="flex items-center gap-1">
+                  <input
+                    type="number"
+                    value={targetDraft}
+                    onChange={(e) => setTargetDraft(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === "Enter") saveTarget(); if (e.key === "Escape") setEditingTarget(false); }}
+                    autoFocus
+                    className="w-full px-2 py-1 rounded text-sm font-bold focus:outline-none"
+                    style={{ background: C.bg, color: C.text, border: `1px solid ${C.yellow}` }}
+                  />
+                  <button onClick={saveTarget} className="p-1 rounded" style={{ color: C.green }} title="Save">
+                    <Check className="w-4 h-4" />
+                  </button>
+                  <button onClick={() => setEditingTarget(false)} className="p-1 rounded" style={{ color: C.orange }} title="Cancel">
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ) : (
+                <div className="text-xl font-bold leading-tight" style={{ color: s.color }}>{s.v}</div>
+              )}
             </div>
           ))}
         </div>

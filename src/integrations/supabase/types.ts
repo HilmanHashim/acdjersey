@@ -381,6 +381,36 @@ export type Database = {
           },
         ]
       }
+      personal_targets: {
+        Row: {
+          created_at: string
+          id: string
+          month: number
+          target_amount: number
+          updated_at: string
+          user_id: string
+          year: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          month: number
+          target_amount?: number
+          updated_at?: string
+          user_id: string
+          year: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          month?: number
+          target_amount?: number
+          updated_at?: string
+          user_id?: string
+          year?: number
+        }
+        Relationships: []
+      }
       product_variants: {
         Row: {
           created_at: string
