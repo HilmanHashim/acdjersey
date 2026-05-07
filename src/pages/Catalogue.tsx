@@ -468,7 +468,7 @@ const Catalogue = () => {
             index="03"
             eyebrow="Customization"
             title="Every neckline, dialled in."
-            subtitle="Eleven collar styles — from clean roundneck to mandarin zip. Tap any to view the reference sheet."
+            subtitle="Eleven collar styles — from clean roundneck to mandarin zip."
           />
           <button
             onClick={() => setLightbox("collar")}
