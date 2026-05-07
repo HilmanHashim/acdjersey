@@ -43,7 +43,7 @@ const Clients = () => {
               Worn By <span className="text-gradient">Champions</span>
             </h2>
           </div>
-          <span className="font-display uppercase tracking-[0.3em] text-[10px] text-muted-foreground">Vol. 04 — The Roster</span>
+          <span className="font-display uppercase tracking-[0.3em] text-[10px] text-muted-foreground"></span>
         </div>
 
         <div className={`max-w-5xl mx-auto reveal ${inView ? "in-view" : ""}`} style={{ animationDelay: "0.3s" }}>
