@@ -43,7 +43,7 @@ const clientLogos = [
 ];
 
 const whyChooseUs = [
-  { icon: Shield, title: "Superior Quality", desc: "Premium fabrics like Ultron Superlite — durable, comfortable, built to last." },
+  { icon: Shield, title: "Superior Quality", desc: "Bulk orders delivered in 7-14 days. No drawn-out lead times." },
   { icon: Zap, title: "Fast Turnaround", desc: "Bulk orders delivered in 7 days. No drawn-out lead times." },
   { icon: Palette, title: "Custom Designs", desc: "Our designers work hand-in-hand with you to create something unmistakable." },
   { icon: Award, title: "Trusted by Top Brands", desc: "From Volvo Ingress Swede to Malaysian government bodies — we deliver." },
