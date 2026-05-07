@@ -427,7 +427,7 @@ const Catalogue = () => {
           index="01"
           eyebrow="The Range"
           title="Four cuts. Endless variations."
-          subtitle="Each category is a starting point — not a limit. Tap any tile to see every design we've produced."
+          subtitle="Each category is a starting point — not a limit."
         />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
