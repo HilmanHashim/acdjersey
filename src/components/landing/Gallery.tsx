@@ -1,4 +1,4 @@
-import { useRef, useMemo } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useInView } from "@/hooks/use-in-view";
 
@@ -8,11 +8,11 @@ const longsleeveImgs = import.meta.glob("@/assets/catalogue/longsleeve/*.{png,jp
 const singletImgs = import.meta.glob("@/assets/catalogue/singlet/*.{png,jpg,jpeg,webp}", { eager: true, query: "?url", import: "default" }) as Record<string, string>;
 const standardImgs = import.meta.glob("@/assets/catalogue/standard/*.{png,jpg,jpeg,webp}", { eager: true, query: "?url", import: "default" }) as Record<string, string>;
 
-const categories = [
-  { label: "Collared", images: Object.values(collaredImgs) },
-  { label: "Long Sleeve", images: Object.values(longsleeveImgs) },
-  { label: "Singlet", images: Object.values(singletImgs) },
-  { label: "Standard", images: Object.values(standardImgs) },
+const allImages = [
+  ...Object.values(collaredImgs),
+  ...Object.values(longsleeveImgs),
+  ...Object.values(singletImgs),
+  ...Object.values(standardImgs),
 ];
 
 const shuffle = <T,>(arr: T[]): T[] => {
@@ -24,83 +24,85 @@ const shuffle = <T,>(arr: T[]): T[] => {
   return a;
 };
 
+type CarouselProps = {
+  images: string[];
+  intervalMs: number;
+  startOffset?: number;
+};
+
+const Carousel = ({ images, intervalMs, startOffset = 0 }: CarouselProps) => {
+  const [current, setCurrent] = useState(startOffset % Math.max(images.length, 1));
+
+  const next = useCallback(() => setCurrent((c) => (c + 1) % images.length), [images.length]);
+  const prev = useCallback(() => setCurrent((c) => (c - 1 + images.length) % images.length), [images.length]);
+
+  useEffect(() => {
+    if (images.length <= 1) return;
+    const id = setInterval(next, intervalMs);
+    return () => clearInterval(id);
+  }, [next, images.length, intervalMs]);
+
+  return (
+    <div className="relative group w-full">
+      <div className="relative aspect-[3/4] md:h-[70vh] md:aspect-auto w-full overflow-hidden">
+        {images.map((src, i) => (
+          <img
+            key={i}
+            src={src}
+            alt={`Project ${i + 1}`}
+            loading={i === 0 ? "eager" : "lazy"}
+            className={`absolute inset-0 w-full h-full object-contain transition-all duration-1000 ease-out ${
+              i === current ? "opacity-100 scale-100" : "opacity-0 scale-105"
+            }`}
+          />
+        ))}
+      </div>
+
+      <button
+        onClick={prev}
+        aria-label="Previous"
+        className="absolute -left-2 md:-left-4 top-1/2 -translate-y-1/2 bg-background/80 backdrop-blur p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all border border-border hover:scale-110"
+      >
+        <ChevronLeft className="h-5 w-5 text-foreground" />
+      </button>
+      <button
+        onClick={next}
+        aria-label="Next"
+        className="absolute -right-2 md:-right-4 top-1/2 -translate-y-1/2 bg-background/80 backdrop-blur p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all border border-border hover:scale-110"
+      >
+        <ChevronRight className="h-5 w-5 text-foreground" />
+      </button>
+    </div>
+  );
+};
+
 const Gallery = () => {
   const { ref, inView } = useInView<HTMLDivElement>();
 
-  // Build all projects, shuffled with their category label.
-  const projects = useMemo(() => {
-    const all = categories.flatMap((c) => c.images.map((src) => ({ src, label: c.label })));
-    return shuffle(all);
+  const { left, right } = useMemo(() => {
+    const shuffled = shuffle(allImages);
+    const half = Math.ceil(shuffled.length / 2);
+    return { left: shuffled.slice(0, half), right: shuffled.slice(half) };
   }, []);
-
-  const scrollRef = useRef<HTMLDivElement>(null);
-
-  const scrollBy = (dir: 1 | -1) => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const card = el.querySelector<HTMLElement>("[data-card]");
-    const step = card ? card.offsetWidth + 16 : el.clientWidth * 0.8;
-    el.scrollBy({ left: step * dir * 2, behavior: "smooth" });
-  };
 
   return (
     <section className="py-24 md:py-32 bg-background">
-      <div ref={ref} className="container space-y-10">
-        <div className="flex items-end justify-between gap-6 flex-wrap">
-          <div className="space-y-3">
-            <p className={`font-display text-accent uppercase tracking-[0.35em] text-xs reveal ${inView ? "in-view" : ""}`}>Featured</p>
-            <h2 className={`font-display uppercase text-foreground leading-[0.95] text-5xl md:text-7xl reveal ${inView ? "in-view" : ""}`} style={{ animationDelay: "0.1s" }}>
-              Recent <span className="text-gradient">Projects</span>
-            </h2>
+      <div ref={ref} className="container space-y-12">
+        <div className="space-y-3">
+          <p className={`font-display text-accent uppercase tracking-[0.35em] text-xs reveal ${inView ? "in-view" : ""}`}>Featured</p>
+          <h2 className={`font-display uppercase text-foreground leading-[0.95] text-5xl md:text-7xl reveal ${inView ? "in-view" : ""}`} style={{ animationDelay: "0.1s" }}>
+            Recent <span className="text-gradient">Projects</span>
+          </h2>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-8 md:gap-12">
+          <div className={`reveal ${inView ? "in-view" : ""}`} style={{ animationDelay: "0.3s" }}>
+            <Carousel images={left} intervalMs={3000} />
           </div>
-          <div className={`hidden md:flex items-center gap-2 reveal ${inView ? "in-view" : ""}`} style={{ animationDelay: "0.2s" }}>
-            <button
-              onClick={() => scrollBy(-1)}
-              aria-label="Scroll left"
-              className="h-12 w-12 rounded-full border border-border bg-background hover:bg-foreground hover:text-background transition flex items-center justify-center"
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </button>
-            <button
-              onClick={() => scrollBy(1)}
-              aria-label="Scroll right"
-              className="h-12 w-12 rounded-full border border-border bg-background hover:bg-foreground hover:text-background transition flex items-center justify-center"
-            >
-              <ChevronRight className="h-5 w-5" />
-            </button>
+          <div className={`reveal ${inView ? "in-view" : ""}`} style={{ animationDelay: "0.45s" }}>
+            <Carousel images={right} intervalMs={3500} startOffset={1} />
           </div>
         </div>
-      </div>
-
-      <div
-        ref={scrollRef}
-        className={`mt-2 flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-6 px-[max(1rem,calc((100vw-1280px)/2))] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden reveal ${inView ? "in-view" : ""}`}
-        style={{ animationDelay: "0.3s" }}
-      >
-        {projects.map((p, i) => (
-          <div
-            key={i}
-            data-card
-            className="snap-start shrink-0 w-[78vw] sm:w-[55vw] md:w-[38vw] lg:w-[28vw] xl:w-[22vw]"
-          >
-            <div className="relative aspect-[3/4] overflow-hidden bg-card group">
-              <img
-                src={p.src}
-                alt={`${p.label} project ${i + 1}`}
-                loading={i < 4 ? "eager" : "lazy"}
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-              <span className="absolute top-4 left-4 font-display uppercase tracking-[0.25em] text-[10px] text-white/80 bg-black/40 backdrop-blur px-2 py-1 rounded-full">
-                0{(i % 9) + 1}
-              </span>
-            </div>
-            <div className="pt-4 flex items-center justify-between">
-              <p className="font-display uppercase tracking-[0.2em] text-sm text-foreground">{p.label}</p>
-              <p className="font-body text-xs text-muted-foreground">Custom Kit</p>
-            </div>
-          </div>
-        ))}
       </div>
     </section>
   );
