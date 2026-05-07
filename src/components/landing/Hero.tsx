@@ -1,52 +1,182 @@
-import heroImage from "@/assets/hero-bg.jpg";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Phone, MapPin, Send } from "lucide-react";
+import { ArrowRight, Send } from "lucide-react";
+import slide1 from "@/assets/carousel-1.jpg";
+import slide2 from "@/assets/carousel-2.jpg";
+import slide3 from "@/assets/carousel-3.jpg";
+import slide4 from "@/assets/carousel-5.jpg";
 
-const Hero = () => (
-  <section className="relative min-h-[90vh] flex items-center overflow-hidden surface-dark">
-    <div className="absolute inset-0">
-      <img
-        src={heroImage}
-        alt="Premium sublimation jerseys by ACD Jersey HQ"
-        width={1920}
-        height={1080}
-        className="w-full h-full object-cover opacity-90 saturate-[1.2] contrast-[1.05] animate-slow-zoom"
-      />
-      <div className="absolute inset-0 bg-gradient-to-r from-surface-dark via-surface-dark/80 to-transparent" />
-    </div>
-    <div className="container relative z-10 py-20">
-      <div className="max-w-2xl space-y-6">
-        <p className="font-display text-accent uppercase tracking-[0.3em] text-sm opacity-0 animate-fade-in-up" style={{ animationDelay: "0.1s" }}>
-          Premium Sublimation Apparel
-        </p>
-        <h1 className="relative text-5xl md:text-7xl font-display leading-[0.95] opacity-0 animate-fade-in-up" style={{ animationDelay: "0.25s" }}>
-          <span className="absolute -inset-4 bg-gradient-to-r from-primary/20 to-accent/20 blur-3xl rounded-full animate-pulse-glow -z-10" aria-hidden />
-          <span className="text-surface-dark-foreground">ACD</span>{" "}
-          <span className="text-gradient">Jersey</span>
-        </h1>
-        <p className="text-lg text-surface-dark-foreground/70 font-body max-w-lg opacity-0 animate-fade-in-up" style={{ animationDelay: "0.45s" }}>
-          High-quality, customizable designs for sports and corporate wear. Trusted by major brands and organizations across Malaysia.
-        </p>
-        <div className="flex flex-wrap gap-4 pt-2 opacity-0 animate-fade-in-up" style={{ animationDelay: "0.6s" }}>
-          <Button variant="hero" size="lg" asChild className="group transition-transform hover:scale-105">
-            <Link to="/enquiry">
-              <Send className="mr-2 h-5 w-5 icon-nudge" /> Get A Quote
-            </Link>
-          </Button>
-          <Button size="lg" asChild className="group bg-white/10 border border-white/20 text-white hover:bg-white/20 backdrop-blur-sm font-display uppercase tracking-wider transition-transform hover:scale-105">
-            <Link to="/agents">
-              <Phone className="mr-2 h-5 w-5 icon-nudge" /> Contact Us
-            </Link>
-          </Button>
+type Slide = {
+  image: string;
+  eyebrow: string;
+  title: string;
+  highlight: string;
+  subtitle: string;
+  primary: { label: string; to: string };
+  secondary: { label: string; to: string };
+};
+
+const slides: Slide[] = [
+  {
+    image: slide1,
+    eyebrow: "Built For The Game",
+    title: "OWN THE",
+    highlight: "FIELD",
+    subtitle: "Tournament-ready sublimation jerseys engineered in Malaysia.",
+    primary: { label: "Get A Quote", to: "/enquiry" },
+    secondary: { label: "View Catalogue", to: "/catalogue" },
+  },
+  {
+    image: slide2,
+    eyebrow: "Custom Team Apparel",
+    title: "DESIGNED",
+    highlight: "FOR YOU",
+    subtitle: "Your colours. Your crest. Your identity — stitched into every thread.",
+    primary: { label: "Customize Now", to: "/enquiry" },
+    secondary: { label: "Browse Designs", to: "/catalogue" },
+  },
+  {
+    image: slide3,
+    eyebrow: "Trusted By Champions",
+    title: "WORN BY",
+    highlight: "THE BEST",
+    subtitle: "From corporate teams to national tournaments — we deliver.",
+    primary: { label: "Start Your Order", to: "/enquiry" },
+    secondary: { label: "Meet The Team", to: "/about" },
+  },
+  {
+    image: slide4,
+    eyebrow: "Premium Sublimation",
+    title: "GO BIG.",
+    highlight: "GO BOLD.",
+    subtitle: "Vivid prints that don't crack, don't fade, don't quit.",
+    primary: { label: "Get A Quote", to: "/enquiry" },
+    secondary: { label: "Talk To An Agent", to: "/agents" },
+  },
+];
+
+const Hero = () => {
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const t = setInterval(() => setIndex((i) => (i + 1) % slides.length), 6000);
+    return () => clearInterval(t);
+  }, []);
+
+  return (
+    <>
+      <section className="relative h-[92vh] min-h-[600px] w-full overflow-hidden surface-dark">
+        {slides.map((s, i) => (
+          <div
+            key={i}
+            className="absolute inset-0 transition-opacity duration-1000 ease-out"
+            style={{ opacity: i === index ? 1 : 0 }}
+            aria-hidden={i !== index}
+          >
+            <img
+              src={s.image}
+              alt={s.title}
+              className="w-full h-full object-cover scale-105"
+              loading={i === 0 ? "eager" : "lazy"}
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/55 to-black/20" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+          </div>
+        ))}
+
+        <div className="container relative z-10 h-full flex items-end pb-24 md:pb-28">
+          <div key={index} className="max-w-3xl space-y-5">
+            <p
+              className="font-display text-accent uppercase tracking-[0.35em] text-xs md:text-sm opacity-0 animate-fade-in-up"
+              style={{ animationDelay: "0.1s" }}
+            >
+              {slides[index].eyebrow}
+            </p>
+            <h1
+              className="font-display text-white leading-[0.9] text-6xl md:text-8xl lg:text-9xl uppercase opacity-0 animate-fade-in-up"
+              style={{ animationDelay: "0.25s" }}
+            >
+              {slides[index].title}
+              <br />
+              <span className="text-gradient">{slides[index].highlight}</span>
+            </h1>
+            <p
+              className="text-base md:text-lg text-white/80 font-body max-w-xl opacity-0 animate-fade-in-up"
+              style={{ animationDelay: "0.45s" }}
+            >
+              {slides[index].subtitle}
+            </p>
+            <div
+              className="flex flex-wrap gap-3 pt-3 opacity-0 animate-fade-in-up"
+              style={{ animationDelay: "0.6s" }}
+            >
+              <Button
+                asChild
+                size="lg"
+                className="rounded-full bg-white text-black hover:bg-white/90 font-display uppercase tracking-wider px-7 transition-transform hover:scale-105"
+              >
+                <Link to={slides[index].primary.to}>
+                  <Send className="mr-2 h-4 w-4" /> {slides[index].primary.label}
+                </Link>
+              </Button>
+              <Button
+                asChild
+                size="lg"
+                variant="outline"
+                className="rounded-full border-white/40 bg-transparent text-white hover:bg-white hover:text-black font-display uppercase tracking-wider px-7 transition-transform hover:scale-105"
+              >
+                <Link to={slides[index].secondary.to}>
+                  {slides[index].secondary.label}
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
+          </div>
         </div>
-        <div className="flex items-center gap-2 pt-4 text-surface-dark-foreground/60 text-sm opacity-0 animate-fade-in-up" style={{ animationDelay: "0.8s" }}>
-          <MapPin className="h-4 w-4" />
-          <span>Aman Putri, Shah Alam, Selangor</span>
+
+        {/* Slide indicators */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2">
+          {slides.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setIndex(i)}
+              aria-label={`Go to slide ${i + 1}`}
+              className={`h-1.5 rounded-full transition-all duration-300 ${
+                i === index ? "w-10 bg-white" : "w-5 bg-white/40 hover:bg-white/70"
+              }`}
+            />
+          ))}
+        </div>
+      </section>
+
+      {/* Marquee strip */}
+      <div className="bg-primary text-primary-foreground overflow-hidden border-y border-primary/40">
+        <div className="flex whitespace-nowrap py-3 animate-marquee">
+          {Array.from({ length: 2 }).map((_, dup) => (
+            <div key={dup} className="flex items-center shrink-0">
+              {[
+                "Custom Sublimation Jerseys",
+                "Fast Turnaround",
+                "Free Design Consultation",
+                "Trusted Across Malaysia",
+                "Bulk Orders Welcome",
+                "Premium Flowmotion Fabric",
+              ].map((t, i) => (
+                <span
+                  key={`${dup}-${i}`}
+                  className="font-display uppercase tracking-[0.25em] text-sm px-8 flex items-center gap-8"
+                >
+                  {t}
+                  <span className="text-accent">★</span>
+                </span>
+              ))}
+            </div>
+          ))}
         </div>
       </div>
-    </div>
-  </section>
-);
+    </>
+  );
+};
 
 export default Hero;
