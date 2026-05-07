@@ -2,10 +2,9 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight, Send } from "lucide-react";
-import slide1 from "@/assets/carousel-1.jpg";
-import slide2 from "@/assets/carousel-2.jpg";
-import slide3 from "@/assets/carousel-3.jpg";
-import slide4 from "@/assets/carousel-5.jpg";
+import slide1 from "@/assets/hero-slide-3.jpg";
+import slide2 from "@/assets/hero-slide-2.jpg";
+import slide3 from "@/assets/hero-slide-1.jpg";
 
 type Slide = {
   image: string;
