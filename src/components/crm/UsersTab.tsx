@@ -53,6 +53,35 @@ const UsersTab = ({ currentUserId }: { currentUserId: string }) => {
     },
   });
 
+  const SALESPEOPLE_KEYS = ["MUNIR ACD", "DIDO ACD", "JEED ACD", "UMAR ACD", "ALYPH ACD", "HILMAN ACD"];
+
+  const { data: profiles = [] } = useQuery({
+    queryKey: ["profiles-admin"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("profiles").select("user_id,salesperson_key");
+      if (error) throw error;
+      return data || [];
+    },
+  });
+  const profileByUser: Record<string, string | null> = Object.fromEntries(
+    (profiles as any[]).map((p) => [p.user_id, p.salesperson_key])
+  );
+
+  const setSalespersonMutation = useMutation({
+    mutationFn: async ({ userId, key }: { userId: string; key: string | null }) => {
+      const { error } = await supabase
+        .from("profiles")
+        .upsert({ user_id: userId, salesperson_key: key }, { onConflict: "user_id" });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["profiles-admin"] });
+      queryClient.invalidateQueries({ queryKey: ["profiles"] });
+      toast.success("Salesperson updated");
+    },
+    onError: (e: any) => toast.error(e.message),
+  });
+
   const users = data?.users ?? [];
   const isAdmin = data?.caller_is_admin ?? false;
   const callerRole = data?.caller_role ?? "user";
@@ -232,6 +261,7 @@ const UsersTab = ({ currentUserId }: { currentUserId: string }) => {
               <TableRow>
                 <TableHead className="min-w-[200px]">Email</TableHead>
                 <TableHead className="min-w-[120px]">Role</TableHead>
+                <TableHead className="min-w-[150px]">Salesperson</TableHead>
                 <TableHead className="min-w-[120px]">Created</TableHead>
                 <TableHead className="min-w-[160px]">Last Sign In</TableHead>
                 <TableHead className="min-w-[150px]">Actions</TableHead>
@@ -260,6 +290,22 @@ const UsersTab = ({ currentUserId }: { currentUserId: string }) => {
                       <Badge variant="outline" className={roleBadge[u.role] || ""}>
                         {u.role.charAt(0).toUpperCase() + u.role.slice(1)}
                       </Badge>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {isAdmin ? (
+                      <Select
+                        value={profileByUser[u.id] || "__none__"}
+                        onValueChange={(v) => setSalespersonMutation.mutate({ userId: u.id, key: v === "__none__" ? null : v })}
+                      >
+                        <SelectTrigger className="h-8 w-[150px] text-xs"><SelectValue placeholder="Unassigned" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="__none__">— Unassigned —</SelectItem>
+                          {SALESPEOPLE_KEYS.map((k) => <SelectItem key={k} value={k}>{k}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <span className="text-xs text-muted-foreground">{profileByUser[u.id] || "—"}</span>
                     )}
                   </TableCell>
                   <TableCell className="text-sm truncate">{format(new Date(u.created_at), "MMM d, yyyy")}</TableCell>
