@@ -491,10 +491,10 @@ const Catalogue = () => {
                 04 / Want More?
               </span>
               <h2 className="font-display text-3xl md:text-5xl text-foreground leading-[0.95]">
-                500+ designs live on our Telegram.
+                More designs live on our Telegram.
               </h2>
               <p className="text-muted-foreground text-sm md:text-base max-w-md">
-                New drops every week. Or skip the scroll and tell us exactly what you need — we'll design it from scratch.
+                Browse our latest drops on Telegram — or skip the scroll and tell us exactly what you need. We'll design it from scratch.
               </p>
             </div>
 
