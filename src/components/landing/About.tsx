@@ -6,7 +6,7 @@ const About = () => {
   return (
     <section className="py-14 md:py-20 bg-background relative overflow-hidden">
       <div ref={ref} className="container relative">
-        <div className="inline-flex items-center gap-2 mb-6 bg-accent text-accent-foreground px-3 py-1 font-display uppercase tracking-[0.3em] text-[10px] -rotate-1">● The Studio</div>
+        <div className="inline-flex items-center gap-2 mb-6 bg-accent text-accent-foreground px-3 py-1 font-display uppercase tracking-[0.3em] text-[10px] rotate-[-2deg]">● The Studio</div>
         <div className="grid md:grid-cols-12 gap-10 md:gap-16">
           <div className="md:col-span-7 space-y-6">
             <h2

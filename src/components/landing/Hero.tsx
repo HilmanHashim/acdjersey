@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { ArrowRight, Send } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight, Pause, Play, Send } from "lucide-react";
 import slide2 from "@/assets/hero-track-motion.jpg";
 import slide3 from "@/assets/hero-jersey-flatlay.jpg";
 import slide4 from "@/assets/hero-slide-3.jpg";
@@ -66,13 +66,29 @@ const slides: Slide[] = [
   },
 ];
 
+const SLIDE_DURATION = 6000;
+
 const Hero = () => {
   const [index, setIndex] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [progress, setProgress] = useState(0);
+  const startRef = useRef<number>(Date.now());
 
   useEffect(() => {
-    const t = setInterval(() => setIndex((i) => (i + 1) % slides.length), 6000);
-    return () => clearInterval(t);
-  }, []);
+    startRef.current = Date.now();
+    setProgress(0);
+    if (!isPlaying) return;
+    const tick = setInterval(() => {
+      const elapsed = Date.now() - startRef.current;
+      const p = Math.min(elapsed / SLIDE_DURATION, 1);
+      setProgress(p);
+      if (p >= 1) setIndex((i) => (i + 1) % slides.length);
+    }, 50);
+    return () => clearInterval(tick);
+  }, [index, isPlaying]);
+
+  const next = () => setIndex((i) => (i + 1) % slides.length);
+  const prev = () => setIndex((i) => (i - 1 + slides.length) % slides.length);
 
   return (
     <>
@@ -148,6 +164,45 @@ const Hero = () => {
               }`}
             />
           ))}
+        </div>
+
+        {/* Playback controls */}
+        <div className="absolute bottom-6 right-6 md:bottom-8 md:right-8 z-10 flex items-center gap-2">
+          <button
+            onClick={() => setIsPlaying((p) => !p)}
+            aria-label={isPlaying ? "Pause" : "Play"}
+            className="relative h-9 w-9 rounded-full border border-white/40 bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 transition flex items-center justify-center"
+          >
+            <svg className="absolute inset-0 -rotate-90" viewBox="0 0 36 36">
+              <circle cx="18" cy="18" r="16" fill="none" stroke="rgba(255,255,255,0.25)" strokeWidth="2" />
+              <circle
+                cx="18"
+                cy="18"
+                r="16"
+                fill="none"
+                stroke="white"
+                strokeWidth="2"
+                strokeDasharray={`${2 * Math.PI * 16}`}
+                strokeDashoffset={`${2 * Math.PI * 16 * (1 - progress)}`}
+                style={{ transition: "stroke-dashoffset 50ms linear" }}
+              />
+            </svg>
+            {isPlaying ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
+          </button>
+          <button
+            onClick={prev}
+            aria-label="Previous slide"
+            className="h-9 w-9 rounded-full bg-white/15 backdrop-blur-sm text-white hover:bg-white/25 transition flex items-center justify-center"
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </button>
+          <button
+            onClick={next}
+            aria-label="Next slide"
+            className="h-9 w-9 rounded-full bg-white/15 backdrop-blur-sm text-white hover:bg-white/25 transition flex items-center justify-center"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </button>
         </div>
       </section>
 

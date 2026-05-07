@@ -20,7 +20,7 @@ const Services = () => {
       <div ref={ref} className="container relative space-y-8">
         <div className="flex items-end justify-between gap-6 flex-wrap">
           <div className="space-y-3">
-            <div className={`inline-flex items-center gap-2 bg-accent text-accent-foreground px-3 py-1 font-display uppercase tracking-[0.3em] text-[10px] -rotate-1 reveal ${inView ? "in-view" : ""}`}>
+            <div className={`inline-flex items-center gap-2 bg-accent text-accent-foreground px-3 py-1 font-display uppercase tracking-[0.3em] text-[10px] rotate-[1.5deg] reveal ${inView ? "in-view" : ""}`}>
               ✦ What We Do
             </div>
             <h2

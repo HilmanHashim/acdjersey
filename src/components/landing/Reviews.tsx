@@ -62,7 +62,7 @@ const Reviews = () => {
       <div ref={ref} className="container relative">
         <div className="mb-8 flex items-end justify-between gap-6 flex-wrap">
           <div className="space-y-3">
-            <div className="inline-flex items-center gap-2 bg-accent text-accent-foreground px-3 py-1 font-display uppercase tracking-[0.3em] text-[10px] -rotate-1">▲ Word On The Street</div>
+            <div className="inline-flex items-center gap-2 bg-accent text-accent-foreground px-3 py-1 font-display uppercase tracking-[0.3em] text-[10px] rotate-[-1.25deg]">▲ Word On The Street</div>
             <h2 className={`font-display uppercase leading-[0.9] text-5xl md:text-7xl text-white reveal ${inView ? "in-view" : ""}`} style={{ animationDelay: "0.1s" }}>
               The <span className="text-gradient">Verdict</span>
             </h2>
