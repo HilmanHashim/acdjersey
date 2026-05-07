@@ -211,6 +211,15 @@ const SalespersonForm = ({ salesperson, entries }: { salesperson: string; entrie
             </SelectContent>
           </Select>
         </div>
+        <div className="md:col-span-2">
+          <label className="text-xs text-muted-foreground">Lead Outcome (did they buy?)</label>
+          <Select value={form.lead_outcome} onValueChange={(v) => update("lead_outcome", v)}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {LEAD_OUTCOMES.map((o) => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
       <Button onClick={submit} variant="hero" className="gap-2">
         <Plus className="h-4 w-4" /> Add Entry
