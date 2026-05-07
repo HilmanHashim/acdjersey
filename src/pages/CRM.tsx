@@ -195,7 +195,7 @@ const CRM = () => {
         <Tabs defaultValue="dashboard" className="relative">
           <TabsList className="grid w-full grid-cols-7 mb-6">
             <TabsTrigger value="dashboard" className="gap-1.5 text-xs"><LayoutDashboard className="h-4 w-4" /><span className="hidden sm:inline">Dashboard</span></TabsTrigger>
-            <TabsTrigger value="sales" className="gap-1.5 text-xs"><BarChart3 className="h-4 w-4" /><span className="hidden sm:inline">Sales</span></TabsTrigger>
+            <TabsTrigger value="sales" className="gap-1.5 text-xs"><BarChart3 className="h-4 w-4" /><span className="hidden sm:inline">Tracker</span></TabsTrigger>
             <TabsTrigger value="enquiry" className="gap-1.5 text-xs"><Inbox className="h-4 w-4" /><span className="hidden sm:inline">Follow Up</span></TabsTrigger>
             <TabsTrigger value="leads" className="gap-1.5 text-xs"><Target className="h-4 w-4" /><span className="hidden sm:inline">Leads</span></TabsTrigger>
             <TabsTrigger value="invoice" className="gap-1.5 text-xs"><FileText className="h-4 w-4" /><span className="hidden sm:inline">Invoice</span></TabsTrigger>
