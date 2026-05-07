@@ -206,13 +206,13 @@ const Agents = () => (
           <p className="font-display text-[11px] uppercase tracking-[0.3em] text-accent">
             01 — Sales
           </p>
-          <h2 className="text-3xl md:text-4xl font-display text-foreground leading-tight">
-            Pick your point of contact.
+          <h2 className="text-3xl md:text-4xl font-display text-foreground uppercase tracking-wider leading-tight">
+            Our Sales Executives
           </h2>
         </div>
-        <p className="text-muted-foreground text-sm max-w-xs">
-          {agents.length} executives ready to help. Any of them can take your order from enquiry to delivery.
-        </p>
+        <div className="text-muted-foreground text-sm max-w-xs">
+          {" "}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
