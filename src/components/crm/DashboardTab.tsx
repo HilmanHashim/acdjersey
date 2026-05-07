@@ -50,6 +50,7 @@ type SalesEntry = {
   orders_closed: number;
   revenue_closed: number;
   energy_level: string | null;
+  lead_outcome: string | null;
 };
 
 const todayISO = () => new Date().toISOString().slice(0, 10);
