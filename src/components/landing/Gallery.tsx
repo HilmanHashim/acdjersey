@@ -41,12 +41,12 @@ const Gallery = () => {
   const showDots = images.length > 1 && images.length <= 12;
 
   return (
-    <section className="py-20 bg-card">
-      <div ref={ref} className="container space-y-10">
-        <div className="text-center space-y-3">
-          <p className={`text-accent uppercase tracking-[0.25em] text-sm font-display reveal ${inView ? "in-view" : ""}`}>Our Work</p>
-          <h2 className={`text-3xl md:text-5xl font-display text-foreground reveal ${inView ? "in-view" : ""}`} style={{ animationDelay: "0.15s" }}>
-            Recent Projects
+    <section className="py-24 md:py-32 bg-background">
+      <div ref={ref} className="container space-y-12">
+        <div className="space-y-3">
+          <p className={`font-display text-accent uppercase tracking-[0.35em] text-xs reveal ${inView ? "in-view" : ""}`}>Featured</p>
+          <h2 className={`font-display uppercase text-foreground leading-[0.95] text-5xl md:text-7xl reveal ${inView ? "in-view" : ""}`} style={{ animationDelay: "0.1s" }}>
+            Recent <span className="text-gradient">Drops</span>
           </h2>
         </div>
 
