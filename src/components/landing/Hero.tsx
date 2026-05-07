@@ -2,10 +2,9 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight, Send } from "lucide-react";
-import slide1 from "@/assets/carousel-1.jpg";
-import slide2 from "@/assets/carousel-2.jpg";
-import slide3 from "@/assets/carousel-3.jpg";
-import slide4 from "@/assets/carousel-5.jpg";
+import slide1 from "@/assets/hero-slide-3.jpg";
+import slide2 from "@/assets/hero-slide-2.jpg";
+import slide3 from "@/assets/hero-slide-1.jpg";
 
 type Slide = {
   image: string;
@@ -44,15 +43,6 @@ const slides: Slide[] = [
     subtitle: "From corporate teams to national tournaments — we deliver.",
     primary: { label: "Start Your Order", to: "/enquiry" },
     secondary: { label: "Meet The Team", to: "/about" },
-  },
-  {
-    image: slide4,
-    eyebrow: "Premium Sublimation",
-    title: "GO BIG.",
-    highlight: "GO BOLD.",
-    subtitle: "Vivid prints that don't crack, don't fade, don't quit.",
-    primary: { label: "Get A Quote", to: "/enquiry" },
-    secondary: { label: "Talk To An Agent", to: "/agents" },
   },
 ];
 
