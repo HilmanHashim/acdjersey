@@ -30,13 +30,19 @@ const categories = [
   "LADIES: LONG SLEEVE",
   "LADIES: SINGLET",
   "LADIES: MUSLIMAH",
+  "CORPORATE MALE",
+  "FEMALE MINI DRESS BACK CURVE",
+  "OVERSIZED JERSEY",
+  "LONG PANTS",
+  "SHORT PANTS",
+  "BASKETBALL TEE",
 ];
 
 const getSizesForCategory = (category: string): string[] => {
   if (category === "FLAG") return flagSizes;
   if (category.includes("MUSLIMAH")) return muslimahSizes;
   if (category.startsWith("KIDS")) return kidsSizes;
-  if (category.startsWith("LADIES")) return femaleSizes;
+  if (category.startsWith("LADIES") || category.startsWith("FEMALE")) return femaleSizes;
   return unisexSizes;
 };
 
