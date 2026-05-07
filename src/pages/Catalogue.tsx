@@ -268,7 +268,7 @@ const SwatchGrid = ({
 /* Sticky chip nav                                             */
 /* ────────────────────────────────────────────────────────── */
 const SECTIONS = [
-  ...categories.map((c) => ({ id: c.slug, label: c.shortTitle })),
+  { id: "shirt-type", label: "Shirt Type" },
   { id: "fabrics", label: "Fabrics" },
   { id: "collars", label: "Collars" },
 ];
