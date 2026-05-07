@@ -409,15 +409,15 @@ const DashboardTab = () => {
             <thead>
               <tr>
                 {[
-                  { h: "NAME", w: "9%" },
-                  { h: "LEADS", w: "7%" },
-                  { h: "CONTACTED", w: "9%" },
-                  { h: "QUOTES", w: "7%" },
-                  { h: "CLOSED", w: "7%" },
-                  { h: "REVENUE (RM)", w: "12%" },
+                  { h: "NAME", w: "13%" },
+                  { h: "LEADS", w: "6%" },
+                  { h: "CONTACTED", w: "8%" },
+                  { h: "QUOTES", w: "6%" },
+                  { h: "CLOSED", w: "6%" },
+                  { h: "REVENUE (RM)", w: "13%" },
                   { h: "CLOSE RATE", w: "9%" },
                   { h: "AVG PRICE/PC", w: "11%" },
-                  { h: "TOTAL PCS", w: "8%" },
+                  { h: "TOTAL PCS", w: "7%" },
                   { h: "CONTRIBUTION", w: "11%" },
                 ].map((c) => (
                   <th key={c.h} style={{ width: c.w, background: HERO_GRADIENT, color: C.white, borderColor: BORDER_COL }}
