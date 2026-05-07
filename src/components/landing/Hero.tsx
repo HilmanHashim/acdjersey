@@ -77,19 +77,13 @@ const Hero = () => {
 
         <div className="container relative z-10 h-full flex items-end pb-24 md:pb-28">
           <div className="max-w-3xl space-y-5">
-            <p
-              className="font-display text-accent uppercase tracking-[0.35em] text-xs md:text-sm opacity-0 animate-fade-in-up"
-              style={{ animationDelay: "0.1s" }}
-            >
-              Fly The Flag · Feel The Pride
-            </p>
             <h1
               className="font-display text-white leading-[0.9] text-6xl md:text-8xl lg:text-9xl uppercase opacity-0 animate-fade-in-up"
               style={{ animationDelay: "0.25s" }}
             >
-              OWN THE
+              DARE TO
               <br />
-              <span className="text-gradient">FIELD</span>
+              <span className="text-gradient">DREAM</span>
             </h1>
             <p
               className="text-base md:text-lg text-white/80 font-body max-w-xl opacity-0 animate-fade-in-up"
