@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight, Send } from "lucide-react";
-import slide1 from "@/assets/hero-team.jpg";
 import slide2 from "@/assets/hero-track-motion.jpg";
 import slide3 from "@/assets/hero-jersey-flatlay.jpg";
 import slide4 from "@/assets/hero-slide-3.jpg";
@@ -121,10 +120,7 @@ const Hero = () => {
             >
               Premium sublimation jerseys engineered in Malaysia for teams that play to win.
             </p>
-            <div
-              className="flex flex-wrap gap-3 pt-3 opacity-0 animate-fade-in-up"
-              style={{ animationDelay: "0.6s" }}
-            >
+            <div className="flex flex-wrap gap-3 pt-3 opacity-0 animate-fade-in-up" style={{ animationDelay: "0.6s" }}>
               <Button
                 asChild
                 size="lg"
