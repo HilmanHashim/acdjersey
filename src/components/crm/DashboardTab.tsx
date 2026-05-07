@@ -309,7 +309,37 @@ const DashboardTab = () => {
         </div>
       </section>
 
-      {/* TEAM PERFORMANCE — TODAY / focus day */}
+      {/* LEAD OUTCOMES — DID THEY BUY? */}
+      <section>
+        <div className="flex items-center justify-between px-3 py-2 rounded-t-md text-xs font-bold tracking-widest"
+          style={{ background: C.panel, color: C.muted }}>
+          <span>🛒  LEAD OUTCOMES — DID THEY BUY?</span>
+          <span style={{ color: C.green }}>
+            {monthTotals.bought + monthTotals.notBought > 0
+              ? fmtPct(monthTotals.bought / (monthTotals.bought + monthTotals.notBought))
+              : "—"} buy rate
+          </span>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 p-3 rounded-b-md" style={{ background: C.panel }}>
+          {[
+            { l: "BOUGHT", v: monthTotals.bought, color: C.green, icon: "✅" },
+            { l: "NOT BOUGHT", v: monthTotals.notBought, color: C.orange, icon: "❌" },
+            { l: "PENDING", v: monthTotals.pending, color: C.yellow, icon: "⏳" },
+            { l: "BUY RATE", v: (monthTotals.bought + monthTotals.notBought > 0) ? fmtPct(monthTotals.bought / (monthTotals.bought + monthTotals.notBought)) : "—", color: C.blue, icon: "📊" },
+          ].map((s) => (
+            <div key={s.l} className="rounded-lg p-3 transition-transform hover:scale-[1.02]"
+              style={{ background: C.panelStrong, borderLeft: `3px solid ${s.color}` }}>
+              <div className="flex items-center justify-between mb-1.5">
+                <div className="text-[10px] font-bold tracking-wider" style={{ color: C.muted }}>{s.l}</div>
+                <span className="text-sm opacity-70">{s.icon}</span>
+              </div>
+              <div className="text-xl font-bold leading-tight" style={{ color: s.color }}>{s.v}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+
       <section>
         <div className="px-3 py-2 whitespace-nowrap rounded-t-md text-xs font-bold tracking-widest"
           style={{ background: C.panel, color: C.muted }}>
