@@ -500,4 +500,50 @@ const DailyActivityChart = ({ monthRows, mStart, mEnd }: { monthRows: SalesEntry
   );
 };
 
+const YMaxInput = ({ value, onChange }: { value: string; onChange: (v: string) => void }) => (
+  <div className="flex items-center gap-1 px-2 py-1 rounded text-xs font-bold"
+    style={{ background: C.panelStrong, color: C.subtle, border: `1px solid ${BORDER_COL}` }}>
+    <span style={{ color: C.muted }}>Y MAX</span>
+    <input
+      type="text"
+      value={value}
+      onChange={(e) => onChange(e.target.value.trim() || "auto")}
+      placeholder="auto"
+      className="w-14 bg-transparent focus:outline-none text-center"
+      style={{ color: C.text }}
+    />
+  </div>
+);
+
+type PerfRow = { key: string; label: string; leads: number; contacted: number; closed: number };
+const PerformanceChart = ({ monthPer }: { monthPer: PerfRow[] }) => {
+  const [yMax, setYMax] = useState<string>("auto");
+  return (
+    <section>
+      <div className="flex flex-wrap items-center justify-between gap-2 px-3 py-2 rounded-t-md text-xs font-bold tracking-widest"
+        style={{ background: C.panel, color: C.muted }}>
+        <span>📊  PERFORMANCE — LEADS vs CONTACTED vs CLOSED</span>
+        <YMaxInput value={yMax} onChange={setYMax} />
+      </div>
+      <div className="p-4 rounded-b-md" style={{ background: C.panel }}>
+        <ResponsiveContainer width="100%" height={320}>
+          <BarChart data={monthPer.map((p) => ({ name: p.label, Leads: p.leads, Contacted: p.contacted, Closed: p.closed }))}>
+            <CartesianGrid strokeDasharray="3 3" stroke={BORDER_COL} />
+            <XAxis dataKey="name" tick={{ fill: C.subtle, fontSize: 11 }} stroke={BORDER_COL} />
+            <YAxis tick={{ fill: C.subtle, fontSize: 11 }} stroke={BORDER_COL} allowDecimals={false} domain={[0, yMax === "auto" || !yMax ? "auto" : Number(yMax)]} />
+            <Tooltip
+              contentStyle={{ background: C.panelStrong, border: `1px solid ${BORDER_COL}`, borderRadius: 6, color: C.text }}
+              cursor={{ fill: "hsl(220 20% 25% / 0.3)" }}
+            />
+            <Legend wrapperStyle={{ color: C.text, fontSize: 12 }} />
+            <Bar dataKey="Leads" fill={C.blue} radius={[4, 4, 0, 0]} />
+            <Bar dataKey="Contacted" fill={C.yellow} radius={[4, 4, 0, 0]} />
+            <Bar dataKey="Closed" fill={C.green} radius={[4, 4, 0, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+    </section>
+  );
+};
+
 export default DashboardTab;
