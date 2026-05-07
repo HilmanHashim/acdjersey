@@ -268,7 +268,7 @@ const SwatchGrid = ({
 /* Sticky chip nav                                             */
 /* ────────────────────────────────────────────────────────── */
 const SECTIONS = [
-  ...categories.map((c) => ({ id: c.slug, label: c.shortTitle })),
+  { id: "shirt-type", label: "Shirt Type" },
   { id: "fabrics", label: "Fabrics" },
   { id: "collars", label: "Collars" },
 ];
@@ -422,7 +422,7 @@ const Catalogue = () => {
       <ChipNav />
 
       {/* ───── Categories — bento grid ───── */}
-      <section className="container max-w-6xl py-16 md:py-24">
+      <section id="shirt-type" className="container max-w-6xl py-16 md:py-24 scroll-mt-32">
         <SectionHeader
           index="01"
           eyebrow="The Range"
