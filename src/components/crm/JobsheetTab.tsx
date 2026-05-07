@@ -30,6 +30,12 @@ const categories = [
   "LADIES: LONG SLEEVE",
   "LADIES: SINGLET",
   "LADIES: MUSLIMAH",
+  "CORPORATE MALE",
+  "FEMALE MINI DRESS BACK CURVE",
+  "OVERSIZED JERSEY",
+  "LONG PANTS",
+  "SHORT PANTS",
+  "BASKETBALL TEE",
 ];
 
 const getSizesForCategory = (category: string): string[] => {
