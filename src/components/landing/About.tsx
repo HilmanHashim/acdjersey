@@ -9,9 +9,6 @@ const About = () => {
         <div className="inline-flex items-center gap-2 mb-6 bg-accent text-accent-foreground px-3 py-1 font-display uppercase tracking-[0.3em] text-[10px] -rotate-1">● The Studio</div>
         <div className="grid md:grid-cols-12 gap-10 md:gap-16">
           <div className="md:col-span-7 space-y-6">
-            <p className={`font-display text-accent uppercase tracking-[0.35em] text-xs reveal ${inView ? "in-view" : ""}`}>
-              The Studio
-            </p>
             <h2
               className={`font-display uppercase text-foreground leading-[0.95] text-5xl md:text-7xl reveal ${inView ? "in-view" : ""}`}
               style={{ animationDelay: "0.1s" }}
