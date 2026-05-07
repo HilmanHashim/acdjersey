@@ -584,31 +584,50 @@ const YMaxInput = ({ value, onChange }: { value: string; onChange: (v: string) =
   </select>
 );
 
-type PerfRow = { key: string; label: string; leads: number; contacted: number; closed: number };
+type PerfRow = { key: string; label: string; leads: number; contacted: number; closed: number; bought: number; notBought: number; pending: number };
 const PerformanceChart = ({ monthPer }: { monthPer: PerfRow[] }) => {
   const [yMax, setYMax] = useState<string>("auto");
+  const [view, setView] = useState<"funnel" | "outcomes">("funnel");
   return (
     <section>
       <div className="flex flex-wrap items-center justify-between gap-2 px-3 py-2 rounded-t-md text-xs font-bold tracking-widest"
         style={{ background: C.panel, color: C.muted }}>
-        <span>📊  PERFORMANCE — LEADS vs CONTACTED vs CLOSED</span>
-        <YMaxInput value={yMax} onChange={setYMax} />
+        <span>📊  PERFORMANCE — {view === "funnel" ? "LEADS vs CONTACTED vs CLOSED" : "LEAD OUTCOMES PER AGENT"}</span>
+        <div className="flex gap-2">
+          <select value={view} onChange={(e) => setView(e.target.value as any)}
+            className="px-2 py-1 rounded text-xs font-bold cursor-pointer focus:outline-none"
+            style={{ background: C.panelStrong, color: C.text, border: `1px solid ${BORDER_COL}` }}>
+            <option value="funnel">Funnel (Leads/Contacted/Closed)</option>
+            <option value="outcomes">Lead Outcomes (Bought/Not/Pending)</option>
+          </select>
+          <YMaxInput value={yMax} onChange={setYMax} />
+        </div>
       </div>
       <div className="p-4 rounded-b-md" style={{ background: C.panel }}>
         <ResponsiveContainer width="100%" height={320}>
-          <BarChart data={monthPer.map((p) => ({ name: p.label, Leads: p.leads, Contacted: p.contacted, Closed: p.closed }))}>
-            <CartesianGrid strokeDasharray="3 3" stroke={BORDER_COL} />
-            <XAxis dataKey="name" tick={{ fill: C.subtle, fontSize: 11 }} stroke={BORDER_COL} />
-            <YAxis tick={{ fill: C.subtle, fontSize: 11 }} stroke={BORDER_COL} allowDecimals={false} domain={[0, yMax === "auto" ? "auto" : Number(yMax)]} allowDataOverflow={yMax !== "auto"} />
-            <Tooltip
-              contentStyle={{ background: C.panelStrong, border: `1px solid ${BORDER_COL}`, borderRadius: 6, color: C.text }}
-              cursor={{ fill: "hsl(220 20% 25% / 0.3)" }}
-            />
-            <Legend wrapperStyle={{ color: C.text, fontSize: 12 }} />
-            <Bar dataKey="Leads" fill={C.blue} radius={[4, 4, 0, 0]} />
-            <Bar dataKey="Contacted" fill={C.yellow} radius={[4, 4, 0, 0]} />
-            <Bar dataKey="Closed" fill={C.green} radius={[4, 4, 0, 0]} />
-          </BarChart>
+          {view === "funnel" ? (
+            <BarChart data={monthPer.map((p) => ({ name: p.label, Leads: p.leads, Contacted: p.contacted, Closed: p.closed }))}>
+              <CartesianGrid strokeDasharray="3 3" stroke={BORDER_COL} />
+              <XAxis dataKey="name" tick={{ fill: C.subtle, fontSize: 11 }} stroke={BORDER_COL} />
+              <YAxis tick={{ fill: C.subtle, fontSize: 11 }} stroke={BORDER_COL} allowDecimals={false} domain={[0, yMax === "auto" ? "auto" : Number(yMax)]} allowDataOverflow={yMax !== "auto"} />
+              <Tooltip contentStyle={{ background: C.panelStrong, border: `1px solid ${BORDER_COL}`, borderRadius: 6, color: C.text }} cursor={{ fill: "hsl(220 20% 25% / 0.3)" }} />
+              <Legend wrapperStyle={{ color: C.text, fontSize: 12 }} />
+              <Bar dataKey="Leads" fill={C.blue} radius={[4, 4, 0, 0]} />
+              <Bar dataKey="Contacted" fill={C.yellow} radius={[4, 4, 0, 0]} />
+              <Bar dataKey="Closed" fill={C.green} radius={[4, 4, 0, 0]} />
+            </BarChart>
+          ) : (
+            <BarChart data={monthPer.map((p) => ({ name: p.label, Bought: p.bought, "Not Bought": p.notBought, Pending: p.pending }))}>
+              <CartesianGrid strokeDasharray="3 3" stroke={BORDER_COL} />
+              <XAxis dataKey="name" tick={{ fill: C.subtle, fontSize: 11 }} stroke={BORDER_COL} />
+              <YAxis tick={{ fill: C.subtle, fontSize: 11 }} stroke={BORDER_COL} allowDecimals={false} domain={[0, yMax === "auto" ? "auto" : Number(yMax)]} allowDataOverflow={yMax !== "auto"} />
+              <Tooltip contentStyle={{ background: C.panelStrong, border: `1px solid ${BORDER_COL}`, borderRadius: 6, color: C.text }} cursor={{ fill: "hsl(220 20% 25% / 0.3)" }} />
+              <Legend wrapperStyle={{ color: C.text, fontSize: 12 }} />
+              <Bar dataKey="Bought" stackId="o" fill={C.green} />
+              <Bar dataKey="Not Bought" stackId="o" fill={C.orange} />
+              <Bar dataKey="Pending" stackId="o" fill={C.yellow} radius={[4, 4, 0, 0]} />
+            </BarChart>
+          )}
         </ResponsiveContainer>
       </div>
     </section>
