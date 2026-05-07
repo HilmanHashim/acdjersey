@@ -4,9 +4,11 @@ import { useInView } from "@/hooks/use-in-view";
 const About = () => {
   const { ref, inView } = useInView<HTMLDivElement>();
   return (
-    <section className="py-24 md:py-32 bg-background">
-      <div ref={ref} className="container">
-        <div className="grid md:grid-cols-12 gap-12 md:gap-16">
+    <section className="py-14 md:py-20 bg-background relative overflow-hidden">
+      <div aria-hidden className="pointer-events-none absolute -top-10 -right-10 font-display uppercase text-[18vw] leading-none text-foreground/[0.03] select-none">EST · MY</div>
+      <div ref={ref} className="container relative">
+        <div className="inline-flex items-center gap-2 mb-6 bg-accent text-accent-foreground px-3 py-1 font-display uppercase tracking-[0.3em] text-[10px] -rotate-1">● The Studio / 02</div>
+        <div className="grid md:grid-cols-12 gap-10 md:gap-16">
           <div className="md:col-span-7 space-y-6">
             <p className={`font-display text-accent uppercase tracking-[0.35em] text-xs reveal ${inView ? "in-view" : ""}`}>
               The Studio

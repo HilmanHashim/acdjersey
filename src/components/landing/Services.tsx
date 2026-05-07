@@ -16,15 +16,16 @@ const services = [
 const Services = () => {
   const { ref, inView } = useInView<HTMLDivElement>();
   return (
-    <section className="py-24 md:py-32 bg-background">
-      <div ref={ref} className="container space-y-12">
+    <section className="py-14 md:py-20 bg-background relative overflow-hidden border-t border-border/40">
+      <div aria-hidden className="pointer-events-none absolute -bottom-10 -right-10 font-display uppercase text-[16vw] leading-none text-foreground/[0.03] select-none">LINEUP</div>
+      <div ref={ref} className="container relative space-y-8">
         <div className="flex items-end justify-between gap-6 flex-wrap">
           <div className="space-y-3">
-            <p className={`font-display text-accent uppercase tracking-[0.35em] text-xs reveal ${inView ? "in-view" : ""}`}>
-              What We Do
-            </p>
+            <div className={`inline-flex items-center gap-2 bg-accent text-accent-foreground px-3 py-1 font-display uppercase tracking-[0.3em] text-[10px] -rotate-1 reveal ${inView ? "in-view" : ""}`}>
+              ✦ What We Do / 01
+            </div>
             <h2
-              className={`font-display uppercase text-foreground leading-[0.95] text-5xl md:text-7xl reveal ${inView ? "in-view" : ""}`}
+              className={`font-display uppercase text-foreground leading-[0.9] text-5xl md:text-7xl reveal ${inView ? "in-view" : ""}`}
               style={{ animationDelay: "0.1s" }}
             >
               The <span className="text-gradient">Lineup</span>
@@ -32,7 +33,7 @@ const Services = () => {
           </div>
           <Link
             to="/catalogue"
-            className={`group inline-flex items-center gap-2 font-display uppercase tracking-[0.25em] text-sm text-foreground reveal ${inView ? "in-view" : ""}`}
+            className={`group inline-flex items-center gap-2 font-display uppercase tracking-[0.25em] text-sm text-foreground border-b border-foreground/30 hover:border-foreground pb-1 reveal ${inView ? "in-view" : ""}`}
             style={{ animationDelay: "0.2s" }}
           >
             View All
