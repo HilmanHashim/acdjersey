@@ -193,16 +193,17 @@ const CRM = () => {
       </header>
       <main className="w-full max-w-[1500px] mx-auto px-4 py-6">
         <Tabs defaultValue="dashboard" className="relative">
-          <TabsList className="grid w-full grid-cols-10 mb-6">
+          <TabsList className="grid w-full grid-cols-7 mb-6">
             <TabsTrigger value="dashboard" className="gap-1.5 text-xs"><LayoutDashboard className="h-4 w-4" /><span className="hidden sm:inline">Dashboard</span></TabsTrigger>
             <TabsTrigger value="sales" className="gap-1.5 text-xs"><BarChart3 className="h-4 w-4" /><span className="hidden sm:inline">Sales</span></TabsTrigger>
             <TabsTrigger value="enquiry" className="gap-1.5 text-xs"><Inbox className="h-4 w-4" /><span className="hidden sm:inline">Follow Up</span></TabsTrigger>
             <TabsTrigger value="leads" className="gap-1.5 text-xs"><Target className="h-4 w-4" /><span className="hidden sm:inline">Leads</span></TabsTrigger>
             <TabsTrigger value="invoice" className="gap-1.5 text-xs"><FileText className="h-4 w-4" /><span className="hidden sm:inline">Invoice</span></TabsTrigger>
             <TabsTrigger value="jobsheet" className="gap-1.5 text-xs"><ClipboardList className="h-4 w-4" /><span className="hidden sm:inline">Jobsheet</span></TabsTrigger>
-            <TabsTrigger value="shop-products" className="gap-1.5 text-xs"><Package className="h-4 w-4" /><span className="hidden sm:inline">Products</span></TabsTrigger>
-            <TabsTrigger value="shop-orders" className="gap-1.5 text-xs"><ShoppingBag className="h-4 w-4" /><span className="hidden sm:inline">Orders</span></TabsTrigger>
-            <TabsTrigger value="shipping" className="gap-1.5 text-xs"><Truck className="h-4 w-4" /><span className="hidden sm:inline">Shipping</span></TabsTrigger>
+            {/* TEMP HIDDEN — shop & shipping CRM tabs */}
+            {/* <TabsTrigger value="shop-products" className="gap-1.5 text-xs"><Package className="h-4 w-4" /><span className="hidden sm:inline">Products</span></TabsTrigger> */}
+            {/* <TabsTrigger value="shop-orders" className="gap-1.5 text-xs"><ShoppingBag className="h-4 w-4" /><span className="hidden sm:inline">Orders</span></TabsTrigger> */}
+            {/* <TabsTrigger value="shipping" className="gap-1.5 text-xs"><Truck className="h-4 w-4" /><span className="hidden sm:inline">Shipping</span></TabsTrigger> */}
             <TabsTrigger value="users" className="gap-1.5 text-xs"><Shield className="h-4 w-4" /><span className="hidden sm:inline">Users</span></TabsTrigger>
           </TabsList>
           <TabsContent value="dashboard" forceMount className="data-[state=inactive]:hidden"><DashboardTab /></TabsContent>
@@ -211,9 +212,10 @@ const CRM = () => {
           <TabsContent value="leads" forceMount className="data-[state=inactive]:hidden"><LeadsTab /></TabsContent>
           <TabsContent value="invoice" forceMount className="data-[state=inactive]:hidden"><InvoiceTab /></TabsContent>
           <TabsContent value="jobsheet" forceMount className="data-[state=inactive]:hidden"><JobsheetTab /></TabsContent>
-          <TabsContent value="shop-products" forceMount className="data-[state=inactive]:hidden"><ShopProductsTab /></TabsContent>
-          <TabsContent value="shop-orders" forceMount className="data-[state=inactive]:hidden"><ShopOrdersTab /></TabsContent>
-          <TabsContent value="shipping" forceMount className="data-[state=inactive]:hidden"><ShippingZonesTab /></TabsContent>
+          {/* TEMP HIDDEN — shop & shipping CRM tab content */}
+          {/* <TabsContent value="shop-products" forceMount className="data-[state=inactive]:hidden"><ShopProductsTab /></TabsContent> */}
+          {/* <TabsContent value="shop-orders" forceMount className="data-[state=inactive]:hidden"><ShopOrdersTab /></TabsContent> */}
+          {/* <TabsContent value="shipping" forceMount className="data-[state=inactive]:hidden"><ShippingZonesTab /></TabsContent> */}
           <TabsContent value="users" forceMount className="data-[state=inactive]:hidden"><UsersTab currentUserId={user.id} /></TabsContent>
         </Tabs>
       </main>
