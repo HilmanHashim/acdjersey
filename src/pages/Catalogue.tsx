@@ -170,7 +170,7 @@ const SectionHeader = ({
     <div className="space-y-3 max-w-2xl">
       <div className="flex items-center gap-3">
         <span className="font-display text-xs uppercase tracking-[0.3em] text-accent">
-          {index} / {eyebrow}
+          {eyebrow}
         </span>
         <span className="h-px flex-1 bg-gradient-to-r from-accent/50 to-transparent w-16" />
       </div>
