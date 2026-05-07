@@ -46,7 +46,7 @@ const Gallery = () => {
         <div className="space-y-3">
           <p className={`font-display text-accent uppercase tracking-[0.35em] text-xs reveal ${inView ? "in-view" : ""}`}>Featured</p>
           <h2 className={`font-display uppercase text-foreground leading-[0.95] text-5xl md:text-7xl reveal ${inView ? "in-view" : ""}`} style={{ animationDelay: "0.1s" }}>
-            Recent <span className="text-gradient">Drops</span>
+            Recent <span className="text-gradient">Projects</span>
           </h2>
         </div>
 
