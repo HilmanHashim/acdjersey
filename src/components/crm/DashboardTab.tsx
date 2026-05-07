@@ -500,19 +500,30 @@ const DailyActivityChart = ({ monthRows, mStart, mEnd }: { monthRows: SalesEntry
   );
 };
 
+const SCALE_PRESETS = [
+  { value: "auto", label: "Auto scale" },
+  { value: "5", label: "Show up to 5" },
+  { value: "10", label: "Show up to 10" },
+  { value: "25", label: "Show up to 25" },
+  { value: "50", label: "Show up to 50" },
+  { value: "100", label: "Show up to 100" },
+  { value: "250", label: "Show up to 250" },
+  { value: "500", label: "Show up to 500" },
+  { value: "1000", label: "Show up to 1,000" },
+];
+
 const YMaxInput = ({ value, onChange }: { value: string; onChange: (v: string) => void }) => (
-  <div className="flex items-center gap-1 px-2 py-1 rounded text-xs font-bold"
-    style={{ background: C.panelStrong, color: C.subtle, border: `1px solid ${BORDER_COL}` }}>
-    <span style={{ color: C.muted }}>Y MAX</span>
-    <input
-      type="text"
-      value={value}
-      onChange={(e) => onChange(e.target.value.trim() || "auto")}
-      placeholder="auto"
-      className="w-14 bg-transparent focus:outline-none text-center"
-      style={{ color: C.text }}
-    />
-  </div>
+  <select
+    value={value}
+    onChange={(e) => onChange(e.target.value)}
+    className="px-2 py-1 rounded text-xs font-bold cursor-pointer focus:outline-none"
+    style={{ background: C.panelStrong, color: C.text, border: `1px solid ${BORDER_COL}` }}
+    title="Choose how tall the chart's number scale goes"
+  >
+    {SCALE_PRESETS.map((o) => (
+      <option key={o.value} value={o.value}>Chart scale: {o.label}</option>
+    ))}
+  </select>
 );
 
 type PerfRow = { key: string; label: string; leads: number; contacted: number; closed: number };
