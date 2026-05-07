@@ -475,16 +475,16 @@ const DashboardTab = () => {
 
 const DailyActivityChart = ({ monthRows, mStart, mEnd }: { monthRows: SalesEntry[]; mStart: string; mEnd: string }) => {
   const [filter, setFilter] = useState<string>("ALL");
-  const [metric, setMetric] = useState<"leads" | "contacted" | "closed" | "revenue">("leads");
+  const [metric, setMetric] = useState<"leads" | "contacted" | "closed" | "revenue" | "outcomes">("leads");
   const [yMax, setYMax] = useState<string>("auto");
 
   const data = useMemo(() => {
     const start = new Date(mStart);
     const end = new Date(mEnd);
-    const days: { date: string; label: string; leads: number; contacted: number; closed: number; revenue: number }[] = [];
+    const days: { date: string; label: string; leads: number; contacted: number; closed: number; revenue: number; bought: number; notBought: number; pending: number }[] = [];
     for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
       const iso = d.toISOString().slice(0, 10);
-      days.push({ date: iso, label: String(d.getDate()), leads: 0, contacted: 0, closed: 0, revenue: 0 });
+      days.push({ date: iso, label: String(d.getDate()), leads: 0, contacted: 0, closed: 0, revenue: 0, bought: 0, notBought: 0, pending: 0 });
     }
     const map = new Map(days.map((x) => [x.date, x]));
     for (const r of monthRows) {
@@ -495,12 +495,15 @@ const DailyActivityChart = ({ monthRows, mStart, mEnd }: { monthRows: SalesEntry
       row.contacted += r.prospects_contacted || 0;
       row.closed += r.orders_closed || 0;
       row.revenue += Number(r.revenue_closed) || 0;
+      if (r.lead_outcome === "Bought") row.bought += 1;
+      else if (r.lead_outcome === "Not Bought") row.notBought += 1;
+      else row.pending += 1;
     }
     return days;
   }, [monthRows, mStart, mEnd, filter]);
 
-  const metricColor = { leads: C.blue, contacted: C.yellow, closed: C.green, revenue: C.orange }[metric];
-  const metricLabel = { leads: "Leads", contacted: "Contacted", closed: "Closed", revenue: "Revenue (RM)" }[metric];
+  const metricColor = { leads: C.blue, contacted: C.yellow, closed: C.green, revenue: C.orange, outcomes: C.green }[metric];
+  const metricLabel = { leads: "Leads", contacted: "Contacted", closed: "Closed", revenue: "Revenue (RM)", outcomes: "Lead Outcomes" }[metric];
 
   return (
     <section>
@@ -515,6 +518,7 @@ const DailyActivityChart = ({ monthRows, mStart, mEnd }: { monthRows: SalesEntry
             <option value="contacted">Contacted</option>
             <option value="closed">Closed</option>
             <option value="revenue">Revenue</option>
+            <option value="outcomes">Lead Outcomes</option>
           </select>
           <select value={filter} onChange={(e) => setFilter(e.target.value)}
             className="px-2 py-1 rounded text-xs font-bold cursor-pointer focus:outline-none"
@@ -527,17 +531,27 @@ const DailyActivityChart = ({ monthRows, mStart, mEnd }: { monthRows: SalesEntry
       </div>
       <div className="p-4 rounded-b-md" style={{ background: C.panel }}>
         <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" stroke={BORDER_COL} />
-            <XAxis dataKey="label" tick={{ fill: C.subtle, fontSize: 11 }} stroke={BORDER_COL} />
-            <YAxis tick={{ fill: C.subtle, fontSize: 11 }} stroke={BORDER_COL} allowDecimals={false} domain={[0, yMax === "auto" ? "auto" : Number(yMax)]} allowDataOverflow={yMax !== "auto"} />
-            <Tooltip
-              contentStyle={{ background: C.panelStrong, border: `1px solid ${BORDER_COL}`, borderRadius: 6, color: C.text }}
-              labelFormatter={(l) => `Day ${l}`}
-            />
-            <Legend wrapperStyle={{ color: C.text, fontSize: 12 }} />
-            <Line type="monotone" dataKey={metric} name={metricLabel} stroke={metricColor} strokeWidth={2} dot={{ r: 3, fill: metricColor }} activeDot={{ r: 5 }} />
-          </LineChart>
+          {metric === "outcomes" ? (
+            <BarChart data={data}>
+              <CartesianGrid strokeDasharray="3 3" stroke={BORDER_COL} />
+              <XAxis dataKey="label" tick={{ fill: C.subtle, fontSize: 11 }} stroke={BORDER_COL} />
+              <YAxis tick={{ fill: C.subtle, fontSize: 11 }} stroke={BORDER_COL} allowDecimals={false} domain={[0, yMax === "auto" ? "auto" : Number(yMax)]} allowDataOverflow={yMax !== "auto"} />
+              <Tooltip contentStyle={{ background: C.panelStrong, border: `1px solid ${BORDER_COL}`, borderRadius: 6, color: C.text }} labelFormatter={(l) => `Day ${l}`} />
+              <Legend wrapperStyle={{ color: C.text, fontSize: 12 }} />
+              <Bar dataKey="bought" stackId="o" name="Bought" fill={C.green} radius={[0, 0, 0, 0]} />
+              <Bar dataKey="notBought" stackId="o" name="Not Bought" fill={C.orange} radius={[0, 0, 0, 0]} />
+              <Bar dataKey="pending" stackId="o" name="Pending" fill={C.yellow} radius={[4, 4, 0, 0]} />
+            </BarChart>
+          ) : (
+            <LineChart data={data}>
+              <CartesianGrid strokeDasharray="3 3" stroke={BORDER_COL} />
+              <XAxis dataKey="label" tick={{ fill: C.subtle, fontSize: 11 }} stroke={BORDER_COL} />
+              <YAxis tick={{ fill: C.subtle, fontSize: 11 }} stroke={BORDER_COL} allowDecimals={false} domain={[0, yMax === "auto" ? "auto" : Number(yMax)]} allowDataOverflow={yMax !== "auto"} />
+              <Tooltip contentStyle={{ background: C.panelStrong, border: `1px solid ${BORDER_COL}`, borderRadius: 6, color: C.text }} labelFormatter={(l) => `Day ${l}`} />
+              <Legend wrapperStyle={{ color: C.text, fontSize: 12 }} />
+              <Line type="monotone" dataKey={metric} name={metricLabel} stroke={metricColor} strokeWidth={2} dot={{ r: 3, fill: metricColor }} activeDot={{ r: 5 }} />
+            </LineChart>
+          )}
         </ResponsiveContainer>
       </div>
     </section>
