@@ -163,7 +163,7 @@ const SalespersonForm = ({ salesperson, entries }: { salesperson: string; entrie
           <Input type="date" value={form.entry_date} onChange={(e) => update("entry_date", e.target.value)} />
         </div>
         <div>
-          <label className="text-xs text-muted-foreground">Job Name</label>
+          <label className="text-xs text-muted-foreground">Job / Client Name</label>
           <Input value={form.job_name} onChange={(e) => update("job_name", e.target.value)} />
         </div>
         <div>
