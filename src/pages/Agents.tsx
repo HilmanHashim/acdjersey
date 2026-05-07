@@ -1,4 +1,6 @@
-import { Phone, MessageCircle, ArrowUpRight, MapPin, Clock } from "lucide-react";
+import { Phone, MessageCircle, MapPin, Clock } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import Footer from "@/components/landing/Footer";
 import aliffImg from "@/assets/aliff-acd-new.png";
 import faizImg from "@/assets/faiz-acd.jfif";
