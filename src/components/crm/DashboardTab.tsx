@@ -50,6 +50,7 @@ type SalesEntry = {
   orders_closed: number;
   revenue_closed: number;
   energy_level: string | null;
+  lead_outcome: string | null;
 };
 
 const todayISO = () => new Date().toISOString().slice(0, 10);
@@ -88,14 +89,16 @@ const agg = (rows: SalesEntry[]) =>
       a.pcs += r.quantity || 0;
       a.priceSum += Number(r.price_per_pc) || 0;
       a.priceCount += r.price_per_pc ? 1 : 0;
-      // Weighted avg price = Σ(qty × price) / Σ(qty where price set)
       if (r.price_per_pc && r.quantity) {
         a.priceWeighted += Number(r.price_per_pc) * r.quantity;
         a.pcsForPrice += r.quantity;
       }
+      if (r.lead_outcome === "Bought") a.bought += 1;
+      else if (r.lead_outcome === "Not Bought") a.notBought += 1;
+      else a.pending += 1;
       return a;
     },
-    { leads: 0, contacted: 0, quotes: 0, closed: 0, revenue: 0, pcs: 0, priceSum: 0, priceCount: 0, priceWeighted: 0, pcsForPrice: 0 }
+    { leads: 0, contacted: 0, quotes: 0, closed: 0, revenue: 0, pcs: 0, priceSum: 0, priceCount: 0, priceWeighted: 0, pcsForPrice: 0, bought: 0, notBought: 0, pending: 0 }
   );
 
 const fmtMoney = (n: number) => n.toLocaleString(undefined, { maximumFractionDigits: 0 });
@@ -109,7 +112,7 @@ const DashboardTab = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("sales_entries")
-        .select("id,salesperson,entry_date,quantity,price_per_pc,new_leads,prospects_contacted,quotations_sent,orders_closed,revenue_closed,energy_level")
+        .select("id,salesperson,entry_date,quantity,price_per_pc,new_leads,prospects_contacted,quotations_sent,orders_closed,revenue_closed,energy_level,lead_outcome")
         .order("entry_date", { ascending: false });
       if (error) throw error;
       return (data || []) as SalesEntry[];
@@ -306,7 +309,37 @@ const DashboardTab = () => {
         </div>
       </section>
 
-      {/* TEAM PERFORMANCE — TODAY / focus day */}
+      {/* LEAD OUTCOMES — DID THEY BUY? */}
+      <section>
+        <div className="flex items-center justify-between px-3 py-2 rounded-t-md text-xs font-bold tracking-widest"
+          style={{ background: C.panel, color: C.muted }}>
+          <span>🛒  LEAD OUTCOMES — DID THEY BUY?</span>
+          <span style={{ color: C.green }}>
+            {monthTotals.bought + monthTotals.notBought > 0
+              ? fmtPct(monthTotals.bought / (monthTotals.bought + monthTotals.notBought))
+              : "—"} buy rate
+          </span>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 p-3 rounded-b-md" style={{ background: C.panel }}>
+          {[
+            { l: "BOUGHT", v: monthTotals.bought, color: C.green, icon: "✅" },
+            { l: "NOT BOUGHT", v: monthTotals.notBought, color: C.orange, icon: "❌" },
+            { l: "PENDING", v: monthTotals.pending, color: C.yellow, icon: "⏳" },
+            { l: "BUY RATE", v: (monthTotals.bought + monthTotals.notBought > 0) ? fmtPct(monthTotals.bought / (monthTotals.bought + monthTotals.notBought)) : "—", color: C.blue, icon: "📊" },
+          ].map((s) => (
+            <div key={s.l} className="rounded-lg p-3 transition-transform hover:scale-[1.02]"
+              style={{ background: C.panelStrong, borderLeft: `3px solid ${s.color}` }}>
+              <div className="flex items-center justify-between mb-1.5">
+                <div className="text-[10px] font-bold tracking-wider" style={{ color: C.muted }}>{s.l}</div>
+                <span className="text-sm opacity-70">{s.icon}</span>
+              </div>
+              <div className="text-xl font-bold leading-tight" style={{ color: s.color }}>{s.v}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+
       <section>
         <div className="px-3 py-2 whitespace-nowrap rounded-t-md text-xs font-bold tracking-widest"
           style={{ background: C.panel, color: C.muted }}>

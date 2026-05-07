@@ -12,6 +12,7 @@ import { toast } from "sonner";
 
 const SALESPEOPLE = ["JEED ACD", "DIDO ACD", "MUNIR ACD", "ALYPH ACD", "HILMAN ACD", "UMAR ACD"] as const;
 const ENERGY_LEVELS = ["🔥 On Fire", "💪🏻 Bring it on", "✊🏻 All Good", "😐 Tough day", "😔 Struggling"];
+const LEAD_OUTCOMES = ["Pending", "Bought", "Not Bought"] as const;
 
 type SalesEntry = {
   id: string;
@@ -28,6 +29,7 @@ type SalesEntry = {
   revenue_closed: number;
   activity_today: string | null;
   energy_level: string | null;
+  lead_outcome: string | null;
 };
 
 const todayISO = () => new Date().toISOString().slice(0, 10);
@@ -109,6 +111,7 @@ const SalespersonForm = ({ salesperson, entries }: { salesperson: string; entrie
     revenue_closed: "",
     activity_today: "",
     energy_level: "🔥 On Fire",
+    lead_outcome: "Pending",
   });
 
   const update = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }));
@@ -128,6 +131,7 @@ const SalespersonForm = ({ salesperson, entries }: { salesperson: string; entrie
       revenue_closed: Number(form.revenue_closed) || 0,
       activity_today: form.activity_today || null,
       energy_level: form.energy_level || null,
+      lead_outcome: form.lead_outcome || null,
     };
     const { error } = await supabase.from("sales_entries").insert(payload);
     if (error) {
@@ -139,7 +143,7 @@ const SalespersonForm = ({ salesperson, entries }: { salesperson: string; entrie
       ...f,
       job_name: "", jersey_type: "", quantity: "", price_per_pc: "",
       new_leads: "", prospects_contacted: "", quotations_sent: "", orders_closed: "", revenue_closed: "",
-      activity_today: "",
+      activity_today: "", lead_outcome: "Pending",
     }));
     qc.invalidateQueries({ queryKey: ["sales_entries"] });
   };
@@ -159,7 +163,7 @@ const SalespersonForm = ({ salesperson, entries }: { salesperson: string; entrie
           <Input type="date" value={form.entry_date} onChange={(e) => update("entry_date", e.target.value)} />
         </div>
         <div>
-          <label className="text-xs text-muted-foreground">Job Name</label>
+          <label className="text-xs text-muted-foreground">Job / Client Name</label>
           <Input value={form.job_name} onChange={(e) => update("job_name", e.target.value)} />
         </div>
         <div>
@@ -204,6 +208,15 @@ const SalespersonForm = ({ salesperson, entries }: { salesperson: string; entrie
             <SelectTrigger><SelectValue /></SelectTrigger>
             <SelectContent>
               {ENERGY_LEVELS.map((e) => <SelectItem key={e} value={e}>{e}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="md:col-span-2">
+          <label className="text-xs text-muted-foreground">Lead Outcome (did they buy?)</label>
+          <Select value={form.lead_outcome} onValueChange={(v) => update("lead_outcome", v)}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {LEAD_OUTCOMES.map((o) => <SelectItem key={o} value={o}>{o}</SelectItem>)}
             </SelectContent>
           </Select>
         </div>
@@ -269,10 +282,11 @@ const RecentEntries = ({ entries, onRemove }: { entries: SalesEntry[]; onRemove:
           <TableHeader>
             <TableRow>
               <TableHead>Date</TableHead>
-              <TableHead>Job</TableHead>
+              <TableHead>Job / Client</TableHead>
               <TableHead className="text-center">Leads</TableHead>
               <TableHead className="text-center">Closed</TableHead>
               <TableHead className="text-right">Revenue (RM)</TableHead>
+              <TableHead className="text-center">Outcome</TableHead>
               <TableHead className="text-center">Energy</TableHead>
               <TableHead></TableHead>
             </TableRow>
@@ -285,6 +299,9 @@ const RecentEntries = ({ entries, onRemove }: { entries: SalesEntry[]; onRemove:
                 <TableCell className="text-center">{e.new_leads}</TableCell>
                 <TableCell className="text-center">{e.orders_closed}</TableCell>
                 <TableCell className="text-right font-mono">RM {Number(e.revenue_closed).toLocaleString()}</TableCell>
+                <TableCell className="text-center">
+                  <OutcomeCell entry={e} />
+                </TableCell>
                 <TableCell className="text-center text-xs">{e.energy_level || "—"}</TableCell>
                 <TableCell>
                   <Button size="icon" variant="ghost" onClick={() => onRemove(e.id)}>
@@ -294,7 +311,7 @@ const RecentEntries = ({ entries, onRemove }: { entries: SalesEntry[]; onRemove:
               </TableRow>
             ))}
             {filtered.length === 0 && (
-              <TableRow><TableCell colSpan={7} className="text-center text-sm text-muted-foreground py-4">No entries for this month</TableCell></TableRow>
+              <TableRow><TableCell colSpan={8} className="text-center text-sm text-muted-foreground py-4">No entries for this month</TableCell></TableRow>
             )}
           </TableBody>
         </Table>
@@ -314,3 +331,25 @@ const RecentEntries = ({ entries, onRemove }: { entries: SalesEntry[]; onRemove:
 };
 
 export default SalesTrackerTab;
+
+const OutcomeCell = ({ entry }: { entry: SalesEntry }) => {
+  const qc = useQueryClient();
+  const value = entry.lead_outcome || "Pending";
+  const color =
+    value === "Bought" ? "text-green-500" :
+    value === "Not Bought" ? "text-red-500" :
+    "text-muted-foreground";
+  const onChange = async (v: string) => {
+    const { error } = await supabase.from("sales_entries").update({ lead_outcome: v }).eq("id", entry.id);
+    if (error) return toast.error(error.message);
+    qc.invalidateQueries({ queryKey: ["sales_entries"] });
+  };
+  return (
+    <Select value={value} onValueChange={onChange}>
+      <SelectTrigger className={`h-7 w-[110px] text-xs mx-auto ${color}`}><SelectValue /></SelectTrigger>
+      <SelectContent>
+        {LEAD_OUTCOMES.map((o) => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+      </SelectContent>
+    </Select>
+  );
+};

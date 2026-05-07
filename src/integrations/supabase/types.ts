@@ -578,6 +578,7 @@ export type Database = {
           id: string
           jersey_type: string | null
           job_name: string | null
+          lead_outcome: string | null
           new_leads: number
           orders_closed: number
           price_per_pc: number | null
@@ -597,6 +598,7 @@ export type Database = {
           id?: string
           jersey_type?: string | null
           job_name?: string | null
+          lead_outcome?: string | null
           new_leads?: number
           orders_closed?: number
           price_per_pc?: number | null
@@ -616,6 +618,7 @@ export type Database = {
           id?: string
           jersey_type?: string | null
           job_name?: string | null
+          lead_outcome?: string | null
           new_leads?: number
           orders_closed?: number
           price_per_pc?: number | null
