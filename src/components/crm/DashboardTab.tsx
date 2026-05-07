@@ -478,6 +478,7 @@ const DailyActivityChart = ({ monthRows, mStart, mEnd }: { monthRows: SalesEntry
             <option value="ALL">All Agents</option>
             {PEOPLE.map((p) => <option key={p.key} value={p.key}>{p.label}</option>)}
           </select>
+          <YMaxInput value={yMax} onChange={setYMax} />
         </div>
       </div>
       <div className="p-4 rounded-b-md" style={{ background: C.panel }}>
