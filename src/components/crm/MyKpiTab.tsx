@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
+import { toast } from "@/hooks/use-toast";
+import { Pencil, Check, X } from "lucide-react";
 
 const SALESPEOPLE_KEYS = ["MUNIR ACD", "DIDO ACD", "JEED ACD", "UMAR ACD", "ALYPH ACD", "HILMAN ACD"] as const;
 const PEOPLE_LABEL: Record<string, string> = {
