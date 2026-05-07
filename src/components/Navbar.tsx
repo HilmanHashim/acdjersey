@@ -13,7 +13,8 @@ const navLinks = [
   { to: "/enquiry", label: "Enquiry" },
   { to: "/about", label: "About Us" },
   { to: "/agents", label: "Contact Us" },
-  { to: "/shop", label: "Shop" },
+  // TEMP HIDDEN — uncomment to re-enable Shop in nav
+  // { to: "/shop", label: "Shop" },
 ];
 
 const Navbar = () => {
@@ -44,34 +45,12 @@ const Navbar = () => {
               {link.label}
             </Link>
           ))}
-          <button
-            onClick={() => setCartOpen(true)}
-            className="relative ml-2 p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/50 transition"
-            aria-label="Open cart"
-          >
-            <ShoppingCart className="h-5 w-5" />
-            {count > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 bg-accent text-accent-foreground text-[10px] font-bold rounded-full h-4 min-w-4 px-1 flex items-center justify-center">
-                {count}
-              </span>
-            )}
-          </button>
+          {/* TEMP HIDDEN — cart button (shop disabled) */}
         </div>
 
         {/* Mobile right side */}
         <div className="md:hidden flex items-center gap-2">
-          <button
-            onClick={() => setCartOpen(true)}
-            className="relative p-2 text-foreground"
-            aria-label="Open cart"
-          >
-            <ShoppingCart className="h-5 w-5" />
-            {count > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 bg-accent text-accent-foreground text-[10px] font-bold rounded-full h-4 min-w-4 px-1 flex items-center justify-center">
-                {count}
-              </span>
-            )}
-          </button>
+          {/* TEMP HIDDEN — cart button (shop disabled) */}
           <button
             className="text-foreground"
             onClick={() => setOpen(!open)}
