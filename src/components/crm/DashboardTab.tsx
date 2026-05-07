@@ -445,19 +445,19 @@ const DashboardTab = () => {
               })}
               <tr style={{ background: C.panelStrong }}>
                 <td className="px-2 py-2 font-extrabold text-base tracking-wide" style={{ color: C.yellowBright, border: TOTAL_BORDER }}>TOTAL</td>
-                <td className="px-2 py-2 font-extrabold text-base tracking-wide" style={{ color: C.yellowBright, border: TOTAL_BORDER }}>{monthTotals.leads}</td>
-                <td className="px-2 py-2 font-extrabold text-base tracking-wide" style={{ color: C.yellowBright, border: TOTAL_BORDER }}>{monthTotals.contacted}</td>
-                <td className="px-2 py-2 font-extrabold text-base tracking-wide" style={{ color: C.yellowBright, border: TOTAL_BORDER }}>{monthTotals.quotes}</td>
-                <td className="px-2 py-2 font-extrabold text-base tracking-wide" style={{ color: C.yellowBright, border: TOTAL_BORDER }}>{monthTotals.closed}</td>
+                <td className="px-2 py-2 text-center font-extrabold text-base tracking-wide" style={{ color: C.yellowBright, border: TOTAL_BORDER }}>{monthTotals.leads}</td>
+                <td className="px-2 py-2 text-center font-extrabold text-base tracking-wide" style={{ color: C.yellowBright, border: TOTAL_BORDER }}>{monthTotals.contacted}</td>
+                <td className="px-2 py-2 text-center font-extrabold text-base tracking-wide" style={{ color: C.yellowBright, border: TOTAL_BORDER }}>{monthTotals.quotes}</td>
+                <td className="px-2 py-2 text-center font-extrabold text-base tracking-wide" style={{ color: C.yellowBright, border: TOTAL_BORDER }}>{monthTotals.closed}</td>
                 <td className="px-2 py-2 font-extrabold text-base tracking-wide" style={{ color: C.yellowBright, border: TOTAL_BORDER }}>RM {fmtMoney(monthTotals.revenue)}</td>
-                <td className="px-2 py-2 font-extrabold text-base tracking-wide" style={{ color: C.blue, border: TOTAL_BORDER }}>
+                <td className="px-2 py-2 text-center font-extrabold text-base tracking-wide" style={{ color: C.blue, border: TOTAL_BORDER }}>
                   {monthTotals.leads ? fmtPct(monthTotals.closed / monthTotals.leads) : "0.0%"}
                 </td>
                 <td className="px-2 py-2 font-extrabold text-base tracking-wide" style={{ color: C.yellowBright, border: TOTAL_BORDER }}>
                   {monthTotals.pcsForPrice ? `RM ${(monthTotals.priceWeighted / monthTotals.pcsForPrice).toFixed(2)}` : "—"}
                 </td>
-                <td className="px-2 py-2 font-extrabold text-base tracking-wide" style={{ color: C.white, border: TOTAL_BORDER }}>{monthTotals.pcs}</td>
-                <td className="px-2 py-2 font-extrabold text-base tracking-wide" style={{ color: C.green, border: TOTAL_BORDER }}>100.0%</td>
+                <td className="px-2 py-2 text-center font-extrabold text-base tracking-wide" style={{ color: C.white, border: TOTAL_BORDER }}>{monthTotals.pcs}</td>
+                <td className="px-2 py-2 text-center font-extrabold text-base tracking-wide" style={{ color: C.green, border: TOTAL_BORDER }}>100.0%</td>
               </tr>
             </tbody>
           </table>
