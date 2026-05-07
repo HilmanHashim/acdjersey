@@ -432,6 +432,7 @@ const DashboardTab = () => {
 const DailyActivityChart = ({ monthRows, mStart, mEnd }: { monthRows: SalesEntry[]; mStart: string; mEnd: string }) => {
   const [filter, setFilter] = useState<string>("ALL");
   const [metric, setMetric] = useState<"leads" | "contacted" | "closed" | "revenue">("leads");
+  const [yMax, setYMax] = useState<string>("auto");
 
   const data = useMemo(() => {
     const start = new Date(mStart);
