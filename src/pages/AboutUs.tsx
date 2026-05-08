@@ -33,7 +33,7 @@ const clientLogos = [
 ];
 
 const whyChooseUs = [
-  { icon: Shield, title: "Superior Quality", desc: "Variety of materials with premium quality to pick from." },
+  { icon: Shield, title: "Superior Quality", desc: "Variety of materials with premium quality to choose from." },
   { icon: Zap, title: "Fast Turnaround", desc: "Bulk orders delivered in 7-14 days. No drawn-out lead times." },
   {
     icon: Palette,
