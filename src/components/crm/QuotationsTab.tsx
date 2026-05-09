@@ -132,16 +132,16 @@ const QuotationsTab = () => {
       ) : quotes.length === 0 ? (
         <p className="text-muted-foreground text-center py-8">No quotations yet.</p>
       ) : (
-        <div className="border rounded-lg overflow-hidden">
-          <Table className="table-fixed w-full">
+        <div className="border rounded-lg overflow-x-auto">
+          <Table className="min-w-[800px] w-full">
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[18%]">Quote #</TableHead>
-                <TableHead className="w-[22%]">Customer</TableHead>
-                <TableHead className="w-[15%]">Status</TableHead>
-                <TableHead className="w-[18%]">Amount (RM)</TableHead>
-                <TableHead className="w-[15%]">Valid Until</TableHead>
-                <TableHead className="w-[12%]">Actions</TableHead>
+                <TableHead className="min-w-[120px]">Quote #</TableHead>
+                <TableHead className="min-w-[150px]">Customer</TableHead>
+                <TableHead className="min-w-[110px]">Status</TableHead>
+                <TableHead className="min-w-[130px]">Amount (RM)</TableHead>
+                <TableHead className="min-w-[120px]">Valid Until</TableHead>
+                <TableHead className="min-w-[90px]">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

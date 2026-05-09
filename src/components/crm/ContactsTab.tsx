@@ -110,15 +110,15 @@ const ContactsTab = () => {
       ) : filtered.length === 0 ? (
         <p className="text-muted-foreground text-center py-8">No contacts yet. Add your first one!</p>
       ) : (
-        <div className="border rounded-lg overflow-hidden">
-          <Table className="table-fixed w-full">
+        <div className="border rounded-lg overflow-x-auto">
+          <Table className="min-w-[700px] w-full">
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[25%]">Name</TableHead>
-                <TableHead className="w-[25%]">Email</TableHead>
-                <TableHead className="w-[20%]">Phone</TableHead>
-                <TableHead className="w-[20%]">Company</TableHead>
-                <TableHead className="w-[10%]">Actions</TableHead>
+                <TableHead className="min-w-[140px]">Name</TableHead>
+                <TableHead className="min-w-[180px]">Email</TableHead>
+                <TableHead className="min-w-[130px]">Phone</TableHead>
+                <TableHead className="min-w-[140px]">Company</TableHead>
+                <TableHead className="min-w-[90px]">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
