@@ -345,8 +345,8 @@ const DashboardTab = () => {
           style={{ background: C.panel, color: C.muted }}>
           👤  TEAM PERFORMANCE — {isCurrentMonth ? "TODAY" : focusDate.toUpperCase()}
         </div>
-        <div className="overflow-hidden">
-          <table className="w-full table-fixed text-sm border-separate border-spacing-0 [&_td]:border [&_th]:border" style={{ borderColor: BORDER_COL }}>
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[900px] table-fixed text-sm border-separate border-spacing-0 [&_td]:border [&_th]:border" style={{ borderColor: BORDER_COL }}>
             <colgroup>
               <col style={{ width: "13%" }} />
               <col style={{ width: "6%" }} />
