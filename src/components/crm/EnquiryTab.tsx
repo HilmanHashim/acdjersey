@@ -166,18 +166,18 @@ const EnquiryTab = () => {
         <p className="text-muted-foreground text-center py-8">No enquiries found</p>
       ) : (
         <div className="rounded-md border overflow-x-auto">
-          <Table>
+          <Table className="min-w-[1100px] w-full">
             <TableHeader>
               <TableRow>
-                <TableHead>Date & Time</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Phone</TableHead>
-                <TableHead>Organisation</TableHead>
-                <TableHead>Qty</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Followed Up By</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead className="min-w-[150px]">Date & Time</TableHead>
+                <TableHead className="min-w-[140px]">Name</TableHead>
+                <TableHead className="min-w-[120px]">Phone</TableHead>
+                <TableHead className="min-w-[140px]">Organisation</TableHead>
+                <TableHead className="min-w-[60px]">Qty</TableHead>
+                <TableHead className="min-w-[100px]">Type</TableHead>
+                <TableHead className="min-w-[120px]">Status</TableHead>
+                <TableHead className="min-w-[150px]">Followed Up By</TableHead>
+                <TableHead className="min-w-[110px] text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

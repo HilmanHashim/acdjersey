@@ -278,11 +278,11 @@ const RecentEntries = ({ entries, onRemove }: { entries: SalesEntry[]; onRemove:
         </div>
       </div>
       <div className="border rounded-lg overflow-x-auto">
-        <Table>
+        <Table className="min-w-[900px] w-full">
           <TableHeader>
             <TableRow>
               <TableHead className="w-[100px]">Date</TableHead>
-              <TableHead>Job / Client</TableHead>
+              <TableHead className="min-w-[160px]">Job / Client</TableHead>
               <TableHead className="text-center w-[70px]">Leads</TableHead>
               <TableHead className="text-center w-[70px]">Closed</TableHead>
               <TableHead className="text-right w-[140px]">Revenue (RM)</TableHead>

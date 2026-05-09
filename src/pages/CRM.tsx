@@ -194,7 +194,7 @@ const CRM = () => {
       </header>
       <main className="w-full max-w-[1500px] mx-auto px-4 py-6">
         <Tabs defaultValue="dashboard" className="relative">
-          <TabsList className="grid w-full grid-cols-8 mb-6">
+          <TabsList className="mb-6 w-full flex sm:grid sm:grid-cols-8 overflow-x-auto sm:overflow-visible no-scrollbar justify-start sm:justify-stretch">
             <TabsTrigger value="dashboard" className="gap-1.5 text-xs"><LayoutDashboard className="h-4 w-4" /><span className="hidden sm:inline">Dashboard</span></TabsTrigger>
             <TabsTrigger value="my-kpi" className="gap-1.5 text-xs"><User className="h-4 w-4" /><span className="hidden sm:inline">My KPI</span></TabsTrigger>
             <TabsTrigger value="sales" className="gap-1.5 text-xs"><BarChart3 className="h-4 w-4" /><span className="hidden sm:inline">Tracker</span></TabsTrigger>

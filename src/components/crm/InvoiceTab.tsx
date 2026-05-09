@@ -1212,17 +1212,17 @@ const InvoiceTab = () => {
             <p className="text-sm text-muted-foreground text-center py-4">No invoice logs match that title.</p>
           ) : (
             <div className="space-y-3">
-              <div className="border rounded-lg overflow-hidden">
-                <Table>
+              <div className="border rounded-lg overflow-x-auto">
+                <Table className="min-w-[900px] w-full">
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Invoice No.</TableHead>
-                      <TableHead>Title</TableHead>
-                      <TableHead>Customer</TableHead>
-                      <TableHead>Saved Details</TableHead>
-                      <TableHead className="text-right">Amount</TableHead>
-                      <TableHead>Date</TableHead>
-                      <TableHead className="text-right">Action</TableHead>
+                      <TableHead className="min-w-[120px]">Invoice No.</TableHead>
+                      <TableHead className="min-w-[140px]">Title</TableHead>
+                      <TableHead className="min-w-[140px]">Customer</TableHead>
+                      <TableHead className="min-w-[130px]">Saved Details</TableHead>
+                      <TableHead className="min-w-[120px] text-right">Amount</TableHead>
+                      <TableHead className="min-w-[100px]">Date</TableHead>
+                      <TableHead className="min-w-[150px] text-right">Action</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
