@@ -484,19 +484,77 @@ const JobsheetTab = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="text-lg font-display flex items-center gap-2">
           <FileText className="h-5 w-5" /> Sublimation Jobsheet
+          {savedId && <span className="text-xs text-muted-foreground font-normal">(editing saved)</span>}
         </h2>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <span className="text-sm text-muted-foreground font-medium">
             {entries.length} sheet{entries.length > 1 ? "s" : ""} · {grandTotal} PCS total
           </span>
+          <Button variant="outline" size="sm" onClick={() => setHistoryOpen((o) => !o)}>
+            <FolderOpen className="h-4 w-4 mr-1" /> {historyOpen ? "Hide" : "Saved"}
+          </Button>
+          {savedId && (
+            <Button variant="outline" size="sm" onClick={newJobsheet}>New</Button>
+          )}
+          <Button variant="outline" size="sm" onClick={saveJobsheet} disabled={saving}>
+            <Save className="h-4 w-4 mr-1" /> {savedId ? "Update" : "Save"}
+          </Button>
           <Button variant="hero" onClick={generatePDF}>
             <Download className="h-4 w-4 mr-1" /> Generate PDF
           </Button>
         </div>
       </div>
+
+      {historyOpen && (
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm">Saved jobsheets</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="border rounded-lg overflow-x-auto">
+              <Table className="min-w-[700px]">
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Client</TableHead>
+                    <TableHead>Job</TableHead>
+                    <TableHead>Date In</TableHead>
+                    <TableHead>Date Out</TableHead>
+                    <TableHead className="text-center">PCS</TableHead>
+                    <TableHead>Saved</TableHead>
+                    <TableHead className="w-[140px]"></TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {history.map((h) => (
+                    <TableRow key={h.id}>
+                      <TableCell className="text-xs">{h.client_name}</TableCell>
+                      <TableCell className="text-xs">{h.job_name}</TableCell>
+                      <TableCell className="text-xs">{h.date_in || "—"}</TableCell>
+                      <TableCell className="text-xs">{h.date_out || "—"}</TableCell>
+                      <TableCell className="text-center text-xs">{h.total_pcs}</TableCell>
+                      <TableCell className="text-xs">{new Date(h.created_at).toLocaleDateString()}</TableCell>
+                      <TableCell>
+                        <div className="flex gap-1">
+                          <Button size="sm" variant="outline" onClick={() => loadJobsheet(h.id)}>Open</Button>
+                          <Button size="icon" variant="ghost" onClick={() => deleteJobsheet(h.id)}>
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  {history.length === 0 && (
+                    <TableRow><TableCell colSpan={7} className="text-center text-sm text-muted-foreground py-4">No saved jobsheets yet</TableCell></TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Shared job details */}
       <Card>
