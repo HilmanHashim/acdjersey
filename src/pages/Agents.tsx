@@ -66,7 +66,7 @@ const agents = [
     role: "Sales Executive / Web & Data Engineer",
     bio: "Ready to help you find the perfect apparel for your team, event, or brand 👕 Always here to make the process smooth from start to finish 🙌",
     image: hilmanImg,
-    imageClass: "scale-[2.8] object-[center_110%]",
+    imageClass: "scale-[2.8] object-[center_60%]",
   },
 ];
 
@@ -319,10 +319,10 @@ const Agents = () => (
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-1 gap-px bg-border">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-border">
         {designers.map((d, i) => (
           <div key={d.name} className="bg-background">
-            <DesignerCard person={d} index={i} />
+            <AgentCard person={d} index={i} />
           </div>
         ))}
       </div>
