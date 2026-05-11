@@ -66,7 +66,7 @@ const agents = [
     role: "Sales Executive / Web & Data Engineer",
     bio: "Ready to help you find the perfect apparel for your team, event, or brand 👕 Always here to make the process smooth from start to finish 🙌",
     image: hilmanImg,
-    imageClass: "scale-[2.8] object-[center_60%]",
+    imageClass: "scale-[2.8] object-[center_80%]",
   },
 ];
 
@@ -107,11 +107,7 @@ type Person = {
 };
 
 const AgentCard = ({ person, index }: { person: Person; index: number }) => (
-  <div className="group relative flex flex-col bg-card border border-border hover:border-primary/40 transition-all duration-300 overflow-hidden">
-    {/* Number badge */}
-    <div className="absolute top-4 left-4 z-10 font-display text-[10px] tracking-[0.3em] text-muted-foreground/60 uppercase">
-      {String(index + 1).padStart(2, "0")}
-    </div>
+  <div className="group relative flex flex-col bg-card border border-border hover:border-primary/40 transition-all duration-300 overflow-hidden rounded-2xl">
 
     {/* Image */}
     <div className="relative h-72 overflow-hidden bg-secondary">
@@ -289,9 +285,9 @@ const Agents = () => (
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-border">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
         {agents.map((a, i) => (
-          <div key={a.name} className="bg-background">
+          <div key={a.name}>
             <AgentCard person={a} index={i} />
           </div>
         ))}
@@ -319,9 +315,9 @@ const Agents = () => (
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-border">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
         {designers.map((d, i) => (
-          <div key={d.name} className="bg-background">
+          <div key={d.name}>
             <AgentCard person={d} index={i} />
           </div>
         ))}
