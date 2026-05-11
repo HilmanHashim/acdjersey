@@ -262,6 +262,45 @@ export type Database = {
         }
         Relationships: []
       }
+      jobsheets: {
+        Row: {
+          client_name: string
+          created_at: string
+          created_by: string | null
+          date_in: string | null
+          date_out: string | null
+          entries: Json
+          id: string
+          job_name: string
+          total_pcs: number
+          updated_at: string
+        }
+        Insert: {
+          client_name: string
+          created_at?: string
+          created_by?: string | null
+          date_in?: string | null
+          date_out?: string | null
+          entries?: Json
+          id?: string
+          job_name: string
+          total_pcs?: number
+          updated_at?: string
+        }
+        Update: {
+          client_name?: string
+          created_at?: string
+          created_by?: string | null
+          date_in?: string | null
+          date_out?: string | null
+          entries?: Json
+          id?: string
+          job_name?: string
+          total_pcs?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       leads: {
         Row: {
           created_at: string
