@@ -140,6 +140,87 @@ const JobsheetTab = () => {
 
   const grandTotal = entries.reduce((sum, e) => sum + e.sizeRows.reduce((s, r) => s + (r.qty || 0), 0), 0);
 
+  const [savedId, setSavedId] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [history, setHistory] = useState<any[]>([]);
+  const [historyOpen, setHistoryOpen] = useState(false);
+
+  const loadHistory = async () => {
+    const { data, error } = await supabase
+      .from("jobsheets")
+      .select("id, client_name, job_name, date_in, date_out, total_pcs, created_at")
+      .order("created_at", { ascending: false })
+      .limit(50);
+    if (error) return toast.error(error.message);
+    setHistory(data || []);
+  };
+
+  useEffect(() => { if (historyOpen) loadHistory(); }, [historyOpen]);
+
+  const saveJobsheet = async () => {
+    if (!clientName || !jobName) {
+      toast.error("Please fill in client name and job name");
+      return;
+    }
+    setSaving(true);
+    const { data: userRes } = await supabase.auth.getUser();
+    const uid = userRes.user?.id;
+    if (!uid) {
+      setSaving(false);
+      return toast.error("You must be signed in to save");
+    }
+    const payload = {
+      client_name: clientName,
+      job_name: jobName,
+      date_in: dateIn || null,
+      date_out: dateOut || null,
+      total_pcs: grandTotal,
+      entries: entries as any,
+      created_by: uid,
+    };
+    if (savedId) {
+      const { error } = await supabase.from("jobsheets").update(payload).eq("id", savedId);
+      setSaving(false);
+      if (error) return toast.error(error.message);
+      toast.success("Jobsheet updated");
+    } else {
+      const { data, error } = await supabase.from("jobsheets").insert(payload).select("id").single();
+      setSaving(false);
+      if (error) return toast.error(error.message);
+      setSavedId(data.id);
+      toast.success("Jobsheet saved");
+    }
+  };
+
+  const loadJobsheet = async (id: string) => {
+    const { data, error } = await supabase.from("jobsheets").select("*").eq("id", id).single();
+    if (error) return toast.error(error.message);
+    setClientName(data.client_name);
+    setJobName(data.job_name);
+    setDateIn(data.date_in || "");
+    setDateOut(data.date_out || "");
+    setEntries((data.entries as any) || [createEmptyEntry()]);
+    setSavedId(data.id);
+    setHistoryOpen(false);
+    toast.success("Jobsheet loaded");
+  };
+
+  const deleteJobsheet = async (id: string) => {
+    if (!confirm("Delete this saved jobsheet?")) return;
+    const { error } = await supabase.from("jobsheets").delete().eq("id", id);
+    if (error) return toast.error(error.message);
+    toast.success("Deleted");
+    if (savedId === id) setSavedId(null);
+    loadHistory();
+  };
+
+  const newJobsheet = () => {
+    setClientName(""); setJobName(""); setDateOut("");
+    setDateIn(new Date().toISOString().split("T")[0]);
+    setEntries([createEmptyEntry()]);
+    setSavedId(null);
+  };
+
   const renderJobsheetPage = async (doc: jsPDF, entry: JobsheetEntry, entryTotal: number) => {
     const pw = doc.internal.pageSize.getWidth();
     const margin = 15;
