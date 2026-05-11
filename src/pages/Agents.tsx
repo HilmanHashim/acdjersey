@@ -1,4 +1,4 @@
-import { Phone, MessageCircle, MapPin, Clock, ChevronRight } from "lucide-react";
+import { Phone, MessageCircle, MapPin, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Footer from "@/components/landing/Footer";
 import aliffImg from "@/assets/aliff-acd-new.png";
@@ -137,25 +137,23 @@ const AgentCard = ({ person, index }: { person: Person; index: number }) => (
       </p>
 
       {person.phone && (
-        <div className="flex items-center gap-2 text-muted-foreground text-xs font-mono border-t border-border pt-4">
-          <Phone className="h-3.5 w-3.5 shrink-0" />
-          <span>{person.phone}</span>
+        <div className="flex items-center justify-between border-t border-border pt-4">
+          <div className="flex items-center gap-2 text-muted-foreground text-xs font-mono">
+            <Phone className="h-3.5 w-3.5 shrink-0" />
+            <span>{person.phone}</span>
+          </div>
+          {person.whatsapp && (
+            <a
+              href={person.whatsapp}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center w-9 h-9 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors shrink-0"
+              aria-label="WhatsApp"
+            >
+              <MessageCircle className="h-4 w-4" />
+            </a>
+          )}
         </div>
-      )}
-
-      {person.whatsapp && (
-        <a
-          href={person.whatsapp}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center justify-between w-full bg-primary text-primary-foreground px-4 py-3 text-xs font-display uppercase tracking-[0.15em] hover:bg-primary/90 transition-colors group/btn"
-        >
-          <span className="flex items-center gap-2">
-            <MessageCircle className="h-3.5 w-3.5" />
-            WhatsApp
-          </span>
-          <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover/btn:translate-x-0.5" />
-        </a>
       )}
     </div>
   </div>
@@ -205,15 +203,10 @@ const Agents = () => (
     <Navbar />
 
     {/* ───── Hero ───── */}
-    <section className="relative min-h-[70vh] flex items-end overflow-hidden border-b border-border">
+    <section className="relative min-h-[50vh] flex items-end overflow-hidden border-b border-border">
       <div className="absolute inset-0">
         <img src={teamBg} alt="" className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-background/80" />
-        {/* Diagonal accent line */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-0 right-[30%] w-px h-full bg-border/40" />
-          <div className="absolute top-0 right-[60%] w-px h-full bg-border/20" />
-        </div>
       </div>
 
       <div className="container max-w-6xl relative z-10 pb-16 pt-32">
