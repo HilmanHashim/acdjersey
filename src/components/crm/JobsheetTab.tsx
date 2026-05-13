@@ -140,8 +140,6 @@ const JobsheetTab = () => {
 
   const grandTotal = entries.reduce((sum, e) => sum + e.sizeRows.reduce((s, r) => s + (r.qty || 0), 0), 0);
 
-  const [savedId, setSavedId] = useState<string | null>(null);
-  const [saving, setSaving] = useState(false);
   const [history, setHistory] = useState<any[]>([]);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [historySearch, setHistorySearch] = useState("");
@@ -151,25 +149,18 @@ const JobsheetTab = () => {
       .from("jobsheets")
       .select("id, client_name, job_name, date_in, date_out, total_pcs, created_at")
       .order("created_at", { ascending: false })
-      .limit(50);
+      .limit(100);
     if (error) return toast.error(error.message);
     setHistory(data || []);
   };
 
   useEffect(() => { if (historyOpen) loadHistory(); }, [historyOpen]);
 
-  const saveJobsheet = async () => {
-    if (!clientName || !jobName) {
-      toast.error("Please fill in client name and job name");
-      return;
-    }
-    setSaving(true);
+  // Auto-persist a snapshot to DB whenever a PDF is generated
+  const persistJobsheet = async () => {
     const { data: userRes } = await supabase.auth.getUser();
     const uid = userRes.user?.id;
-    if (!uid) {
-      setSaving(false);
-      return toast.error("You must be signed in to save");
-    }
+    if (!uid) return;
     const payload = {
       client_name: clientName,
       job_name: jobName,
@@ -179,47 +170,28 @@ const JobsheetTab = () => {
       entries: entries as any,
       created_by: uid,
     };
-    if (savedId) {
-      const { error } = await supabase.from("jobsheets").update(payload).eq("id", savedId);
-      setSaving(false);
-      if (error) return toast.error(error.message);
-      toast.success("Jobsheet updated");
-    } else {
-      const { data, error } = await supabase.from("jobsheets").insert(payload).select("id").single();
-      setSaving(false);
-      if (error) return toast.error(error.message);
-      setSavedId(data.id);
-      toast.success("Jobsheet saved");
-    }
+    const { error } = await supabase.from("jobsheets").insert(payload);
+    if (error) console.error("Jobsheet auto-save failed:", error.message);
   };
 
-  const loadJobsheet = async (id: string, mode: "edit" | "duplicate" = "edit") => {
+  const recreateJobsheet = async (id: string) => {
     const { data, error } = await supabase.from("jobsheets").select("*").eq("id", id).single();
     if (error) return toast.error(error.message);
-    setClientName(mode === "duplicate" ? `${data.client_name} (copy)` : data.client_name);
+    setClientName(data.client_name);
     setJobName(data.job_name);
-    setDateIn(mode === "duplicate" ? new Date().toISOString().split("T")[0] : (data.date_in || ""));
-    setDateOut(mode === "duplicate" ? "" : (data.date_out || ""));
+    setDateIn(new Date().toISOString().split("T")[0]);
+    setDateOut("");
     setEntries((data.entries as any) || [createEmptyEntry()]);
-    setSavedId(mode === "duplicate" ? null : data.id);
     setHistoryOpen(false);
-    toast.success(mode === "duplicate" ? "Jobsheet duplicated — save to create a new copy" : "Jobsheet loaded");
+    toast.success("Loaded — edit and generate a new PDF when ready");
   };
 
   const deleteJobsheet = async (id: string) => {
-    if (!confirm("Delete this saved jobsheet?")) return;
+    if (!confirm("Delete this past jobsheet?")) return;
     const { error } = await supabase.from("jobsheets").delete().eq("id", id);
     if (error) return toast.error(error.message);
     toast.success("Deleted");
-    if (savedId === id) setSavedId(null);
     loadHistory();
-  };
-
-  const newJobsheet = () => {
-    setClientName(""); setJobName(""); setDateOut("");
-    setDateIn(new Date().toISOString().split("T")[0]);
-    setEntries([createEmptyEntry()]);
-    setSavedId(null);
   };
 
   const renderJobsheetPage = async (doc: jsPDF, entry: JobsheetEntry, entryTotal: number) => {
