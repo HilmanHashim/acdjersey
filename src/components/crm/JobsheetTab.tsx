@@ -468,7 +468,7 @@ const JobsheetTab = () => {
       <div className="space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="text-lg font-display flex items-center gap-2">
-            <FolderOpen className="h-5 w-5" /> Saved Jobsheets
+            <History className="h-5 w-5" /> Past Jobsheets
             <span className="text-xs text-muted-foreground font-normal">({history.length})</span>
           </h2>
           <Button variant="outline" size="sm" onClick={() => setHistoryOpen(false)}>
