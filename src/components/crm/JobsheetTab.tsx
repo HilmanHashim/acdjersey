@@ -541,20 +541,13 @@ const JobsheetTab = () => {
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="text-lg font-display flex items-center gap-2">
           <FileText className="h-5 w-5" /> Sublimation Jobsheet
-          {savedId && <span className="text-xs text-muted-foreground font-normal">(editing saved)</span>}
         </h2>
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-sm text-muted-foreground font-medium">
             {entries.length} sheet{entries.length > 1 ? "s" : ""} · {grandTotal} PCS total
           </span>
           <Button variant="outline" size="sm" onClick={() => setHistoryOpen(true)}>
-            <FolderOpen className="h-4 w-4 mr-1" /> Saved
-          </Button>
-          {savedId && (
-            <Button variant="outline" size="sm" onClick={newJobsheet}>New</Button>
-          )}
-          <Button variant="outline" size="sm" onClick={saveJobsheet} disabled={saving}>
-            <Save className="h-4 w-4 mr-1" /> {savedId ? "Update" : "Save"}
+            <History className="h-4 w-4 mr-1" /> Past Jobsheets
           </Button>
           <Button variant="hero" onClick={generatePDF}>
             <Download className="h-4 w-4 mr-1" /> Generate PDF
