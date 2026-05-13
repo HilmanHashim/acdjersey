@@ -5,7 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { FileText, Download, ImagePlus, Plus, Trash2, Save, FolderOpen } from "lucide-react";
+import { FileText, Download, ImagePlus, Plus, Trash2, History } from "lucide-react";
 import { toast } from "sonner";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -140,8 +140,6 @@ const JobsheetTab = () => {
 
   const grandTotal = entries.reduce((sum, e) => sum + e.sizeRows.reduce((s, r) => s + (r.qty || 0), 0), 0);
 
-  const [savedId, setSavedId] = useState<string | null>(null);
-  const [saving, setSaving] = useState(false);
   const [history, setHistory] = useState<any[]>([]);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [historySearch, setHistorySearch] = useState("");
@@ -151,25 +149,18 @@ const JobsheetTab = () => {
       .from("jobsheets")
       .select("id, client_name, job_name, date_in, date_out, total_pcs, created_at")
       .order("created_at", { ascending: false })
-      .limit(50);
+      .limit(100);
     if (error) return toast.error(error.message);
     setHistory(data || []);
   };
 
   useEffect(() => { if (historyOpen) loadHistory(); }, [historyOpen]);
 
-  const saveJobsheet = async () => {
-    if (!clientName || !jobName) {
-      toast.error("Please fill in client name and job name");
-      return;
-    }
-    setSaving(true);
+  // Auto-persist a snapshot to DB whenever a PDF is generated
+  const persistJobsheet = async () => {
     const { data: userRes } = await supabase.auth.getUser();
     const uid = userRes.user?.id;
-    if (!uid) {
-      setSaving(false);
-      return toast.error("You must be signed in to save");
-    }
+    if (!uid) return;
     const payload = {
       client_name: clientName,
       job_name: jobName,
@@ -179,47 +170,28 @@ const JobsheetTab = () => {
       entries: entries as any,
       created_by: uid,
     };
-    if (savedId) {
-      const { error } = await supabase.from("jobsheets").update(payload).eq("id", savedId);
-      setSaving(false);
-      if (error) return toast.error(error.message);
-      toast.success("Jobsheet updated");
-    } else {
-      const { data, error } = await supabase.from("jobsheets").insert(payload).select("id").single();
-      setSaving(false);
-      if (error) return toast.error(error.message);
-      setSavedId(data.id);
-      toast.success("Jobsheet saved");
-    }
+    const { error } = await supabase.from("jobsheets").insert(payload);
+    if (error) console.error("Jobsheet auto-save failed:", error.message);
   };
 
-  const loadJobsheet = async (id: string, mode: "edit" | "duplicate" = "edit") => {
+  const recreateJobsheet = async (id: string) => {
     const { data, error } = await supabase.from("jobsheets").select("*").eq("id", id).single();
     if (error) return toast.error(error.message);
-    setClientName(mode === "duplicate" ? `${data.client_name} (copy)` : data.client_name);
+    setClientName(data.client_name);
     setJobName(data.job_name);
-    setDateIn(mode === "duplicate" ? new Date().toISOString().split("T")[0] : (data.date_in || ""));
-    setDateOut(mode === "duplicate" ? "" : (data.date_out || ""));
+    setDateIn(new Date().toISOString().split("T")[0]);
+    setDateOut("");
     setEntries((data.entries as any) || [createEmptyEntry()]);
-    setSavedId(mode === "duplicate" ? null : data.id);
     setHistoryOpen(false);
-    toast.success(mode === "duplicate" ? "Jobsheet duplicated — save to create a new copy" : "Jobsheet loaded");
+    toast.success("Loaded — edit and generate a new PDF when ready");
   };
 
   const deleteJobsheet = async (id: string) => {
-    if (!confirm("Delete this saved jobsheet?")) return;
+    if (!confirm("Delete this past jobsheet?")) return;
     const { error } = await supabase.from("jobsheets").delete().eq("id", id);
     if (error) return toast.error(error.message);
     toast.success("Deleted");
-    if (savedId === id) setSavedId(null);
     loadHistory();
-  };
-
-  const newJobsheet = () => {
-    setClientName(""); setJobName(""); setDateOut("");
-    setDateIn(new Date().toISOString().split("T")[0]);
-    setEntries([createEmptyEntry()]);
-    setSavedId(null);
   };
 
   const renderJobsheetPage = async (doc: jsPDF, entry: JobsheetEntry, entryTotal: number) => {
@@ -477,6 +449,9 @@ const JobsheetTab = () => {
       }
 
       setTimeout(() => URL.revokeObjectURL(url), 60000);
+
+      // Persist a snapshot to the database for future recreation
+      persistJobsheet();
     } catch (err: any) {
       console.error("PDF generation failed:", err);
       toast.error(`PDF failed: ${err?.message || "unknown error"}`);
@@ -496,7 +471,7 @@ const JobsheetTab = () => {
       <div className="space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="text-lg font-display flex items-center gap-2">
-            <FolderOpen className="h-5 w-5" /> Saved Jobsheets
+            <History className="h-5 w-5" /> Past Jobsheets
             <span className="text-xs text-muted-foreground font-normal">({history.length})</span>
           </h2>
           <Button variant="outline" size="sm" onClick={() => setHistoryOpen(false)}>
@@ -523,8 +498,8 @@ const JobsheetTab = () => {
                     <TableHead>Date In</TableHead>
                     <TableHead>Date Out</TableHead>
                     <TableHead className="text-center">PCS</TableHead>
-                    <TableHead>Saved</TableHead>
-                    <TableHead className="w-[220px]">Actions</TableHead>
+                    <TableHead>Created</TableHead>
+                    <TableHead className="w-[180px]">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -538,11 +513,8 @@ const JobsheetTab = () => {
                       <TableCell className="text-xs">{new Date(h.created_at).toLocaleDateString()}</TableCell>
                       <TableCell>
                         <div className="flex gap-1 flex-wrap">
-                          <Button size="sm" variant="outline" onClick={() => loadJobsheet(h.id, "edit")}>
-                            Open
-                          </Button>
-                          <Button size="sm" variant="secondary" onClick={() => loadJobsheet(h.id, "duplicate")}>
-                            Duplicate
+                          <Button size="sm" variant="secondary" onClick={() => recreateJobsheet(h.id)}>
+                            Recreate
                           </Button>
                           <Button size="icon" variant="ghost" onClick={() => deleteJobsheet(h.id)}>
                             <Trash2 className="h-3.5 w-3.5" />
@@ -554,7 +526,7 @@ const JobsheetTab = () => {
                   {filtered.length === 0 && (
                     <TableRow>
                       <TableCell colSpan={7} className="text-center text-sm text-muted-foreground py-6">
-                        {history.length === 0 ? "No saved jobsheets yet" : "No matches"}
+                        {history.length === 0 ? "No jobsheets yet — generate a PDF and it will appear here" : "No matches"}
                       </TableCell>
                     </TableRow>
                   )}
@@ -572,20 +544,13 @@ const JobsheetTab = () => {
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="text-lg font-display flex items-center gap-2">
           <FileText className="h-5 w-5" /> Sublimation Jobsheet
-          {savedId && <span className="text-xs text-muted-foreground font-normal">(editing saved)</span>}
         </h2>
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-sm text-muted-foreground font-medium">
             {entries.length} sheet{entries.length > 1 ? "s" : ""} · {grandTotal} PCS total
           </span>
           <Button variant="outline" size="sm" onClick={() => setHistoryOpen(true)}>
-            <FolderOpen className="h-4 w-4 mr-1" /> Saved
-          </Button>
-          {savedId && (
-            <Button variant="outline" size="sm" onClick={newJobsheet}>New</Button>
-          )}
-          <Button variant="outline" size="sm" onClick={saveJobsheet} disabled={saving}>
-            <Save className="h-4 w-4 mr-1" /> {savedId ? "Update" : "Save"}
+            <History className="h-4 w-4 mr-1" /> Past Jobsheets
           </Button>
           <Button variant="hero" onClick={generatePDF}>
             <Download className="h-4 w-4 mr-1" /> Generate PDF
