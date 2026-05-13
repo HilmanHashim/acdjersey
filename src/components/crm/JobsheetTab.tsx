@@ -495,8 +495,8 @@ const JobsheetTab = () => {
                     <TableHead>Date In</TableHead>
                     <TableHead>Date Out</TableHead>
                     <TableHead className="text-center">PCS</TableHead>
-                    <TableHead>Saved</TableHead>
-                    <TableHead className="w-[220px]">Actions</TableHead>
+                    <TableHead>Created</TableHead>
+                    <TableHead className="w-[180px]">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -510,11 +510,8 @@ const JobsheetTab = () => {
                       <TableCell className="text-xs">{new Date(h.created_at).toLocaleDateString()}</TableCell>
                       <TableCell>
                         <div className="flex gap-1 flex-wrap">
-                          <Button size="sm" variant="outline" onClick={() => loadJobsheet(h.id, "edit")}>
-                            Open
-                          </Button>
-                          <Button size="sm" variant="secondary" onClick={() => loadJobsheet(h.id, "duplicate")}>
-                            Duplicate
+                          <Button size="sm" variant="secondary" onClick={() => recreateJobsheet(h.id)}>
+                            Recreate
                           </Button>
                           <Button size="icon" variant="ghost" onClick={() => deleteJobsheet(h.id)}>
                             <Trash2 className="h-3.5 w-3.5" />
@@ -526,7 +523,7 @@ const JobsheetTab = () => {
                   {filtered.length === 0 && (
                     <TableRow>
                       <TableCell colSpan={7} className="text-center text-sm text-muted-foreground py-6">
-                        {history.length === 0 ? "No saved jobsheets yet" : "No matches"}
+                        {history.length === 0 ? "No jobsheets yet — generate a PDF and it will appear here" : "No matches"}
                       </TableCell>
                     </TableRow>
                   )}
