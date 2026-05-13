@@ -144,6 +144,7 @@ const JobsheetTab = () => {
   const [saving, setSaving] = useState(false);
   const [history, setHistory] = useState<any[]>([]);
   const [historyOpen, setHistoryOpen] = useState(false);
+  const [historySearch, setHistorySearch] = useState("");
 
   const loadHistory = async () => {
     const { data, error } = await supabase
