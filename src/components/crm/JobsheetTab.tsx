@@ -449,6 +449,9 @@ const JobsheetTab = () => {
       }
 
       setTimeout(() => URL.revokeObjectURL(url), 60000);
+
+      // Persist a snapshot to the database for future recreation
+      persistJobsheet();
     } catch (err: any) {
       console.error("PDF generation failed:", err);
       toast.error(`PDF failed: ${err?.message || "unknown error"}`);
