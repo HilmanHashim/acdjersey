@@ -192,17 +192,17 @@ const JobsheetTab = () => {
     }
   };
 
-  const loadJobsheet = async (id: string) => {
+  const loadJobsheet = async (id: string, mode: "edit" | "duplicate" = "edit") => {
     const { data, error } = await supabase.from("jobsheets").select("*").eq("id", id).single();
     if (error) return toast.error(error.message);
-    setClientName(data.client_name);
+    setClientName(mode === "duplicate" ? `${data.client_name} (copy)` : data.client_name);
     setJobName(data.job_name);
-    setDateIn(data.date_in || "");
-    setDateOut(data.date_out || "");
+    setDateIn(mode === "duplicate" ? new Date().toISOString().split("T")[0] : (data.date_in || ""));
+    setDateOut(mode === "duplicate" ? "" : (data.date_out || ""));
     setEntries((data.entries as any) || [createEmptyEntry()]);
-    setSavedId(data.id);
+    setSavedId(mode === "duplicate" ? null : data.id);
     setHistoryOpen(false);
-    toast.success("Jobsheet loaded");
+    toast.success(mode === "duplicate" ? "Jobsheet duplicated — save to create a new copy" : "Jobsheet loaded");
   };
 
   const deleteJobsheet = async (id: string) => {
