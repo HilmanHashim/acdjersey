@@ -11,11 +11,10 @@ import AboutUs from "./pages/AboutUs.tsx";
 import Catalogue from "./pages/Catalogue.tsx";
 import CatalogueCategory from "./pages/CatalogueCategory.tsx";
 import Enquiry from "./pages/Enquiry.tsx";
-// TEMP HIDDEN — uncomment to re-enable shop/checkout pages
-// import Shop from "./pages/Shop.tsx";
-// import ShopProduct from "./pages/ShopProduct.tsx";
-// import Checkout from "./pages/Checkout.tsx";
-// import OrderSubmitted from "./pages/OrderSubmitted.tsx";
+import Shop from "./pages/Shop.tsx";
+import ShopProduct from "./pages/ShopProduct.tsx";
+import Checkout from "./pages/Checkout.tsx";
+import OrderSubmitted from "./pages/OrderSubmitted.tsx";
 // TEMP HIDDEN — uncomment to re-enable the Customize page
 // import Customize from "./pages/Customize.tsx";
 import EnquirySubmitted from "./pages/EnquirySubmitted.tsx";
@@ -24,8 +23,7 @@ import ScrollToTop from "./components/ScrollToTop";
 import ScrollToTopButton from "./components/ScrollToTopButton";
 import FacebookPixel from "./components/FacebookPixel";
 import PageTransition from "./components/PageTransition";
-// TEMP HIDDEN — uncomment to re-enable cart drawer
-// import CartDrawer from "./components/shop/CartDrawer";
+import CartDrawer from "./components/shop/CartDrawer";
 
 const queryClient = new QueryClient();
 
@@ -39,7 +37,7 @@ const App = () => (
           <ScrollToTop />
           <ScrollToTopButton />
           <FacebookPixel />
-          {/* TEMP HIDDEN — <CartDrawer /> */}
+          <CartDrawer />
           <PageTransition>
           <Routes>
             <Route path="/" element={<Index />} />
@@ -48,11 +46,10 @@ const App = () => (
             <Route path="/about" element={<AboutUs />} />
             <Route path="/catalogue" element={<Catalogue />} />
             <Route path="/catalogue/:slug" element={<CatalogueCategory />} />
-            {/* TEMP HIDDEN — shop/checkout routes */}
-            {/* <Route path="/shop" element={<Shop />} /> */}
-            {/* <Route path="/shop/:slug" element={<ShopProduct />} /> */}
-            {/* <Route path="/checkout" element={<Checkout />} /> */}
-            {/* <Route path="/order-submitted" element={<OrderSubmitted />} /> */}
+            <Route path="/shop" element={<Shop />} />
+            <Route path="/shop/:slug" element={<ShopProduct />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/order-submitted" element={<OrderSubmitted />} />
             {/* TEMP HIDDEN — uncomment to re-enable the Customize route */}
             {/* <Route path="/customize" element={<Customize />} /> */}
             <Route path="/enquiry" element={<Enquiry />} />
