@@ -8,6 +8,7 @@ import logo from "@/assets/logo-white.png";
 const navLinks = [
   { to: "/", label: "Home" },
   { to: "/catalogue", label: "Catalogue" },
+  { to: "/shop", label: "Shop" },
   { to: "/about", label: "About Us" },
   { to: "/agents", label: "Contact Us" },
 ];
