@@ -26,8 +26,8 @@ const agents = [
   },
   {
     name: "ALYPH ACD",
-    phone: "011-6844 8896",
-    whatsapp: "https://wa.me/601168448896",
+    phone: "011-3732 7643",
+    whatsapp: "https://wa.me/601137327643",
     role: "Sales Executive",
     bio: "Want custom jerseys but don’t want the headache? Just send your idea, I’ll handle the rest 🤝",
     image: aliffImg,
