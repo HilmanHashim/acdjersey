@@ -35,8 +35,8 @@ const agents = [
   },
   {
     name: "MUNIR ACD",
-    phone: "018-255 2426",
-    whatsapp: "https://wa.me/60182552426",
+    phone: "011-6561 4120",
+    whatsapp: "https://wa.me/01165614120",
     role: "Sales Executive",
     bio: "I help teams stand out with premium jerseys. Want yours to look different? Hit WhatsApp below 🤝",
     image: imanImg,
