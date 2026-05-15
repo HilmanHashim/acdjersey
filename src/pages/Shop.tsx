@@ -4,10 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/landing/Footer";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
 import slide2 from "@/assets/hero-jersey-flatlay.jpg";
-import slide1 from "@/assets/hero-bg.jpg";
-import slide3 from "@/assets/hero-jerseys.jpg";
 
 type Product = {
   id: string;
@@ -18,19 +15,6 @@ type Product = {
   base_price: number;
   images: string[];
 };
-
-type Slide = {
-  image: string;
-  alt: string;
-};
-
-const slides: Slide[] = [
-  { image: slide2, alt: "Jersey flatlay" },
-  { image: slide1, alt: "Hero background" },
-  { image: slide3, alt: "Jerseys collection" },
-];
-
-const SLIDE_DURATION = 6000;
 
 const Shop = () => {
   const [products, setProducts] = useState<Product[]>([]);
